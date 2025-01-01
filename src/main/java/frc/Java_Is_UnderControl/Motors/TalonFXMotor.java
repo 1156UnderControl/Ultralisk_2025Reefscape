@@ -17,67 +17,71 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import frc.Java_Is_UnderControl.Driver.Phoenix6Util;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
 public class TalonFXMotor implements Motor{
-    private TalonFX motor;
-    private GravityTypeValue gravityType;
+  private TalonFX motor;
 
-    private final MotionMagicVoltage m_angleVoltageSetter = new MotionMagicVoltage(0);
+  private GravityTypeValue gravityType;
 
-    private final VelocityVoltage m_velocityVoltageSetter = new VelocityVoltage(0);
+  private final MotionMagicVoltage m_angleVoltageSetter = new MotionMagicVoltage(0);
 
-    private TalonFXConfiguration configuration = new TalonFXConfiguration();
+  private final VelocityVoltage m_velocityVoltageSetter = new VelocityVoltage(0);
 
-    private double targetPosition = Double.NaN;
+  private TalonFXConfiguration configuration = new TalonFXConfiguration();
 
-    private double targetVelocity = Double.NaN;
+  private double targetPosition = Double.NaN;
 
-    private double targetOutput = Double.NaN;
+  private double targetVelocity = Double.NaN;
 
-    private boolean factoryDefaultOcurred = false;
+  private double targetOutput = Double.NaN;
 
-    private CustomDoubleLogger appliedOutputLog;
+  private boolean factoryDefaultOcurred = false;
 
-    private CustomDoubleLogger targetOutputLog;
+  private CustomDoubleLogger appliedOutputLog;
 
-    private CustomDoubleLogger currentLog;
+  private CustomDoubleLogger targetOutputLog;
 
-    private CustomDoubleLogger positionLog;
+  private CustomDoubleLogger currentLog;
 
-    private CustomDoubleLogger velocityLog;
+  private CustomDoubleLogger positionLog;
 
-    private CustomDoubleLogger temperatureLog;
+  private CustomDoubleLogger velocityLog;
 
-    private CustomIntegerLogger faultsLog;
+  private CustomDoubleLogger temperatureLog;
 
-    private CustomDoubleLogger targetPositionLog;
+  private CustomIntegerLogger faultsLog;
 
-    private CustomDoubleLogger targetSpeedLog;
+  private CustomDoubleLogger targetPositionLog;
 
-    private MotorOutputConfigs configs;
+  private CustomDoubleLogger targetSpeedLog;
 
-    public TalonFXMotor(int id, GravityTypeValue gravityType) {
-      this.gravityType = gravityType;
-      motor = new TalonFX(id);
-      this.factoryDefault();
-      this.clearStickyFaults();
-      this.setCurrentLimit(80);
-      this.setupLogs(id);
-      this.updateLogs();
-      this.factoryDefault();
-      this.clearStickyFaults();
-      configs = new MotorOutputConfigs();
-    }
+  private MotorOutputConfigs configs;
+
+  StatusCode status;
+
+  public TalonFXMotor(int id, GravityTypeValue gravityType) {
+    this.gravityType = gravityType;
+    motor = new TalonFX(id);
+    this.factoryDefault();
+    this.clearStickyFaults();
+    this.setCurrentLimit(80);
+    this.setupLogs(id);
+    this.updateLogs();
+    this.factoryDefault();
+    this.clearStickyFaults();
+    configs = new MotorOutputConfigs();
+  }
   
-    public TalonFXMotor(int id) {
-      this(id, GravityTypeValue.Elevator_Static);
-    }
+  public TalonFXMotor(int id) {
+    this(id, GravityTypeValue.Elevator_Static);
+  }
   
 
-    private void setupLogs(int motorId) {
-        this.appliedOutputLog = new CustomDoubleLogger("/motors/" + motorId + "/appliedOutput");
+  private void setupLogs(int motorId) {
+    this.appliedOutputLog = new CustomDoubleLogger("/motors/" + motorId + "/appliedOutput");
     this.targetOutputLog = new CustomDoubleLogger("/motors/" + motorId + "/targetOutput");
     this.currentLog = new CustomDoubleLogger("/motors/" + motorId + "/current");
     this.positionLog = new CustomDoubleLogger("/motors/" + motorId + "/position");
@@ -87,7 +91,7 @@ public class TalonFXMotor implements Motor{
     this.targetPositionLog = new CustomDoubleLogger("/motors/" + motorId + "/targetPosition");
     this.targetSpeedLog = new CustomDoubleLogger("/motors/" + motorId + "/targetSpeed");
     StringLogEntry descriptionLog = new StringLogEntry(DataLogManager.getLog(),
-        "/motors/" + motorId + "/Description");
+      "/motors/" + motorId + "/Description");
     descriptionLog.append(this.motor.getDescription());
     BooleanLogEntry isInvertedLog = new BooleanLogEntry(DataLogManager.getLog(), "/motors/" + motorId + "/isInverted");
     isInvertedLog.append(isInverted());
@@ -95,12 +99,9 @@ public class TalonFXMotor implements Motor{
 
   @Override
   public void factoryDefault() {
-    if (!factoryDefaultOcurred) {
+   if (!factoryDefaultOcurred) {
       configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      StatusCode status = motor.getConfigurator().apply(this.configuration, 100);
-      if (status.isError()) {
-        status = motor.getConfigurator().apply(this.configuration, 100);
-      }
+      Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(configuration, 100));
       m_angleVoltageSetter.UpdateFreqHz = 0;
       m_velocityVoltageSetter.UpdateFreqHz = 0;
     }
