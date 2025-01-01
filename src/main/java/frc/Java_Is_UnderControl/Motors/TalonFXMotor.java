@@ -1,6 +1,7 @@
 package frc.Java_Is_UnderControl.Motors;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -9,6 +10,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
@@ -54,6 +56,26 @@ public class TalonFXMotor implements Motor{
 
     private CustomDoubleLogger targetSpeedLog;
 
+    private MotorOutputConfigs configs;
+
+    public TalonFXMotor(int id, GravityTypeValue gravityType) {
+      this.gravityType = gravityType;
+      motor = new TalonFX(id);
+      this.factoryDefault();
+      this.clearStickyFaults();
+      this.setCurrentLimit(80);
+      this.setupLogs(id);
+      this.updateLogs();
+      this.factoryDefault();
+      this.clearStickyFaults();
+      configs = new MotorOutputConfigs();
+    }
+  
+    public TalonFXMotor(int id) {
+      this(id, GravityTypeValue.Elevator_Static);
+    }
+  
+
     private void setupLogs(int motorId) {
         this.appliedOutputLog = new CustomDoubleLogger("/motors/" + motorId + "/appliedOutput");
     this.targetOutputLog = new CustomDoubleLogger("/motors/" + motorId + "/targetOutput");
@@ -68,7 +90,7 @@ public class TalonFXMotor implements Motor{
         "/motors/" + motorId + "/Description");
     descriptionLog.append(this.motor.getDescription());
     BooleanLogEntry isInvertedLog = new BooleanLogEntry(DataLogManager.getLog(), "/motors/" + motorId + "/isInverted");
-    isInvertedLog.append(this.motor.getInverted());
+    isInvertedLog.append(isInverted());
   }
 
   @Override
@@ -185,8 +207,9 @@ public class TalonFXMotor implements Motor{
   }
 
   @Override
-  public void setInverted(boolean inverted) {
-    motor.setInverted(inverted);
+  public void setInverted(boolean setInverted) {
+    motor.getConfigurator().refresh(configs);
+    configs.Inverted = setInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
   }
 
   @Override
@@ -233,7 +256,7 @@ public class TalonFXMotor implements Motor{
   @Override
   public void setVelocityReference(double velocity, double feedforward) {
     targetVelocity = velocity;
-    targetOutput = Double.NaN;x
+    targetOutput = Double.NaN;
     targetPosition = Double.NaN;
     motor.setControl(new VelocityVoltage(velocity).withFeedForward(feedforward));
   }
@@ -303,6 +326,15 @@ public class TalonFXMotor implements Motor{
     TalonFXConfigurator cfg = motor.getConfigurator();
     cfg.refresh(configuration.ClosedLoopRamps);
     cfg.apply(configuration.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(rampRate));
+  }
+
+  private boolean isInverted(){
+    motor.getConfigurator().refresh(configs);
+    if (configs.Inverted == InvertedValue.Clockwise_Positive) {
+      return false;
+    } else {
+      return true;
+    }  
   }
 
   @Override
