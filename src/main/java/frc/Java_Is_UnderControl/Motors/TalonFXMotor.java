@@ -21,7 +21,7 @@ import frc.Java_Is_UnderControl.Driver.Phoenix6Util;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
-public class TalonFXMotor implements Motor{
+public class TalonFXMotor implements IMotor{
   private TalonFX motor;
 
   private GravityTypeValue gravityType;
@@ -58,9 +58,9 @@ public class TalonFXMotor implements Motor{
 
   private CustomDoubleLogger targetSpeedLog;
 
-  private MotorOutputConfigs configs;
+  private MotorOutputConfigs configs = new MotorOutputConfigs();
 
-  StatusCode status;
+  private boolean encoderInverted = false;
 
   public TalonFXMotor(int id, GravityTypeValue gravityType) {
     this.gravityType = gravityType;
@@ -72,9 +72,24 @@ public class TalonFXMotor implements Motor{
     this.updateLogs();
     this.factoryDefault();
     this.clearStickyFaults();
-    configs = new MotorOutputConfigs();
+  }
+
+  public TalonFXMotor(int id, GravityTypeValue gravityType, String canivoreBus) {
+    this.gravityType = gravityType;
+    motor = new TalonFX(id, canivoreBus);
+    this.factoryDefault();
+    this.clearStickyFaults();
+    this.setCurrentLimit(80);
+    this.setupLogs(id);
+    this.updateLogs();
+    this.factoryDefault();
+    this.clearStickyFaults();
   }
   
+  public TalonFXMotor(int id, String canivoreBus) {
+    this(id, GravityTypeValue.Elevator_Static, canivoreBus);
+  }
+
   public TalonFXMotor(int id) {
     this(id, GravityTypeValue.Elevator_Static);
   }
@@ -209,18 +224,17 @@ public class TalonFXMotor implements Motor{
 
   @Override
   public void setInverted(boolean setInverted) {
-    motor.getConfigurator().refresh(configs);
-    configs.Inverted = setInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+    this.configs = new MotorOutputConfigs().withInverted(setInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive);
+    burnFlash();
   }
 
   @Override
   public void setInvertedEncoder(boolean inverted) {
-    //
   }
 
   @Override
   public void burnFlash() {
-    // Do nothing
+    motor.getConfigurator().apply(this.configs, 100);
   }
 
   @Override
@@ -236,7 +250,6 @@ public class TalonFXMotor implements Motor{
     setPositionReferenceArbFF(position, 0);
   }
 
-  @Override
   public void setPositionReferenceArbFF(double position, double feedforward) {
     double positionInRotations = Units.degreesToRotations(position);
     targetPosition = position;
@@ -254,7 +267,6 @@ public class TalonFXMotor implements Motor{
     motor.setControl(new PositionDutyCycle(positionInRotations).withFeedForward(feedforward).withVelocity(velocity));
   }
 
-  @Override
   public void setVelocityReference(double velocity, double feedforward) {
     targetVelocity = velocity;
     targetOutput = Double.NaN;

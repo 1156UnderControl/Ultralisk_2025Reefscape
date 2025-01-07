@@ -1,5 +1,6 @@
 package frc.Java_Is_UnderControl.Motors;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 
@@ -24,7 +25,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkBaseConfigAccessor;
 
-public class SparkMAXMotor implements Motor{
+public class SparkMAXMotor implements IMotor{
 
     private SparkMax motor;
 
@@ -58,7 +59,7 @@ public class SparkMAXMotor implements Motor{
     private CustomDoubleLogger targetPositionLog;
     private CustomDoubleLogger targetSpeedLog;
 
-    SparkBaseConfigAccessor sparkBaseConfigAccessor;
+    boolean isInverted = false;
 
     private double targetPercentage;
     private double targetPosition;
@@ -107,7 +108,7 @@ public class SparkMAXMotor implements Motor{
     BooleanLogEntry isFollowerLog = new BooleanLogEntry(DataLogManager.getLog(), "/motors/" + motorId + "/isFollower");
     isFollowerLog.append(this.motor.isFollower());
     BooleanLogEntry isInvertedLog = new BooleanLogEntry(DataLogManager.getLog(), "/motors/" + motorId + "/isInverted");
-    isInvertedLog.append(sparkBaseConfigAccessor.getInverted());
+    isInvertedLog.append(isInverted);
   }
 
   @Override
@@ -177,7 +178,13 @@ public class SparkMAXMotor implements Motor{
 
     @Override
     public void setInverted(boolean inverted){
-        config.inverted(inverted);
+        this.config.inverted(inverted);
+
+        if(inverted == true){
+            isInverted = true;
+        } else {
+            isInverted = false;
+        }
     }
 
     @Override
@@ -212,10 +219,9 @@ public class SparkMAXMotor implements Motor{
         this.updateLogs();
     }
 
-    @Override
-    public void setPositionReferenceArbFF(double position, double feedforward){
+    public void setPositionReferenceArbFF(double position, ClosedLoopSlot feedforward){
         if(this.getPosition() != position){
-            motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, 0, feedforward);
+            motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, feedforward);
         }
         this.targetPercentage = Double.NaN;
         this.targetVelocity = Double.NaN;
@@ -236,10 +242,9 @@ public class SparkMAXMotor implements Motor{
         this.updateLogs();
     }
 
-    @Override
-    public void setVelocityReference(double velocity, double feedforward){
+    public void setVelocityReference(double velocity, ClosedLoopSlot feedforward){
         if(this.getVelocity() != velocity){
-            motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, 0, feedforward);
+            motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, feedforward);
         }
         this.targetPercentage = Double.NaN;
         this.targetVelocity = velocity;
