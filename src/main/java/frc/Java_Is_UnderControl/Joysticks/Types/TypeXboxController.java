@@ -12,7 +12,7 @@ public class TypeXboxController implements IController {
 
   @Override
   public Trigger buttomUp() {
-    return controller.x();
+    return controller.y();
   }
 
   public Trigger buttomDown() {
@@ -24,7 +24,7 @@ public class TypeXboxController implements IController {
   }
 
   public Trigger buttomLeft() {
-    return controller.y();
+    return controller.x();
   }
 
   @Override
