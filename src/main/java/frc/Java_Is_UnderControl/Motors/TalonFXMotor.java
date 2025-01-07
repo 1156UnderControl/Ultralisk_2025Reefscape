@@ -60,7 +60,11 @@ public class TalonFXMotor implements IMotor{
 
   private MotorOutputConfigs configs = new MotorOutputConfigs();
 
+  private boolean isInverted = false;
+
   private boolean encoderInverted = false;
+
+  private TalonFXConfigurator cfg;
 
   public TalonFXMotor(int id, GravityTypeValue gravityType) {
     this.gravityType = gravityType;
@@ -195,7 +199,7 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void configurePIDF(double P, double I, double D, double F) {
-    TalonFXConfigurator cfg = motor.getConfigurator();
+    this.cfg = motor.getConfigurator();
     cfg.refresh(configuration.Slot0);
     cfg.apply(
         configuration.Slot0.withKP(P).withKI(I).withKD(D).withKS(F).withGravityType(gravityType));
@@ -203,7 +207,7 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void configureFeedForward(double Kg, double Ks, double Kv) {
-    TalonFXConfigurator cfg = motor.getConfigurator();
+    this.cfg = motor.getConfigurator();
     cfg.refresh(configuration.Slot0);
     cfg.apply(
         configuration.Slot0.withKG(Kg).withKS(Ks).withKV(Kv));
@@ -211,7 +215,7 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void configurePIDWrapping(double minInput, double maxInput) {
-    TalonFXConfigurator cfg = motor.getConfigurator();
+    this.cfg = motor.getConfigurator();
     cfg.refresh(configuration.ClosedLoopGeneral);
     configuration.ClosedLoopGeneral.ContinuousWrap = true;
     cfg.apply(configuration.ClosedLoopGeneral);
@@ -223,9 +227,8 @@ public class TalonFXMotor implements IMotor{
   }
 
   @Override
-  public void setInverted(boolean setInverted) {
-    this.configs = new MotorOutputConfigs().withInverted(setInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive);
-    burnFlash();
+  public void setInverted(boolean isInverted) {
+    this.isInverted = isInverted;
   }
 
   @Override
@@ -234,7 +237,7 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void burnFlash() {
-    motor.getConfigurator().apply(this.configs, 100);
+    cfg.apply(this.configs = new MotorOutputConfigs().withInverted(isInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive), 100);
   }
 
   @Override
@@ -301,17 +304,17 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void setPositionFactor(double factor) {
-    TalonFXConfigurator cfg = motor.getConfigurator();
-    configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(factor);
+    this.cfg = motor.getConfigurator();
+    cfg.refresh(configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+    .withSensorToMechanismRatio(factor));
     cfg.apply(configuration);
   }
 
   @Override
   public void setVelocityFactor(double factor) {
-    TalonFXConfigurator cfg = motor.getConfigurator();
-    configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(factor);
+    this.cfg = motor.getConfigurator();
+    cfg.refresh(configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+    .withSensorToMechanismRatio(factor));
     cfg.apply(configuration);
   }
 
@@ -327,7 +330,7 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void setCurrentLimit(int currentLimit) {
-    TalonFXConfigurator cfg = motor.getConfigurator();
+    this.cfg = motor.getConfigurator();
     cfg.refresh(configuration.CurrentLimits);
     cfg.apply(
         configuration.CurrentLimits.withStatorCurrentLimit(currentLimit)
@@ -336,7 +339,7 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void setLoopRampRate(double rampRate) {
-    TalonFXConfigurator cfg = motor.getConfigurator();
+    this.cfg = motor.getConfigurator();
     cfg.refresh(configuration.ClosedLoopRamps);
     cfg.apply(configuration.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(rampRate));
   }
