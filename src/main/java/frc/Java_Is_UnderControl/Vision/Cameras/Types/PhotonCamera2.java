@@ -1,6 +1,5 @@
 package frc.Java_Is_UnderControl.Vision.Cameras.Types;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -31,8 +30,6 @@ public class PhotonCamera2 implements ICamera{
     private double goalHeightMeters;
     private double cameraMountAngleDEG;
     
-
-
     public static PhotonCamera2 getInstance(String cameraName, boolean isTag) {
         if (instance == null) {
           instance = new PhotonCamera2(cameraName, isTag);
