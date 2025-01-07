@@ -17,9 +17,9 @@ import edu.wpi.first.math.util.Units;
 import frc.Java_Is_UnderControl.Vision.TargetData;
 import frc.Java_Is_UnderControl.Vision.Cameras.ICamera;
 
-public class PhotonCamera2 implements ICamera{
+public class PhotonCameras implements ICamera{
 
-    private static PhotonCamera2 instance;
+    private static PhotonCameras instance;
     private PhotonCamera camera;
     private AprilTagFieldLayout fieldTags = AprilTagFieldLayout.loadField(null);
     private PhotonPoseEstimator photonPoseEstimator;
@@ -30,16 +30,16 @@ public class PhotonCamera2 implements ICamera{
     private double goalHeightMeters;
     private double cameraMountAngleDEG;
     
-    public static PhotonCamera2 getInstance(String cameraName, boolean isTag) {
+    public static PhotonCameras getInstance(String cameraName, boolean isTag) {
         if (instance == null) {
-          instance = new PhotonCamera2(cameraName, isTag);
+          instance = new PhotonCameras(cameraName, isTag);
           return instance;
         } else {
           return instance;
         }
       }
     
-    private PhotonCamera2(String cameraName, boolean isTag){
+    private PhotonCameras(String cameraName, boolean isTag){
         this.targetType(isTag);
         this.camera = new PhotonCamera(cameraName);
         this.photonPoseEstimator = new PhotonPoseEstimator(fieldTags, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, this.cameraPos);
