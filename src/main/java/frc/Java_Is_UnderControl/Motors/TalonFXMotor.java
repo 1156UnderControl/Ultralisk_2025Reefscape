@@ -282,9 +282,11 @@ public class TalonFXMotor implements IMotor{
     configuration.Slot0.withKP(P).withKI(I).withKD(D).withKS(S).withKV(V).withKA(A);
 
     var motionMagicConfigs = configuration.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = 80;
-    motionMagicConfigs.MotionMagicAcceleration = 160;
-    motionMagicConfigs.MotionMagicJerk = 1600;
+    motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity;
+    motionMagicConfigs.MotionMagicAcceleration = acceleration;
+    motionMagicConfigs.MotionMagicJerk = jerk;
+
+    cfg.apply(configuration);
   }
 
   public void setPositionMotionMagic(double position){
