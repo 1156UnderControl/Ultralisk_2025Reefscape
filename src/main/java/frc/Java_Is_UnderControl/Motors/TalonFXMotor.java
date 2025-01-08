@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -65,6 +66,8 @@ public class TalonFXMotor implements IMotor{
   private boolean encoderInverted = false;
 
   private TalonFXConfigurator cfg;
+
+  private MotionMagicVoltage magicVoltage;
 
   public TalonFXMotor(int id, GravityTypeValue gravityType) {
     this.gravityType = gravityType;
@@ -272,6 +275,26 @@ public class TalonFXMotor implements IMotor{
     targetOutput = Double.NaN;
     targetVelocity = Double.NaN;
     motor.setControl(new PositionDutyCycle(positionInRotations).withFeedForward(feedforward).withVelocity(velocity));
+  }
+
+  public void configureMotionMagic(double P, double I, double D, double S, double V, double A, double cruiseVelocity, double acceleration, double jerk){
+    cfg.refresh(configuration.Slot0);
+    configuration.Slot0.withKP(P).withKI(I).withKD(D).withKS(S).withKV(V).withKA(A);
+
+    var motionMagicConfigs = configuration.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 80;
+    motionMagicConfigs.MotionMagicAcceleration = 160;
+    motionMagicConfigs.MotionMagicJerk = 1600;
+  }
+
+  public void setPositionMotionMagic(double position){
+    magicVoltage = new MotionMagicVoltage(0);
+    motor.setControl(magicVoltage.withPosition(position));
+  }
+
+  public void setAngleMotionMagic(Angle angle){
+    magicVoltage = new MotionMagicVoltage(0);
+    motor.setControl(magicVoltage.withPosition(angle));
   }
 
   public void setVelocityReference(double velocity, double feedforward) {

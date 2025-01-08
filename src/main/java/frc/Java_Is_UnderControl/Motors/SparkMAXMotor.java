@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -16,7 +17,9 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -26,6 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
+import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class SparkMAXMotor implements IMotor{
@@ -68,6 +72,10 @@ public class SparkMAXMotor implements IMotor{
     private double targetPosition;
     private double targetVelocity;
 
+    private SimpleMotorFeedforward feedforward;
+
+    private double velocityFF;
+
     public SparkMAXMotor(int motorID){
         this(motorID, false);
     }
@@ -75,13 +83,13 @@ public class SparkMAXMotor implements IMotor{
     public SparkMAXMotor(int motorID, boolean usingAlternateEncoder){
         this.motor = new SparkMax(motorID, MotorType.kBrushless);
         this.config = new SparkMaxConfig();
-
-        // these variables will be zero
         this.m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(this.maxVelocity, this.maxAcceleration));
 
         this.setAlternateEncoder(usingAlternateEncoder);
         this.setupLogs(motorID, usingAlternateEncoder);
         this.updateLogs();
+        
+
     }
 
     private void setAlternateEncoder(boolean usingAlternateEncoder) {
@@ -253,6 +261,26 @@ public class SparkMAXMotor implements IMotor{
         this.targetVelocity = Double.NaN;
         this.targetPosition = position;
         this.updateLogs();
+    }
+
+    public void configureMaxMagic(double P, double I, double D, double S, double V, double A, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
+        this.feedforward = new SimpleMotorFeedforward(S,V,A);
+        double ff = feedforward.calculate(this.velocityFF);
+        config.closedLoop.maxMotion
+            .maxVelocity(maxVelocity)
+            .maxAcceleration(maxAcceleration)
+            .allowedClosedLoopError(positionErrorAllowed);
+        config.closedLoop
+            .pidf(P, I, D, ff);
+    }
+
+    public void setPositionMaxMagic(double position, double velocity){
+        this.velocityFF = velocity;
+        motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
+    }
+
+    public void setAngleMaxMagic(Angle angle){
+
     }
 
     public void setVelocityReference(double velocity, ClosedLoopSlot feedforward){
