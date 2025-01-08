@@ -228,16 +228,20 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void setInverted(boolean isInverted) {
-    this.isInverted = isInverted;
+    cfg.refresh(configuration.MotorOutput);
+    configuration.MotorOutput.withInverted(
+        isInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive);
+    cfg.apply(configuration.MotorOutput);
   }
 
   @Override
   public void setInvertedEncoder(boolean inverted) {
+    //do nothing
   }
 
   @Override
   public void burnFlash() {
-    cfg.apply(this.configs = new MotorOutputConfigs().withInverted(isInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive), 100);
+    //do nothing
   }
 
   @Override

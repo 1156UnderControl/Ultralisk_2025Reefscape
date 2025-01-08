@@ -4,6 +4,9 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 
+import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.Seconds;
+
 import java.util.function.Supplier;
 
 import com.revrobotics.REVLibError;
@@ -18,6 +21,7 @@ import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
@@ -129,6 +133,7 @@ public class SparkMAXMotor implements IMotor{
         if (config.get() == REVLibError.kOk) {
             return;
         }
+        Timer.delay(Milliseconds.of(5).in(Seconds));
     }
     DriverStation.reportWarning("Failure configuring motor " + motor.getDeviceId(), true);
   }
@@ -143,8 +148,18 @@ public class SparkMAXMotor implements IMotor{
 
     @Override
     public void clearStickyFaults(){
-        configureSparkMax(() -> motor.clearFaults());
+        configureSparkMax(motor::clearFaults);
     }
+
+    public void updateConfig(SparkMaxConfig cfgGiven)
+  {
+    if (!DriverStation.isDisabled())
+    {
+      throw new RuntimeException("Configuration changes cannot be applied while the robot is enabled.");
+    }
+    config.apply(cfgGiven);
+    configureSparkMax(() -> motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters));
+  }
 
 // To implement the Kg, Ks and Kv its necessary to wait until revlib 2025 is officially launched
     @Override
@@ -165,9 +180,9 @@ public class SparkMAXMotor implements IMotor{
 
     @Override
     public void configurePIDWrapping(double minInput, double maxInput){
-        config.closedLoop.positionWrappingEnabled(true);
-        config.closedLoop.positionWrappingMaxInput(maxInput);
-        config.closedLoop.positionWrappingMinInput(minInput);
+        config.closedLoop
+        .positionWrappingEnabled(true)
+        .positionWrappingInputRange(minInput, maxInput);
     }
 
     @Override
@@ -177,13 +192,7 @@ public class SparkMAXMotor implements IMotor{
 
     @Override
     public void setInverted(boolean inverted){
-        this.config.inverted(inverted);
-
-        if(inverted == true){
-            isInverted = true;
-        } else {
-            isInverted = false;
-        }
+        config.inverted(inverted);
     }
 
     @Override
@@ -193,7 +202,12 @@ public class SparkMAXMotor implements IMotor{
 
     @Override
     public void burnFlash(){
-        motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        if (!DriverStation.isDisabled()){
+            throw new RuntimeException("Config updates cannot be applied while the robot is Enabled!");
+        }
+        configureSparkMax(() -> {
+            return motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kPersistParameters);
+        });
     }
 
     @Override
@@ -303,11 +317,8 @@ public class SparkMAXMotor implements IMotor{
 
     @Override
     public void setLoopRampRate(double rampRate) {
-        if (rampRate != this.rampRate) {
-            config.closedLoopRampRate(rampRate);
-            config.openLoopRampRate(rampRate);
-        }
-        this.rampRate = rampRate;
+        config.closedLoopRampRate(rampRate)
+       .openLoopRampRate(rampRate);
     }
 
     @Override
