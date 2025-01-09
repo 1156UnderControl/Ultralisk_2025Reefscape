@@ -1,33 +1,30 @@
-package frc.Java_Is_UnderControl.Vision;
+package frc.Java_Is_UnderControl.Vision.Cameras;
+
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 
 public class TargetData {
-    public int aprilID;
-    public Pose2d targetPose;
-    public double targetYaw;
-    public double targetPitch;
-    public double targetSkew;
-    public double targetArea;
-    public double distanceToTarget;
+    private Pose2d targetPose;
+    private double targetYaw;
+    private double targetPitch;
+    private double targetSkew;
+    private double targetArea;
+    private double distanceToTarget;
 
-    public TargetData(int aprilID,
+    public TargetData(
         double targetYaw,
         double targetPitch,
         double targetSkew,
         double targetArea,
         double distanceToTarget){
 
-        this.aprilID = aprilID;
         this.targetYaw = targetYaw;
         this.targetPitch = targetPitch;
         this.targetSkew = targetSkew;
         this.targetArea = targetArea;
         this.distanceToTarget = distanceToTarget;
-    }
-
-    public int getAprilID(){
-        return this.aprilID;
     }
 
     public double getYaw(){
