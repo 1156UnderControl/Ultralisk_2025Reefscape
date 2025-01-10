@@ -279,10 +279,6 @@ public class SparkMAXMotor implements IMotor{
         motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
     }
 
-    public void setAngleMaxMagic(Angle angle){
-
-    }
-
     public void setVelocityReference(double velocity, ClosedLoopSlot feedforward){
         if(this.getVelocity() != velocity){
             motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, feedforward);

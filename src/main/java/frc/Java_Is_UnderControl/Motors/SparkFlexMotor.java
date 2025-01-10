@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
@@ -63,6 +64,10 @@ public class SparkFlexMotor implements IMotor{
     private double targetPercentage;
     private double targetPosition;
     private double targetVelocity;
+
+    private SimpleMotorFeedforward feedforward;
+
+    private double velocityFF;
 
     public SparkFlexMotor(int motorID){
         this(motorID, false);
@@ -234,6 +239,22 @@ public class SparkFlexMotor implements IMotor{
         this.targetVelocity = Double.NaN;
         this.targetPosition = position;
         this.updateLogs();
+    }
+
+     public void configureMaxMagic(double P, double I, double D, double S, double V, double A, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
+        this.feedforward = new SimpleMotorFeedforward(S,V,A);
+        double ff = feedforward.calculate(this.velocityFF);
+        config.closedLoop.maxMotion
+            .maxVelocity(maxVelocity)
+            .maxAcceleration(maxAcceleration)
+            .allowedClosedLoopError(positionErrorAllowed);
+        config.closedLoop
+            .pidf(P, I, D, ff);
+    }
+
+    public void setPositionMaxMagic(double position, double velocity){
+        this.velocityFF = velocity;
+        motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
     }
 
     public void setVelocityReference(double velocity, ClosedLoopSlot feedforward){
