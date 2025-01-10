@@ -19,7 +19,6 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -29,7 +28,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
-import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class SparkMAXMotor implements IMotor{
@@ -42,19 +40,9 @@ public class SparkMAXMotor implements IMotor{
 
     private final TrapezoidProfile m_profile;
 
-    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-
-    private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
-
     private double maxVelocity = 0;
 
-    private double rampRate = Double.NaN;
-
     private double maxAcceleration = 0;
-
-    // I don't how it works, and if it's truly necessary to use
-    private Supplier<Double> velocity;
-    private Supplier<Double> position;
 
     private CustomDoubleLogger appliedOutputLog;
     private CustomDoubleLogger targetOutputLog;

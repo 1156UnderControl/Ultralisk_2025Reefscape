@@ -35,19 +35,11 @@ public class SparkFlexMotor implements IMotor{
 
     private final TrapezoidProfile m_profile;
 
-    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-
-    private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
-
     private double maxVelocity = 0;
 
     private double rampRate = Double.NaN;
 
     private double maxAcceleration = 0;
-
-    // I don't how it works, and if it's truly necessary to use
-    private Supplier<Double> velocity;
-    private Supplier<Double> position;
 
     private CustomDoubleLogger appliedOutputLog;
     private CustomDoubleLogger targetOutputLog;
