@@ -16,7 +16,6 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
 
     private static ArmSubsystem armInstance = null;
     private SparkMAXMotor motorArm1;
-    private SparkMAXMotor motorArm2;
     private final MutVoltage m_appliedVoltage = Volts.mutable(0);
     private final MutDistance m_distance = Meters.mutable(0);
     private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
@@ -30,9 +29,7 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
 
     private ArmSubsystem(){
         motorArm1 = new SparkMAXMotor(0);
-        motorArm2 = new SparkMAXMotor(1);
         motorArm1.setPositionFactor(360);
-        motorArm2.setPositionFactor(360);
     }
 
     @Override
@@ -40,7 +37,7 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
 
     @Override
     public boolean isAtSetPoint(){
-        if(motorArm1.getPosition() == 180 && motorArm2.getPosition() == 180){
+        if(motorArm1.getPosition() == 180){
             return true;
         } else {
             return false;
@@ -51,18 +48,13 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
         new SysIdRoutine.Config(),
         new SysIdRoutine.Mechanism(
             voltage -> {
-                motorArm1.set(voltage);;
-                motorArm2.set(voltage);
+                motorArm1.set(voltage);
             },
             log -> {
                 log.motor("arm_motor1")
                     .voltage(m_appliedVoltage.mut_replace(motorArm1.getSetPointVelocity() * RobotController.getBatteryVoltage(), Volts))
                     .linearPosition(m_distance.mut_replace(motorArm1.getPosition(), Meters))
                     .linearVelocity(m_velocity.mut_replace(motorArm1.getVelocity(), MetersPerSecond));
-                log.motor("arm_motor2")
-                    .voltage(m_appliedVoltage.mut_replace(motorArm2.getSetPointVelocity() * RobotController.getBatteryVoltage(), Volts))
-                    .linearPosition(m_distance.mut_replace(motorArm2.getPosition(), Meters))
-                    .linearVelocity(m_velocity.mut_replace(motorArm2.getVelocity(), MetersPerSecond));
             },
             this
         )    
