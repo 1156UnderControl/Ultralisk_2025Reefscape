@@ -6,6 +6,7 @@ import com.revrobotics.spark.SparkMax;
 
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
 
@@ -19,7 +20,10 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -230,6 +234,17 @@ public class SparkMAXMotor implements IMotor{
     }
 
     @Override
+    public void set(Voltage percentOutput){
+        if (percentOutput.in(Volts) != this.targetPercentage) {
+            this.motor.set(percentOutput.in(Volts));
+          }
+          this.targetPercentage = percentOutput.in(Volts);
+          this.targetPosition = Double.NaN;
+          this.targetVelocity = Double.NaN;
+          this.updateLogs();
+    }
+
+    @Override
     public void setPositionReference(double position){
         if(this.getPosition() != position){
             motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition);
@@ -296,6 +311,11 @@ public class SparkMAXMotor implements IMotor{
     @Override
     public double getVoltage(){
         return motor.getAppliedOutput() * motor.getBusVoltage();
+    }
+
+    @Override
+    public double getSetPointVelocity(){
+        return motor.get();
     }
 
     @Override

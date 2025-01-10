@@ -1,5 +1,7 @@
 package frc.Java_Is_UnderControl.Motors;
 
+import edu.wpi.first.units.measure.Voltage;
+
 public interface IMotor {
     final int maximumRetries = 5;
 
@@ -25,11 +27,15 @@ public interface IMotor {
 
     void set(double percentOutput);
 
+    void set(Voltage percentOutput);
+
     void setPositionReference(double position);
 
     void setPositionReferenceMotionProfiling(double position, double velocity, double feedforward);
 
     double getVoltage();
+
+    double getSetPointVelocity();
 
     void setVoltage(double voltage);
 
