@@ -35,7 +35,7 @@ public interface IMotor {
 
     double getVoltage();
 
-    double getSetPointVelocity();
+    double getDutyCycleSetpoint();
 
     void setVoltage(double voltage);
 

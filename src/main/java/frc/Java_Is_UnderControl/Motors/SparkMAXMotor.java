@@ -314,7 +314,7 @@ public class SparkMAXMotor implements IMotor{
     }
 
     @Override
-    public double getSetPointVelocity(){
+    public double getDutyCycleSetpoint(){
         return motor.get();
     }
 
