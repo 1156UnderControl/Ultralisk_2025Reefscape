@@ -52,7 +52,7 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
             },
             log -> {
                 log.motor("arm_motor1")
-                    .voltage(m_appliedVoltage.mut_replace(motorArm1.getSetPointVelocity() * RobotController.getBatteryVoltage(), Volts))
+                    .voltage(m_appliedVoltage.mut_replace(motorArm1.getDutyCycleSetpoint() * RobotController.getBatteryVoltage(), Volts))
                     .linearPosition(m_distance.mut_replace(motorArm1.getPosition(), Meters))
                     .linearVelocity(m_velocity.mut_replace(motorArm1.getVelocity(), MetersPerSecond));
             },
