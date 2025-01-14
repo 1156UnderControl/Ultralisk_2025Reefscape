@@ -1,8 +1,5 @@
 package frc.Java_Is_UnderControl.Vision.Cameras.Types;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -16,16 +13,19 @@ import frc.Java_Is_UnderControl.Vision.Cameras.TargetData;
 
 public class PhotonCameras{
 
+    private String cameraName;
     private static PhotonCameras instance;
     private PhotonCamera camera;
     private double cameraLensHeightMeters;
     private double goalHeightMeters;
     private double cameraMountAngleDEG;
-    private Map<Integer, TargetData> aprilTagData = new HashMap<>();
     private Rotation2d robotRotation;
     private Transform3d camToRobot;
+    private TargetData targetData;
+    private boolean isTag;
     
-    public static PhotonCameras getInstance(String cameraName, boolean isTag) {
+    public PhotonCameras getInstance(String cameraName, boolean isTag) {
+        this.cameraName = cameraName;
         if (instance == null) {
           instance = new PhotonCameras(cameraName, isTag);
           return instance;
@@ -42,7 +42,7 @@ public class PhotonCameras{
         this.camToRobot = new Transform3d(translation, rotation);
     }
 
-    public Transform3d getCamToRobot(){
+    private Transform3d getCamToRobot(){
         return this.camToRobot;
     }
 
@@ -62,15 +62,31 @@ public class PhotonCameras{
         var result = camera.getLatestResult();
         if (result.hasTargets()) {
             for (PhotonTrackedTarget target : result.getTargets()) {
-                TargetData data = new TargetData(
-                    target.getYaw(),
+                if(isTag){
+                    this.targetData = new TargetData(
+                        cameraName,
+                        target.getFiducialId(),
+                        target.getYaw(),
+                        target.getPitch(),
+                        target.getSkew(),
+                        target.getArea(),
+                        this.getDistanceTarget(),
+                        target.getBestCameraToTarget(),
+                        this.getCamToRobot());
+                } else {
+                    this.targetData = new TargetData(cameraName, target.getYaw(),
                     target.getPitch(),
                     target.getSkew(),
                     target.getArea(),
-                    this.getDistanceTarget());
-                aprilTagData.put(target.fiducialId, data);
+                    this.getDistanceTarget(),
+                    this.getCamToRobot());
+                }
             }
         }
+    }
+
+    public TargetData getTargetData(){
+        return this.targetData;
     }
 
     public void setRobotRotation(Rotation2d rotation){
@@ -79,10 +95,6 @@ public class PhotonCameras{
 
     public Rotation2d getRobotRotation(){
         return this.robotRotation;
-    }
-
-    public Map<Integer, TargetData> getTargetData(){
-        return this.aprilTagData;
     }
 
     public int getNumberOfTargetsDetected(){

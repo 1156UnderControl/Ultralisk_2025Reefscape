@@ -9,30 +9,29 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import frc.Java_Is_UnderControl.Vision.Cameras.TargetData;
 
-public class PoseEstimation {
-
+public class MultiPoseEstimation {
     private AprilTagFieldLayout aprilTagFieldLayout;
-    private Map<Integer, TargetData> mapTargetData;
+    private Map<String, Map<Integer, TargetData>> cameraData;
     private TargetData bestTargetData;
     private int bestAprilTagID;
     private Pose3d robotPose;
 
-    public PoseEstimation(Map<Integer, TargetData> mapTargetData){
+    public MultiPoseEstimation(Map<String, Map<Integer, TargetData>> cameraData) {
         try {
             this.aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        this.mapTargetData = mapTargetData;
+        this.cameraData = cameraData;
         this.bestTargetData = null;
+        this.bestAprilTagID = -1;
     }
 
     private void robotPoseCalc() {
         if (bestTargetData != null && aprilTagFieldLayout.getTagPose(bestAprilTagID).isPresent()) {
             this.robotPose = PhotonUtils.estimateFieldToRobotAprilTag(
                 bestTargetData.getBestCameraToTarget(),
-                bestTargetData.getTargetPose(),
+                aprilTagFieldLayout.getTagPose(bestAprilTagID).get(),
                 bestTargetData.getCameraPosition()
             );
         }
@@ -40,7 +39,10 @@ public class PoseEstimation {
 
     private void selectBestTarget() {
         double closestDistance = Double.MAX_VALUE;
-            for (Map.Entry<Integer, TargetData> entry : mapTargetData.entrySet()) {
+
+        for (String cameraName : cameraData.keySet()) {
+            Map<Integer, TargetData> targets = cameraData.get(cameraName);
+            for (Map.Entry<Integer, TargetData> entry : targets.entrySet()) {
                 int tagID = entry.getKey();
                 TargetData data = entry.getValue();
 
@@ -50,6 +52,7 @@ public class PoseEstimation {
                     bestAprilTagID = tagID;
                 }
             }
+        }
     }
 
     public Pose3d getRobotPose() {
@@ -58,3 +61,4 @@ public class PoseEstimation {
         return this.robotPose;
     }
 }
+
