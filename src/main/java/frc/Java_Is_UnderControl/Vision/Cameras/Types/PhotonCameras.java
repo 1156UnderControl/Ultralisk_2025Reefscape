@@ -9,7 +9,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import frc.Java_Is_UnderControl.Vision.Cameras.TargetData;
+import frc.Java_Is_UnderControl.Vision.Cameras.Data.TargetData;
 
 public class PhotonCameras{
 

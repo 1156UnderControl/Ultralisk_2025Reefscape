@@ -1,30 +1,28 @@
 package frc.Java_Is_UnderControl.Vision.Localization;
 
-import java.util.Map;
-
 import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
-import frc.Java_Is_UnderControl.Vision.Cameras.TargetData;
+import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilData;
 
 public class PoseEstimation {
 
     private AprilTagFieldLayout aprilTagFieldLayout;
-    private Map<Integer, TargetData> mapTargetData;
-    private TargetData bestTargetData;
+    private AprilData targetData;
+    private AprilData bestTargetData;
     private int bestAprilTagID;
     private Pose3d robotPose;
 
-    public PoseEstimation(Map<Integer, TargetData> mapTargetData){
+    public PoseEstimation(AprilData targetData){
         try {
             this.aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        this.mapTargetData = mapTargetData;
+
+        this.targetData = targetData;
         this.bestTargetData = null;
     }
 
@@ -40,16 +38,14 @@ public class PoseEstimation {
 
     private void selectBestTarget() {
         double closestDistance = Double.MAX_VALUE;
-            for (Map.Entry<Integer, TargetData> entry : mapTargetData.entrySet()) {
-                int tagID = entry.getKey();
-                TargetData data = entry.getValue();
+                int tagID = this.targetData.getAprilID();
+                AprilData data = this.targetData;
 
                 if (data.getDistanceTarget() < closestDistance) {
                     closestDistance = data.getDistanceTarget();
                     bestTargetData = data;
                     bestAprilTagID = tagID;
                 }
-            }
     }
 
     public Pose3d getRobotPose() {
@@ -57,4 +53,6 @@ public class PoseEstimation {
         robotPoseCalc();
         return this.robotPose;
     }
+
+
 }

@@ -7,16 +7,17 @@ import org.photonvision.PhotonUtils;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
-import frc.Java_Is_UnderControl.Vision.Cameras.TargetData;
+import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilData;
 
 public class MultiPoseEstimation {
     private AprilTagFieldLayout aprilTagFieldLayout;
-    private Map<String, Map<Integer, TargetData>> cameraData;
-    private TargetData bestTargetData;
+    private Map<String, AprilData> cameraData;
+    private AprilData bestTargetData;
     private int bestAprilTagID;
     private Pose3d robotPose;
+    private String cameraName;
 
-    public MultiPoseEstimation(Map<String, Map<Integer, TargetData>> cameraData) {
+    public MultiPoseEstimation(Map<String, AprilData> cameraData) {
         try {
             this.aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
         } catch (Exception e) {
@@ -40,17 +41,15 @@ public class MultiPoseEstimation {
     private void selectBestTarget() {
         double closestDistance = Double.MAX_VALUE;
 
-        for (String cameraName : cameraData.keySet()) {
-            Map<Integer, TargetData> targets = cameraData.get(cameraName);
-            for (Map.Entry<Integer, TargetData> entry : targets.entrySet()) {
-                int tagID = entry.getKey();
-                TargetData data = entry.getValue();
+        for (Map.Entry<String, AprilData> entry : cameraData.entrySet()) {
+            this.cameraName = entry.getKey();
+            int tagID = entry.getValue().getAprilID();
+            AprilData data = entry.getValue();
 
-                if (data.getDistanceTarget() < closestDistance) {
-                    closestDistance = data.getDistanceTarget();
-                    bestTargetData = data;
-                    bestAprilTagID = tagID;
-                }
+            if (data.getDistanceTarget() < closestDistance) {
+                closestDistance = data.getDistanceTarget();
+                bestTargetData = data;
+                bestAprilTagID = tagID;
             }
         }
     }
@@ -59,6 +58,10 @@ public class MultiPoseEstimation {
         selectBestTarget();
         robotPoseCalc();
         return this.robotPose;
+    }
+
+    public String getCameraName(){
+        return this.cameraName;
     }
 }
 

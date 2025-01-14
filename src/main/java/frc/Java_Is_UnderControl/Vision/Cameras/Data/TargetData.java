@@ -1,4 +1,4 @@
-package frc.Java_Is_UnderControl.Vision.Cameras;
+package frc.Java_Is_UnderControl.Vision.Cameras.Data;
 
 import java.util.Map;
 
@@ -6,9 +6,9 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.Java_Is_UnderControl.Vision.Localization.MultiPoseEstimation;
 
 public class TargetData {
+    private String cameraName;
     private int targetID;
     private double targetsYaw;
     private double targetsPitch;
@@ -18,7 +18,6 @@ public class TargetData {
     private Transform3d camToRobot;
     private AprilTagFieldLayout aprilTagFieldLayout;
     private Transform3d bestCameraToTarget;
-    private MultiPoseEstimation multiPoseEstimation;
     private boolean isTag;
 
     public TargetData(
@@ -63,6 +62,10 @@ public class TargetData {
         Transform3d.kZero,
         camToRobot);
         this.isTag = false;
+    }
+
+    public String getCameraName(){
+        return this.cameraName;
     }
 
     public double getPitch() {
