@@ -35,7 +35,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, new SwervePathPlannerConfig(
-        new PIDConstants(5, 0, 0),
+        new PIDConstants(0.2, 0, 0),
         new PIDConstants(5, 0, 0)),
         new NoPoseEstimator(),
         new NoPoseEstimator(),
