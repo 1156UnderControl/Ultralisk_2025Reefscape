@@ -7,6 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,6 +50,7 @@ public class RobotContainer {
     controller.setHeadingFront().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
     controller.setHeadingRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     controller.setHeadingLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
 
     // reset the field-centric heading on left bumper press
     // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
