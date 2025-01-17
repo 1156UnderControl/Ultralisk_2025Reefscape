@@ -4,6 +4,8 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkMax;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -23,13 +25,19 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
@@ -56,6 +64,8 @@ public class SparkMAXMotor implements IMotor{
 
     private double maxAcceleration = 0;
 
+    private String motorName;
+
     // I don't how it works, and if it's truly necessary to use
     private Supplier<Double> velocity;
     private Supplier<Double> position;
@@ -79,21 +89,26 @@ public class SparkMAXMotor implements IMotor{
     private SimpleMotorFeedforward feedforward;
 
     private double velocityFF;
+    
+    private final MutVoltage m_appliedVoltage = Volts.mutable(0);
+    private final MutDistance m_distance = Meters.mutable(0);
+    private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
-    public SparkMAXMotor(int motorID){
-        this(motorID, false);
+    private SysIdRoutine sysIdRoutine;
+
+    public SparkMAXMotor(int motorID, String motorName){
+        this(motorID, false, motorName);
     }
 
-    public SparkMAXMotor(int motorID, boolean usingAlternateEncoder){
+    public SparkMAXMotor(int motorID, boolean usingAlternateEncoder, String motorName){
         this.motor = new SparkMax(motorID, MotorType.kBrushless);
         this.config = new SparkMaxConfig();
         this.m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(this.maxVelocity, this.maxAcceleration));
+        this.motorName = motorName;
 
         this.setAlternateEncoder(usingAlternateEncoder);
         this.setupLogs(motorID, usingAlternateEncoder);
         this.updateLogs();
-        
-
     }
 
     private void setAlternateEncoder(boolean usingAlternateEncoder) {
@@ -149,6 +164,11 @@ public class SparkMAXMotor implements IMotor{
     }
     DriverStation.reportWarning("Failure configuring motor " + motor.getDeviceId(), true);
   }
+
+    @Override
+    public String getMotorName(){
+        return this.motorName;
+    }
 
 // To restore factory default its necessary to wait until revlib 2025 is officially launched
     @Override
@@ -372,6 +392,59 @@ public class SparkMAXMotor implements IMotor{
     @Override
     public Object getMotor(){
         return motor;
+    }
+
+    @Override
+    public void setSysID(Subsystem currentSubsystem){
+        this.sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            voltage -> {
+                this.set(voltage);
+            },
+            log -> {
+                log.motor(this.motorName)
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+            },
+            currentSubsystem
+            )    
+        );  
+    }
+    @Override
+    public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
+        this.sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            voltage -> {
+                this.set(voltage);
+                otherMotor.set(voltage);
+            },
+            log -> {
+                log.motor(this.motorName)
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+
+                log.motor(otherMotor.getMotorName())
+                .voltage(m_appliedVoltage.mut_replace(otherMotor.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(otherMotor.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(otherMotor.getVelocity(), MetersPerSecond));
+            },
+            currentSubsystem
+            )    
+        );  
+    }
+
+    @Override
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return this.sysIdRoutine.quasistatic(direction);
+    }
+
+    @Override
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return this.sysIdRoutine.dynamic(direction);
     }
 }
     

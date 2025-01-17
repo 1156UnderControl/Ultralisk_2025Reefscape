@@ -1,5 +1,9 @@
 package frc.Java_Is_UnderControl.Motors;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -15,9 +19,17 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.Java_Is_UnderControl.Driver.Phoenix6Util;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
@@ -69,7 +81,15 @@ public class TalonFXMotor implements IMotor{
 
   private MotionMagicVoltage magicVoltage;
 
-  public TalonFXMotor(int id, GravityTypeValue gravityType) {
+  private String motorName;
+
+  private final MutVoltage m_appliedVoltage = Volts.mutable(0);
+  private final MutDistance m_distance = Meters.mutable(0);
+  private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
+
+  private SysIdRoutine sysIdRoutine;
+
+  public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName) {
     this.gravityType = gravityType;
     motor = new TalonFX(id);
     this.factoryDefault();
@@ -79,9 +99,10 @@ public class TalonFXMotor implements IMotor{
     this.updateLogs();
     this.factoryDefault();
     this.clearStickyFaults();
+    this.motorName = motorName;
   }
 
-  public TalonFXMotor(int id, GravityTypeValue gravityType, String canivoreBus) {
+  public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName, String canivoreBus) {
     this.gravityType = gravityType;
     motor = new TalonFX(id, canivoreBus);
     this.factoryDefault();
@@ -91,14 +112,15 @@ public class TalonFXMotor implements IMotor{
     this.updateLogs();
     this.factoryDefault();
     this.clearStickyFaults();
+    this.motorName = motorName;
   }
   
-  public TalonFXMotor(int id, String canivoreBus) {
-    this(id, GravityTypeValue.Elevator_Static, canivoreBus);
+  public TalonFXMotor(int id, String motorName, String canivoreBus) {
+    this(id, GravityTypeValue.Elevator_Static, motorName, canivoreBus);
   }
 
-  public TalonFXMotor(int id) {
-    this(id, GravityTypeValue.Elevator_Static);
+  public TalonFXMotor(int id, String motorName) {
+    this(id, GravityTypeValue.Elevator_Static, motorName);
   }
   
 
@@ -117,6 +139,11 @@ public class TalonFXMotor implements IMotor{
     descriptionLog.append(this.motor.getDescription());
     BooleanLogEntry isInvertedLog = new BooleanLogEntry(DataLogManager.getLog(), "/motors/" + motorId + "/isInverted");
     isInvertedLog.append(isInverted());
+  }
+
+  @Override
+  public String getMotorName(){
+    return this.motorName;
   }
 
   @Override
@@ -256,6 +283,14 @@ public class TalonFXMotor implements IMotor{
   }
 
   @Override
+  public void set(Voltage percentOutput) {
+    targetOutput = percentOutput.in(Volts);
+    targetPosition = Double.NaN;
+    targetVelocity = Double.NaN;
+    motor.set(percentOutput.in(Volts));
+  }
+
+  @Override
   public void setPositionReference(double position) {
     setPositionReferenceArbFF(position, 0);
   }
@@ -309,6 +344,10 @@ public class TalonFXMotor implements IMotor{
   @Override
   public double getVoltage() {
     return motor.getMotorVoltage().getValueAsDouble();
+  }
+
+  public double getDutyCycleSetpoint(){
+    return motor.get();
   }
 
   @Override
@@ -386,6 +425,59 @@ public class TalonFXMotor implements IMotor{
   public Object getMotor() {
     return motor;
   }
+
+   @Override
+    public void setSysID(Subsystem currentSubsystem){
+        this.sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            voltage -> {
+              this.set(voltage);
+            },
+            log -> {
+                log.motor(this.motorName)
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+            },
+            currentSubsystem
+            )    
+        );  
+    }
+    @Override
+    public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
+        this.sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            voltage -> {
+                this.set(voltage);
+                otherMotor.set(voltage);
+            },
+            log -> {
+                log.motor(this.motorName)
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+
+                log.motor(otherMotor.getMotorName())
+                .voltage(m_appliedVoltage.mut_replace(otherMotor.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(otherMotor.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(otherMotor.getVelocity(), MetersPerSecond));
+            },
+            currentSubsystem
+            )    
+        );  
+    }
+
+    @Override
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return this.sysIdRoutine.quasistatic(direction);
+    }
+
+    @Override
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return this.sysIdRoutine.dynamic(direction);
+    }
 
   @Override
   public void updateLogs() {

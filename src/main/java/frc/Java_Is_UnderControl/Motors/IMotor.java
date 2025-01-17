@@ -1,9 +1,14 @@
 package frc.Java_Is_UnderControl.Motors;
 
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public interface IMotor {
     final int maximumRetries = 5;
+
+    String getMotorName();
 
     void factoryDefault();
 
@@ -61,4 +66,11 @@ public interface IMotor {
 
     void updateLogs();
 
+    void setSysID(Subsystem currentSubsystem);
+
+    void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor);
+
+    Command sysIdQuasistatic(SysIdRoutine.Direction direction);
+
+    Command sysIdDynamic(SysIdRoutine.Direction direction);
 }

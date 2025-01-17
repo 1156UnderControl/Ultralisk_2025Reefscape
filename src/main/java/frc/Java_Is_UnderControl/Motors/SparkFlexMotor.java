@@ -4,6 +4,10 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkFlex;
 
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Volts;
+
 import java.util.function.Supplier;
 
 import com.revrobotics.REVLibError;
@@ -11,14 +15,23 @@ import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.MutDistance;
+import edu.wpi.first.units.measure.MutLinearVelocity;
+import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
@@ -63,21 +76,30 @@ public class SparkFlexMotor implements IMotor{
     private double targetPercentage;
     private double targetPosition;
     private double targetVelocity;
+    private String motorName;
 
-    public SparkFlexMotor(int motorID){
-        this(motorID, false);
+    private final MutVoltage m_appliedVoltage = Volts.mutable(0);
+    private final MutDistance m_distance = Meters.mutable(0);
+    private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
+
+  private SysIdRoutine sysIdRoutine;
+
+
+    public SparkFlexMotor(int motorID, String motorName){
+        this(motorID, false, motorName);
     }
 
-    public SparkFlexMotor(int motorID, boolean usingAlternateEncoder){
+    public SparkFlexMotor(int motorID, boolean usingAlternateEncoder, String motorName){
         this.motor = new SparkFlex(motorID, MotorType.kBrushless);
         this.config = new SparkFlexConfig();
-
-        // these variables will be zero
         this.m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(this.maxVelocity, this.maxAcceleration));
+        this.motorName = motorName;
 
         this.setAlternateEncoder(usingAlternateEncoder);
         this.setupLogs(motorID, usingAlternateEncoder);
         this.updateLogs();
+        
+
     }
 
     private void setAlternateEncoder(boolean usingAlternateEncoder) {
@@ -127,6 +149,11 @@ public class SparkFlexMotor implements IMotor{
     }
     DriverStation.reportWarning("Failure configuring motor " + motor.getDeviceId(), true);
   }
+
+    @Override
+    public String getMotorName(){
+        return this.motorName;
+    }
 
 // To restore factory default its necessary to wait until revlib 2025 is officially launched
     @Override
@@ -203,6 +230,18 @@ public class SparkFlexMotor implements IMotor{
     }
 
     @Override
+    public void set(Voltage percentOutput){
+        if (percentOutput.in(Volts) != this.targetPercentage) {
+            this.motor.set(percentOutput.in(Volts));
+          }
+          this.targetPercentage = percentOutput.in(Volts);
+          this.targetPosition = Double.NaN;
+          this.targetVelocity = Double.NaN;
+          this.updateLogs();
+    }
+
+
+    @Override
     public void setPositionReference(double position){
         if(this.getPosition() != position){
             motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition);
@@ -249,6 +288,11 @@ public class SparkFlexMotor implements IMotor{
     @Override
     public double getVoltage(){
         return motor.getAppliedOutput() * motor.getBusVoltage();
+    }
+
+    @Override
+    public double getDutyCycleSetpoint(){
+        return motor.get();
     }
 
     @Override
@@ -308,5 +352,58 @@ public class SparkFlexMotor implements IMotor{
     @Override
     public Object getMotor(){
         return motor;
+    }
+
+    @Override
+    public void setSysID(Subsystem currentSubsystem){
+        this.sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            voltage -> {
+              this.set(voltage);
+            },
+            log -> {
+                log.motor(this.motorName)
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+            },
+            currentSubsystem
+            )    
+        );  
+    }
+    @Override
+    public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
+        this.sysIdRoutine = new SysIdRoutine(
+        new SysIdRoutine.Config(),
+        new SysIdRoutine.Mechanism(
+            voltage -> {
+                this.set(voltage);
+                otherMotor.set(voltage);
+            },
+            log -> {
+                log.motor(this.motorName)
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+
+                log.motor(otherMotor.getMotorName())
+                .voltage(m_appliedVoltage.mut_replace(otherMotor.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .linearPosition(m_distance.mut_replace(otherMotor.getPosition(), Meters))
+                .linearVelocity(m_velocity.mut_replace(otherMotor.getVelocity(), MetersPerSecond));
+            },
+            currentSubsystem
+            )    
+        );  
+    }
+
+    @Override
+    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+        return this.sysIdRoutine.quasistatic(direction);
+    }
+
+    @Override
+    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+        return this.sysIdRoutine.dynamic(direction);
     }
 }
