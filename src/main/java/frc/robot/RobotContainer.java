@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,9 +43,8 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // Note that X is defined as forward according to WPILib convention,
-    // and Y is defined as to the left according to WPILib convention.
-    drivetrain.setDefaultCommand(Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain));
+    drivetrain.setDefaultCommand(
+        Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     controller.setHeadingBack().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
     controller.setHeadingFront().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
