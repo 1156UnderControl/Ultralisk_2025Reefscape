@@ -56,19 +56,11 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private CustomPose2dLogger poseVisionLogger = new CustomPose2dLogger("/SwerveSubsystem/PoseVision");
 
-  // Load the path we want to pathfind to and follow
-  // PathPlannerPath path = PathPlannerPath.fromPathFile("Go"); descobrir como nao
-  // dar erro essa
   // Create the constraints to use while pathfinding. The constraints defined in
   // the path will only be used for the path.
   PathConstraints constraints = new PathConstraints(
       3.0, 4.0,
       Units.degreesToRadians(540), Units.degreesToRadians(720));
-
-  // Since AutoBuilder is configured, we can use it to build pathfinding commands
-  Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(
-      new PathPlannerPath(null, constraints, null, null),
-      constraints);
 
   public OdometryEnabledSwerveSubsystem(OdometryEnabledSwerveConfig config,
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants... modules) {
@@ -188,6 +180,19 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
   protected void driveRobotOriented(ChassisSpeeds targetSpeeds) {
     this.targetPose = new Pose2d();
     super.driveRobotOriented(targetSpeeds);
+  }
+
+  protected Command driveToPoseWithPathfinding(Pose2d targetPose) {
+    Command pathfindingCommand = AutoBuilder.pathfindToPose(
+        targetPose,
+        constraints,
+        0.0);
+    return pathfindingCommand;
+  }
+
+  protected Command driveToPathWithPathfinding(PathPlannerPath path) {
+    Command pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
+    return pathfindingCommand;
   }
 
   @Override
