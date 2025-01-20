@@ -163,7 +163,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
           this));
 
   /* The SysId routine to test */
-  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
+  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
   protected BaseSwerveSubsystem(BaseSwerveConfig config,
       SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
@@ -240,6 +240,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
           this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
           this::getRobotVelocity, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speeds, feedforwards) -> setControl(
+
               applyRobotCentricSpeeds.withSpeeds(speeds)
                   .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                   .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),

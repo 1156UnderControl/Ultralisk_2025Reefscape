@@ -46,8 +46,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
   }
 
   public void driveAlignAngleJoy() {
-    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
-        controller.getXtranslation());
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(-controller.getYtranslation(),
+        -controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_JOY";
     this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, controller.getCOS_Joystick(),
         controller.getSIN_Joystick());
