@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Joysticks.ControlBoard;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class RobotContainer {
 
@@ -31,6 +31,10 @@ public class RobotContainer {
 
   public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
+
+  public class ElevatorSubsystem {
+
+  }
 
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
