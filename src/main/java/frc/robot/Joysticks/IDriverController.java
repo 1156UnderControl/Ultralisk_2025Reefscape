@@ -15,13 +15,13 @@ public interface IDriverController {
 
   boolean notUsingJoystick();
 
-  Trigger setHeadingFront();
+  Trigger y();
 
-  Trigger setHeadingRight();
+  Trigger b();
 
-  Trigger setHeadingBack();
+  Trigger a();
 
-  Trigger setHeadingLeft();
+  Trigger x();
 
   boolean rotateLeft();
 

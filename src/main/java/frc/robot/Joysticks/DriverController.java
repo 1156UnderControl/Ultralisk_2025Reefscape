@@ -74,22 +74,22 @@ public class DriverController implements IDriverController {
   }
 
   @Override
-  public Trigger setHeadingBack() {
+  public Trigger a() {
     return driverController.a();
   }
 
   @Override
-  public Trigger setHeadingFront() {
+  public Trigger y() {
     return driverController.y();
   }
 
   @Override
-  public Trigger setHeadingLeft() {
+  public Trigger x() {
     return driverController.x();
   }
 
   @Override
-  public Trigger setHeadingRight() {
+  public Trigger b() {
     return driverController.b();
   }
 
