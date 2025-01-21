@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -18,41 +19,33 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
     }
 
     private ArmSubsystem(){
-        motorArm1 = new SparkMAXMotor(0, "Motor Arm");
-        motorArm1.setPositionFactor(0.01388888888 * 360);
+        motorArm1 = new SparkMAXMotor(2, "Motor Arm");
+        motorArm1.setPositionFactor(0.0119047619 * 360);
     }
 
     @Override
     public void go180Degrees(){
+        motorArm1.setPosition(180);
     }
 
-    public void sysIdDynamicForward(){
+    public Command sysIdDynamicForward(){
         motorArm1.setSysID(this);
-        motorArm1.sysIdDynamic(Direction.kForward).until(()-> motorArm1.getPosition() < 80);
+        return motorArm1.sysIdDynamic(Direction.kForward).until(()-> motorArm1.getPosition() >= 0).finallyDo(()-> motorArm1.setPosition(0));
     }
 
-    public void sysIdDynamicReverse(){
+    public Command sysIdDynamicReverse(){
         motorArm1.setSysID(this);
-        motorArm1.sysIdDynamic(Direction.kReverse).until(()-> motorArm1.getPosition() < 80);
+        return motorArm1.sysIdDynamic(Direction.kReverse).until(()-> motorArm1.getPosition() <= -180).finallyDo(()-> motorArm1.setPosition(-180));
     }
 
-    public void sysIdQuasistaticForward(){
+    public Command sysIdQuasistaticForward(){
         motorArm1.setSysID(this);
-        motorArm1.sysIdQuasistatic(Direction.kReverse).until(()-> motorArm1.getPosition() < 80);
+        return motorArm1.sysIdQuasistatic(Direction.kReverse).until(()-> motorArm1.getPosition() <= -180).finallyDo(()-> motorArm1.setPosition(-180));
     }
 
-    public void sysIdQuasistaticReverse(){
+    public Command sysIdQuasistaticReverse(){
         motorArm1.setSysID(this);
-        motorArm1.sysIdQuasistatic(Direction.kReverse).until(()-> motorArm1.getPosition() < 80);
-    }
-
-    @Override
-    public boolean isAtSetPoint(){
-        if(motorArm1.getPosition() == 80 || motorArm1.getPosition() == -80){
-            return true;
-        } else {
-            return false;
-        }
+        return motorArm1.sysIdQuasistatic(Direction.kReverse).until(()-> motorArm1.getPosition() >= 0).finallyDo(()-> motorArm1.setPosition(0));
     }
 
     public void updateLogs(){
