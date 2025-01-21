@@ -63,9 +63,9 @@ public class FieldConstants {
                                                                           // zone line
 
     public static final Pose2d[] centerFaces = new Pose2d[6]; // Starting facing the driver station in clockwise order
-    public static final List<Map<ReefHeight, Pose3d>> branchPositions = new ArrayList<>(); // Starting at the right
-                                                                                           // branch facing the driver
-                                                                                           // station in clockwise
+    public static final List<Map<ReefHeight, Pose3d>> branchPositions = new ArrayList<>(20); // Starting at the right
+    // branch facing the driver
+    // station in clockwise
 
     static {
       // Initialize faces
@@ -134,8 +134,8 @@ public class FieldConstants {
                       Units.degreesToRadians(level.pitch),
                       poseDirection.getRotation().getRadians())));
         }
-        branchPositions.add((face * 2) + 1, fillRight);
-        branchPositions.add((face * 2) + 2, fillLeft);
+        branchPositions.add((face * 2), fillRight);
+        branchPositions.add((face * 2) + 1, fillLeft);
       }
     }
   }

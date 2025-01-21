@@ -9,11 +9,16 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.FieldConstants.ReefHeight;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+
+  CustomPose3dLogger logPoses = new CustomPose3dLogger("pose reef");
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -26,6 +31,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    logPoses.appendDegrees(FieldConstants.Reef.branchPositions.get(0).get(ReefHeight.L2));
+
     CommandScheduler.getInstance().run();
   }
 

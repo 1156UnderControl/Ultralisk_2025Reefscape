@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.FieldConstants.Reef;
 import frc.robot.Joysticks.ControlBoard;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -35,6 +37,8 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
+
+  private final FieldConstants.Reef reef = new Reef();
 
   public RobotContainer() {
     configureBindings();
