@@ -9,12 +9,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Joysticks.ControlBoard;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -46,10 +46,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    controller.setHeadingBack().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    controller.setHeadingFront().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    controller.setHeadingRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    controller.setHeadingLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    controller.a()
+        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
     NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
 
     // reset the field-centric heading on left bumper press
