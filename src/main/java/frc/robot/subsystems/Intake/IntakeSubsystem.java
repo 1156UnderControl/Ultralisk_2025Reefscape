@@ -11,4 +11,32 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
     this.intakeMotor = new SparkMAXMotor(0);
   }
 
+  @Override
+  public void intake() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'intake'");
+  }
+
+  @Override
+  public void expell() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'expell'");
+  }
+
+  @Override
+  public void goToIntakePosition() {
+  }
+
+  @Override
+  public void goToSecuredPosition() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'goToSecuredPosition'");
+  }
+
+  @Override
+  public boolean isAtSetPoint() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'isAtSetPoint'");
+  }
+
 }
