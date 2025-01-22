@@ -15,21 +15,17 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
 
   @Override
   public void isAtSetPoint() {
-    throw new UnsupportedOperationException("Unimplemented method 'isAtSetPoint'");
   }
 
   @Override
   public void climbDeep() {
-    throw new UnsupportedOperationException("Unimplemented method 'climbDeep'");
   }
 
   @Override
   public void stop() {
-    throw new UnsupportedOperationException("Unimplemented method 'stop'");
   }
 
   @Override
   public void release() {
-    throw new UnsupportedOperationException("Unimplemented method 'release'");
   }
 }
