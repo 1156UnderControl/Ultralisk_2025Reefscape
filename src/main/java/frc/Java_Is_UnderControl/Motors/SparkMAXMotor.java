@@ -46,8 +46,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class SparkMAXMotor implements IMotor{
 
-    private SparkMax motor;
-
     private SparkMaxConfig config;
 
     private boolean factoryDefaultOcurred = false;
@@ -96,6 +94,8 @@ public class SparkMAXMotor implements IMotor{
 
     private SysIdRoutine sysIdRoutine;
 
+    private SparkMax motor;
+
     public SparkMAXMotor(int motorID, String motorName){
         this(motorID, false, motorName);
     }
@@ -143,11 +143,11 @@ public class SparkMAXMotor implements IMotor{
 
   @Override
   public void updateLogs() {
-    this.appliedOutputLog.append(this.motor.getAppliedOutput());
+    this.appliedOutputLog.append(this.getAppliedOutput());
     this.targetOutputLog.append(this.targetPercentage);
-    this.currentLog.append(this.motor.getOutputCurrent());
-    this.positionLog.append(this.motor.getEncoder().getPosition());
-    this.velocityLog.append(this.motor.getEncoder().getVelocity());
+    this.currentLog.append(this.getVoltage());
+    this.positionLog.append(this.getPosition());
+    this.velocityLog.append(this.getVelocity());
     this.temperatureLog.append(this.motor.getMotorTemperature());
     //this.faultsLog.append(this.motor.getFaults());
     this.targetPositionLog.append(this.targetPosition);
@@ -301,6 +301,15 @@ public class SparkMAXMotor implements IMotor{
     public void configureMaxMagic(double P, double I, double D, double S, double V, double A, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
         this.feedforward = new SimpleMotorFeedforward(S,V,A);
         double ff = feedforward.calculate(this.velocityFF);
+        config.closedLoop.maxMotion
+            .maxVelocity(maxVelocity)
+            .maxAcceleration(maxAcceleration)
+            .allowedClosedLoopError(positionErrorAllowed);
+        config.closedLoop
+            .pidf(P, I, D, ff);
+    }
+
+    public void configureMaxMagic(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
         config.closedLoop.maxMotion
             .maxVelocity(maxVelocity)
             .maxAcceleration(maxAcceleration)
