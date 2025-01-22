@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.FieldConstants.Reef;
 import frc.robot.Constants.FieldConstants.ReefHeight;
 
 public class Robot extends TimedRobot {
@@ -19,6 +21,8 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   CustomPose3dLogger logPoses = new CustomPose3dLogger("pose reef");
+
+  CustomPose3dLogger logPosesred = new CustomPose3dLogger("pose reef red");
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -31,8 +35,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    logPoses.appendDegrees(FieldConstants.Reef.branchPositions.get(0).get(ReefHeight.L2));
-
+    logPoses.appendRadians(FieldConstants.Reef.branchPositions.get(0).get(ReefHeight.L2));
+    logPosesred.appendRadians(AllianceFlipUtil.apply(Reef.branchPositions.get(0).get(ReefHeight.L2)));
     CommandScheduler.getInstance().run();
   }
 
