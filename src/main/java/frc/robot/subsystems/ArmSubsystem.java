@@ -14,8 +14,8 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
 
     private static ArmSubsystem armInstance = null;
     private SparkFlexMotor motorArm1;
-    private ArmFeedforward ffArm = new ArmFeedforward(0.17187, 0.10741, 0.8275, 0.050913);
-    private double positionTarget = 100;
+    private ArmFeedforward ffArm = new ArmFeedforward(0.17187, 0, 0.8275, 0.050913);
+    private double positionTarget = -100;
     private double velocityTarget = 20;
 
     public static ArmSubsystem getInstance() {
@@ -29,14 +29,14 @@ public class ArmSubsystem extends SubsystemBase implements IArm{
         motorArm1 = new SparkFlexMotor(2, "Motor Arm");
         motorArm1.setPositionFactor(0.0126984126984127 * 360);
         motorArm1.setVelocityFactor(0.00211640211);
-        motorArm1.configureMaxMagic(2.2667, 0.0, 1.4979, ffArm.calculate(Units.degreesToRadians(this.positionTarget), this.velocityTarget), 20, 20, 0.01);
+        motorArm1.configureMaxMotion(0.099957, 0.0, 0, ffArm.calculate(Units.degreesToRadians(this.positionTarget), this.velocityTarget), 200, 100, 0.01);
         motorArm1.setMotorBrake(true);
         motorArm1.burnFlash();
     }
 
     @Override
     public void go100Degrees(){
-        motorArm1.setPositionMaxMagic(this.positionTarget);
+        motorArm1.setPositionMaxMotion(this.positionTarget);
     }
 
     public BooleanSupplier atLimitReverse(){

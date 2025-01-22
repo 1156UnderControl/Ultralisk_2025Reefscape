@@ -17,7 +17,8 @@ public class Go100Angle extends Command{
   
     @Override
     public void execute() {
-      this.robot.stopMotor();
+      System.out.println("TO RODANDO");
+      this.robot.go100Degrees();
     }
   
     @Override

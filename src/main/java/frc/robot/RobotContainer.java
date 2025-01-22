@@ -19,7 +19,6 @@ public class RobotContainer {
   public RobotContainer() {
     armSubsystem = ArmSubsystem.getInstance();
     controllerType = new TypeXboxController(0);
-    armSubsystem.setDefaultCommand(new StopMotorCmd(armSubsystem));
     configureBindings();
   }
 
@@ -28,6 +27,7 @@ public class RobotContainer {
     controllerType.buttomDown().whileTrue(this.armSubsystem.sysIdQuasistaticReverse().until(armSubsystem.atLimitReverse()));
     controllerType.buttomRight().whileTrue(this.armSubsystem.sysIdDynamicForward().until(armSubsystem.atLimitForward()));
     controllerType.buttomLeft().whileTrue(this.armSubsystem.sysIdDynamicReverse().until(armSubsystem.atLimitReverse()));
+    controllerType.dPadRight().onTrue(new Go100Angle(armSubsystem));
   }
 
   public Command getAutonomousCommand() {

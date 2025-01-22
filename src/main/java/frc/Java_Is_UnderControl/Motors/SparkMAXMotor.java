@@ -300,16 +300,20 @@ public class SparkMAXMotor implements IMotor{
         this.updateLogs();
     }
 
-    public void configureMaxMagic(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
+    public void configureMaxMotion(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
         config.closedLoop.maxMotion
-            .maxVelocity(maxVelocity)
-            .maxAcceleration(maxAcceleration)
-            .allowedClosedLoopError(positionErrorAllowed);
+            .maxVelocity(maxVelocity, ClosedLoopSlot.kSlot0)
+            .maxAcceleration(maxAcceleration, ClosedLoopSlot.kSlot0)
+            .allowedClosedLoopError(positionErrorAllowed, ClosedLoopSlot.kSlot0);
         config.closedLoop
-            .pidf(P, I, D, ff);
+            .p(P, ClosedLoopSlot.kSlot0)
+            .i(I, ClosedLoopSlot.kSlot0)
+            .d(D, ClosedLoopSlot.kSlot0)
+            .velocityFF(ff, ClosedLoopSlot.kSlot0)
+            .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
     }
 
-    public void setPositionMaxMagic(double position){
+    public void setPositionMaxMotion(double position){
         motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
     }
 
