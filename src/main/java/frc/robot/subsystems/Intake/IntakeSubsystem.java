@@ -13,14 +13,10 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
 
   @Override
   public void intake() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'intake'");
   }
 
   @Override
   public void expell() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'expell'");
   }
 
   @Override
@@ -29,14 +25,10 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
 
   @Override
   public void goToSecuredPosition() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'goToSecuredPosition'");
   }
 
   @Override
   public boolean isAtSetPoint() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'isAtSetPoint'");
+    return false;
   }
-
 }
