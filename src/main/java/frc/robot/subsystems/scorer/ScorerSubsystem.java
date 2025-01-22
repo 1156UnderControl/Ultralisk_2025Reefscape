@@ -17,66 +17,53 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   @Override
   public boolean hasCoral() {
-    throw new UnsupportedOperationException("Unimplemented method 'hasCoral'");
+    return false;
   }
 
   @Override
-  public void intake() {
-    throw new UnsupportedOperationException("Unimplemented method 'intake'");
-  }
+  public void intake(){}
+
+
 
   @Override
-  public void intakeFromHP() {
-    throw new UnsupportedOperationException("Unimplemented method 'intakeFromHP'");
-  }
+  public void intakeFromHP(){}
+
 
   @Override
-  public void prepareToPlaceL1() {
-    throw new UnsupportedOperationException("Unimplemented method 'prepareToPlaceL1'");
-  }
+  public void prepareToPlaceL1() {}
+
 
   @Override
-  public void prepareToPlaceL2() {
-    throw new UnsupportedOperationException("Unimplemented method 'prepareToPlaceL2'");
-  }
+  public void prepareToPlaceL2() {}
 
   @Override
-  public void prepareToPlaceL3() {
-    throw new UnsupportedOperationException("Unimplemented method 'prepareToPlaceL3'");
-  }
+  public void prepareToPlaceL3() {}
 
   @Override
-  public void prepareToPlaceL4() {
-    throw new UnsupportedOperationException("Unimplemented method 'prepareToPlaceL4'");
-  }
+  public void prepareToPlaceL4() {}
 
   @Override
-  public void place() {
-    throw new UnsupportedOperationException("Unimplemented method 'place'");
-  }
+  public void place() {}
 
   @Override
-  public void expell() {
-    throw new UnsupportedOperationException("Unimplemented method 'expell'");
-  }
+  public void expell() {}
 
   @Override
   public boolean isSecuredToPlace() {
-    throw new UnsupportedOperationException("Unimplemented method 'isSecuredToPlace'");
+    return false;
   }
 
   @Override
   public boolean hasPlaced() {
-    throw new UnsupportedOperationException("Unimplemented method 'hasPlaced'");
+    return false;
   }
 
   @Override
-  public void stopIntaking() {
-    throw new UnsupportedOperationException("Unimplemented method 'stopIntaking'");
-  }
+  public void stopIntaking() {}
 
   @Override
   public boolean isAtSetPoint() {
-    throw new UnsupportedOperationException("Unimplemented method 'isAtSetPoint'");
+    return false;
   }
 }
+
