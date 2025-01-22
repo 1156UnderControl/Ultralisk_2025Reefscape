@@ -7,7 +7,9 @@ import com.revrobotics.spark.SparkMax;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
+import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volt;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
@@ -298,17 +300,6 @@ public class SparkMAXMotor implements IMotor{
         this.updateLogs();
     }
 
-    public void configureMaxMagic(double P, double I, double D, double S, double V, double A, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
-        this.feedforward = new SimpleMotorFeedforward(S,V,A);
-        double ff = feedforward.calculate(this.velocityFF);
-        config.closedLoop.maxMotion
-            .maxVelocity(maxVelocity)
-            .maxAcceleration(maxAcceleration)
-            .allowedClosedLoopError(positionErrorAllowed);
-        config.closedLoop
-            .pidf(P, I, D, ff);
-    }
-
     public void configureMaxMagic(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
         config.closedLoop.maxMotion
             .maxVelocity(maxVelocity)
@@ -318,8 +309,7 @@ public class SparkMAXMotor implements IMotor{
             .pidf(P, I, D, ff);
     }
 
-    public void setPositionMaxMagic(double position, double velocity){
-        this.velocityFF = velocity;
+    public void setPositionMaxMagic(double position){
         motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
     }
 
@@ -406,8 +396,8 @@ public class SparkMAXMotor implements IMotor{
     @Override
     public void setSysID(Subsystem currentSubsystem){
         this.sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
-        new SysIdRoutine.Mechanism(
+            new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(5), Seconds.of(10)),
+            new SysIdRoutine.Mechanism(
             voltage -> {
                 this.set(voltage);
             },
@@ -424,7 +414,7 @@ public class SparkMAXMotor implements IMotor{
     @Override
     public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
         this.sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
+        new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(5), Seconds.of(10)),
         new SysIdRoutine.Mechanism(
             voltage -> {
                 this.set(voltage);

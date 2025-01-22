@@ -6,6 +6,8 @@ import com.revrobotics.spark.SparkFlex;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
@@ -18,6 +20,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -283,6 +286,23 @@ public class SparkFlexMotor implements IMotor{
         this.updateLogs();
     }
 
+    public void configureMaxMagic(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration, double positionErrorAllowed){
+        config.closedLoop.maxMotion
+            .maxVelocity(maxVelocity)
+            .maxAcceleration(maxAcceleration)
+            .allowedClosedLoopError(positionErrorAllowed);
+        config.closedLoop
+            .pidf(P, I, D, ff);
+    }
+
+    public void setPositionMaxMagic(double position){
+        motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
+    }
+
+    public void setAngleMaxMagic(Angle angle){
+
+    }
+
     @Override
     public double getVoltage(){
         return motor.getAppliedOutput() * motor.getBusVoltage();
@@ -355,7 +375,7 @@ public class SparkFlexMotor implements IMotor{
     @Override
     public void setSysID(Subsystem currentSubsystem){
         this.sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
+            new SysIdRoutine.Config(Volts.of(0.1).per(Second), Volts.of(0.5), Seconds.of(10)),
         new SysIdRoutine.Mechanism(
             voltage -> {
               this.set(voltage);
@@ -373,7 +393,7 @@ public class SparkFlexMotor implements IMotor{
     @Override
     public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
         this.sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
+        new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(5), Seconds.of(10)),
         new SysIdRoutine.Mechanism(
             voltage -> {
                 this.set(voltage);

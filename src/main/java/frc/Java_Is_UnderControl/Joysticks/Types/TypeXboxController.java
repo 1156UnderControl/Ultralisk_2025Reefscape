@@ -72,8 +72,8 @@ public class TypeXboxController implements IController {
   }
 
   @Override
-  public boolean R1() {
-    return controller.rightBumper().getAsBoolean();
+  public Trigger R1() {
+    return controller.rightBumper();
   }
 
   @Override
@@ -87,8 +87,8 @@ public class TypeXboxController implements IController {
   }
 
   @Override
-  public boolean L1() {
-    return controller.leftBumper().getAsBoolean();
+  public Trigger L1() {
+    return controller.leftBumper();
   }
 
   @Override
