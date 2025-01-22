@@ -8,10 +8,6 @@ public class IntakeConstants {
   public static final int ID_intake = 0;
   public static final int port_IR = 0;
 
-  ;
-  public static final double ANGLE_SECURED = 0;
-  public static final double ANGLE_INTAKE = 0;
-
   public class TunningValues {
     public static final double KS = 0;
     public static final double KV = 0;

@@ -7,18 +7,22 @@ package frc.robot.Constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 
 public final class FieldConstants {
-  public static Translation2d blueGoalPos = new Translation2d(0.076, 5.547868);
-  public static Translation2d redGoalPos = new Translation2d(16.465042, 5.547868);
-  public static Translation2d blueFeedPos = new Translation2d(1, 6.5);
-  public static Translation2d redFeedPos = new Translation2d(15.46, 6.5);
-  public static Pose2d blueAmp = new Pose2d(1.84, 7.8, new Rotation2d());
-  public static Pose2d redAmp = new Pose2d(15.24, 7.8, new Rotation2d());
-  public static double midFieldLine = 8.270875;
-  public static final double fieldLength = Units.inchesToMeters(651.223);
-  public static final double fieldWidth = Units.inchesToMeters(323.277);
+  public static Translation2d processor = new Translation2d(133.652, 162.095);
+
+  public static Pose2d reefF = new Pose2d(-147.721, -23.385, new Rotation2d());
+  public static Pose2d reefE = new Pose2d(-146.931, -23.260, new Rotation2d());
+  public static Pose2d reefD = new Pose2d(-177.670, -29.722, new Rotation2d());
+  public static Pose2d reefC = new Pose2d(-188.847, -23.248, new Rotation2d());
+  public static Pose2d reefA = new Pose2d(-198.586, -6.444, new Rotation2d());
+  public static Pose2d reefB = new Pose2d(-198.631, -6.442, new Rotation2d());
+  public static Pose2d reefG = new Pose2d(-137.200, 6.430, new Rotation2d());
+  public static Pose2d reefH = new Pose2d(-137.155, 6.432, new Rotation2d());
+  public static Pose2d reefI = new Pose2d(-146.953, 23.223, new Rotation2d());
+  public static Pose2d reefJ = new Pose2d(-158.139, 29.708, new Rotation2d());
+  public static Pose2d reefK = new Pose2d(-177.648, 29.685, new Rotation2d());
+  public static Pose2d reefL = new Pose2d(-188.870, 23.289, new Rotation2d());
 
   public static boolean poseOutOfField(Pose2d pose2D) {
     double x = pose2D.getX();
