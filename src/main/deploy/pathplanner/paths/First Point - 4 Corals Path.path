@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.168124714813639,
+        "y": 4.757
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.182212275708331,
+        "y": 5.0668034815366445
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 4.969976426311828,
+        "y": 5.265272761054559
+      },
+      "prevControl": {
+        "x": 5.77507840869019,
+        "y": 5.012419668125762
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "First Point - 4 Corals Path END"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.92,
+    "maxAcceleration": 5.92,
+    "maxAngularVelocity": 1200.0,
+    "maxAngularAcceleration": 1200.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 60.688612530143885
+  },
+  "reversed": false,
+  "folder": "4 Corals",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": false
+}
