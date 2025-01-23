@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.Java_Is_UnderControl.Joysticks.Types.TypeXboxController;
 import frc.robot.commands.Go100Angle;
 import frc.robot.commands.StopMotorCmd;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.test_subsystems.ArmSubsystem;
 
 public class RobotContainer {
 
@@ -19,6 +19,7 @@ public class RobotContainer {
   public RobotContainer() {
     armSubsystem = ArmSubsystem.getInstance();
     controllerType = new TypeXboxController(0);
+    armSubsystem.setDefaultCommand(new StopMotorCmd(armSubsystem));
     configureBindings();
   }
 

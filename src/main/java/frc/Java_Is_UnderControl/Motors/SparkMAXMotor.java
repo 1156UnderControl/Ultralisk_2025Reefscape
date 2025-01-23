@@ -9,12 +9,10 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.Milliseconds;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volt;
 import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.revrobotics.REVLibError;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -22,14 +20,14 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
@@ -43,32 +41,21 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
-import com.revrobotics.spark.config.MAXMotionConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class SparkMAXMotor implements IMotor{
 
-    private SparkMaxConfig config;
-
     private boolean factoryDefaultOcurred = false;
-
-    private final TrapezoidProfile m_profile;
-
-    private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-
-    private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
 
     private double maxVelocity = 0;
 
-    private double rampRate = Double.NaN;
-
     private double maxAcceleration = 0;
 
-    private String motorName;
+    private final TrapezoidProfile m_profile;
 
-    // I don't how it works, and if it's truly necessary to use
-    private Supplier<Double> velocity;
-    private Supplier<Double> position;
+    private SparkMaxConfig config;
+    private String motorName;
+    private boolean isInverted = false;
 
     private CustomDoubleLogger appliedOutputLog;
     private CustomDoubleLogger targetOutputLog;
@@ -80,22 +67,19 @@ public class SparkMAXMotor implements IMotor{
     private CustomDoubleLogger targetPositionLog;
     private CustomDoubleLogger targetSpeedLog;
 
-    boolean isInverted = false;
-
     private double targetPercentage;
     private double targetPosition;
     private double targetVelocity;
-
-    private SimpleMotorFeedforward feedforward;
-
-    private double velocityFF;
     
     private final MutVoltage m_appliedVoltage = Volts.mutable(0);
     private final MutDistance m_distance = Meters.mutable(0);
     private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
 
-    private SysIdRoutine sysIdRoutine;
+    public Velocity<VoltageUnit> quasistaticVoltagePerSecond = null;
+    public Voltage dynamicVoltage = null;
+    public Time timeoutSysID = null;
 
+    private SysIdRoutine sysIdRoutine;
     private SparkMax motor;
 
     public SparkMAXMotor(int motorID, String motorName){
@@ -398,16 +382,23 @@ public class SparkMAXMotor implements IMotor{
     }
 
     @Override
+    public void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID){
+        this.quasistaticVoltagePerSecond = Volts.of(quasistaticVoltagePerSecond).per(Second);
+        this.dynamicVoltage = Volts.of(dynamicVoltage);
+        this.timeoutSysID = Seconds.of(timeoutSysID);
+    }
+
+    @Override
     public void setSysID(Subsystem currentSubsystem){
         this.sysIdRoutine = new SysIdRoutine(
-            new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(5), Seconds.of(10)),
+            new SysIdRoutine.Config(this.quasistaticVoltagePerSecond, this.dynamicVoltage, this.timeoutSysID),
             new SysIdRoutine.Mechanism(
             voltage -> {
                 this.set(voltage);
             },
             log -> {
                 log.motor(this.motorName)
-                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
                 .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
                 .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
             },
@@ -418,7 +409,7 @@ public class SparkMAXMotor implements IMotor{
     @Override
     public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
         this.sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(Volts.of(1).per(Second), Volts.of(5), Seconds.of(10)),
+        new SysIdRoutine.Config(this.quasistaticVoltagePerSecond, this.dynamicVoltage, this.timeoutSysID),
         new SysIdRoutine.Mechanism(
             voltage -> {
                 this.set(voltage);
@@ -426,12 +417,12 @@ public class SparkMAXMotor implements IMotor{
             },
             log -> {
                 log.motor(this.motorName)
-                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
                 .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
                 .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
 
                 log.motor(otherMotor.getMotorName())
-                .voltage(m_appliedVoltage.mut_replace(otherMotor.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
+                .voltage(m_appliedVoltage.mut_replace(otherMotor.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
                 .linearPosition(m_distance.mut_replace(otherMotor.getPosition(), Meters))
                 .linearVelocity(m_velocity.mut_replace(otherMotor.getVelocity(), MetersPerSecond));
             },

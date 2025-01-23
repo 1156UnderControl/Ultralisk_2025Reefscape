@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.test_subsystems.ArmSubsystem;
 
 public class StopMotorCmd extends Command{
     ArmSubsystem robot = ArmSubsystem.getInstance();

@@ -66,6 +66,8 @@ public interface IMotor {
 
     void updateLogs();
 
+    void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID);
+
     void setSysID(Subsystem currentSubsystem);
 
     void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor);

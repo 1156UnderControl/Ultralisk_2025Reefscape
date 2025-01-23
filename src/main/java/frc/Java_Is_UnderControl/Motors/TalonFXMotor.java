@@ -2,9 +2,10 @@ package frc.Java_Is_UnderControl.Motors;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -18,10 +19,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
+import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.datalog.BooleanLogEntry;
 import edu.wpi.first.util.datalog.StringLogEntry;
@@ -73,10 +77,6 @@ public class TalonFXMotor implements IMotor{
 
   private MotorOutputConfigs configs = new MotorOutputConfigs();
 
-  private boolean isInverted = false;
-
-  private boolean encoderInverted = false;
-
   private TalonFXConfigurator cfg;
 
   private MotionMagicVoltage magicVoltage;
@@ -86,6 +86,10 @@ public class TalonFXMotor implements IMotor{
   private final MutVoltage m_appliedVoltage = Volts.mutable(0);
   private final MutDistance m_distance = Meters.mutable(0);
   private final MutLinearVelocity m_velocity = MetersPerSecond.mutable(0);
+
+  public Velocity<VoltageUnit> quasistaticVoltagePerSecond = null;
+  public Voltage dynamicVoltage = null;
+  public Time timeoutSysID = null;
 
   private SysIdRoutine sysIdRoutine;
 
@@ -139,6 +143,18 @@ public class TalonFXMotor implements IMotor{
     descriptionLog.append(this.motor.getDescription());
     BooleanLogEntry isInvertedLog = new BooleanLogEntry(DataLogManager.getLog(), "/motors/" + motorId + "/isInverted");
     isInvertedLog.append(isInverted());
+  }
+
+  @Override
+  public void updateLogs() {
+    this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
+    this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
+    this.positionLog.append(Units.rotationsToDegrees(this.motor.getPosition().getValueAsDouble()));
+    this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
+    this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
+    this.faultsLog.append(this.motor.getFaultField().getValue());
+    this.targetPositionLog.append(this.targetPosition);
+    this.targetSpeedLog.append(this.targetVelocity);
   }
 
   @Override
@@ -426,10 +442,17 @@ public class TalonFXMotor implements IMotor{
     return motor;
   }
 
+  @Override
+  public void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID){
+    this.quasistaticVoltagePerSecond = Volts.of(quasistaticVoltagePerSecond).per(Second);
+    this.dynamicVoltage = Volts.of(dynamicVoltage);
+    this.timeoutSysID = Seconds.of(timeoutSysID);
+}
+
    @Override
     public void setSysID(Subsystem currentSubsystem){
         this.sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
+        new SysIdRoutine.Config(this.quasistaticVoltagePerSecond, this.dynamicVoltage, this.timeoutSysID),
         new SysIdRoutine.Mechanism(
             voltage -> {
               this.set(voltage);
@@ -447,7 +470,7 @@ public class TalonFXMotor implements IMotor{
     @Override
     public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
         this.sysIdRoutine = new SysIdRoutine(
-        new SysIdRoutine.Config(),
+        new SysIdRoutine.Config(this.quasistaticVoltagePerSecond, this.dynamicVoltage, this.timeoutSysID),
         new SysIdRoutine.Mechanism(
             voltage -> {
                 this.set(voltage);
@@ -478,17 +501,4 @@ public class TalonFXMotor implements IMotor{
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return this.sysIdRoutine.dynamic(direction);
     }
-
-  @Override
-  public void updateLogs() {
-    this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
-    this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
-    this.positionLog.append(Units.rotationsToDegrees(this.motor.getPosition().getValueAsDouble()));
-    this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
-    this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
-    this.faultsLog.append(this.motor.getFaultField().getValue());
-    this.targetPositionLog.append(this.targetPosition);
-    this.targetSpeedLog.append(this.targetVelocity);
-  }
-
 }
