@@ -50,6 +50,7 @@ public class RobotContainer {
     controller.setHeadingFront().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
     controller.setHeadingRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     controller.setHeadingLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
     NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
 
     // reset the field-centric heading on left bumper press
