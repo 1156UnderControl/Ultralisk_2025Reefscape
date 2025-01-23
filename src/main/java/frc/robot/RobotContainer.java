@@ -4,31 +4,50 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.swerve.SwerveModuleConstants;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.Java_Is_UnderControl.Joysticks.Types.TypeXboxController;
-import frc.robot.commands.Go100Angle;
-import frc.robot.commands.StopMotorCmd;
-import frc.robot.test_subsystems.ArmSubsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.Joysticks.ControlBoard;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.SwerveSubsystem;
 
 public class RobotContainer {
 
-  TypeXboxController controllerType;
-  ArmSubsystem armSubsystem;
+  private ControlBoard controller = ControlBoard.getInstance();
+
+  // private final CommandXboxController joystick = new CommandXboxController(0);
+
+  private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
+
+  public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
+      modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
+
+  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+
+  private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
 
   public RobotContainer() {
-    armSubsystem = ArmSubsystem.getInstance();
-    controllerType = new TypeXboxController(0);
-    armSubsystem.setDefaultCommand(new StopMotorCmd(armSubsystem));
     configureBindings();
   }
 
   private void configureBindings() {
-    controllerType.buttomUp().whileTrue(this.armSubsystem.sysIdQuasistaticForward().until(armSubsystem.atLimitForward()));
-    controllerType.buttomDown().whileTrue(this.armSubsystem.sysIdQuasistaticReverse().until(armSubsystem.atLimitReverse()));
-    controllerType.buttomRight().whileTrue(this.armSubsystem.sysIdDynamicForward().until(armSubsystem.atLimitForward()));
-    controllerType.buttomLeft().whileTrue(this.armSubsystem.sysIdDynamicReverse().until(armSubsystem.atLimitReverse()));
-    controllerType.dPadRight().onTrue(new Go100Angle(armSubsystem));
+    // Note that X is defined as forward according to WPILib convention,
+    // and Y is defined as to the left according to WPILib convention.
+    drivetrain.setDefaultCommand(Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain));
+
+    controller.setHeadingBack().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    controller.setHeadingFront().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    controller.setHeadingRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    controller.setHeadingLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+
+    // reset the field-centric heading on left bumper press
+    // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
+    // drivetrain.seedFieldCentric()));
+
+    drivetrain.registerTelemetry(logger::telemeterize);
   }
 
   public Command getAutonomousCommand() {
