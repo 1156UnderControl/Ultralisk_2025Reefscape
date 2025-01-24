@@ -49,7 +49,6 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   public double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   protected double MaxAngularRate;
-
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
@@ -61,7 +60,8 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
 
-  private final SwerveRequest.ApplyRobotSpeeds applyRobotCentricSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+  private final SwerveRequest.ApplyRobotSpeeds applyRobotCentricSpeeds = new SwerveRequest.ApplyRobotSpeeds()
+      .withDriveRequestType(DriveRequestType.Velocity);
   private final SwervePathPlannerConfig pathPlannerConfig;
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -174,7 +174,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
         config.headingPidConfig.kI, config.headingPidConfig.kD);
     applyFieldCentricDrivePointingAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     MaxAngularRate = RotationsPerSecond.of(config.maxRotationRate).in(RadiansPerSecond); // fraction of a rotation per
-                                                                                         // second
+    // second
     pathPlannerConfig = config.pathPlannerConfig;
     if (Utils.isSimulation()) {
       startSimThread();
@@ -232,6 +232,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   }
 
   private void configureAutoBuilder() {
+
     try {
       var config = RobotConfig.fromGUISettings();
       // Configure AutoBuilder last
