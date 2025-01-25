@@ -1,5 +1,6 @@
 package frc.Java_Is_UnderControl.Swerve;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -335,6 +336,14 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
 
   protected Rotation2d getHeading() {
     return super.getState().RawHeading;
+  }
+
+  protected double[] getWheelRadiusCharacterizationPositions() {
+    double[] values = new double[4];
+    for (int i = 0; i < 4; i++) {
+      values[i] = getState().ModulePositions[i].distanceMeters / TunerConstants.kWheelRadius.in(Meters);
+    }
+    return values;
   }
 
   public Supplier<SwerveRequest> lock() {
