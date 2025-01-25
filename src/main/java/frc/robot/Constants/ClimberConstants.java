@@ -1,4 +1,4 @@
-package frc.robot.Constants;
+package frc.robot.constants;
 
 public class ClimberConstants {
   public static final int alignerMotorPort = 0;

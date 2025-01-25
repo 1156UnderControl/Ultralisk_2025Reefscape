@@ -1,4 +1,4 @@
-package frc.robot.Constants;
+package frc.robot.constants;
 
 public class ElevatorConstants {
   public static final int ID_elevatorMotor1 = 0;

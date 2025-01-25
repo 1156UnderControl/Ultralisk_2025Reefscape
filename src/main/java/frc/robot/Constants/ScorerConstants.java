@@ -1,4 +1,4 @@
-package frc.robot.Constants;
+package frc.robot.constants;
 
 public class ScorerConstants {
   public static final int pivotMotorPort = 0;
