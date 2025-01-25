@@ -67,8 +67,8 @@ public class TypePS5Controller implements IController {
   }
 
   @Override
-  public boolean R1() {
-    return controller.R1().getAsBoolean();
+  public Trigger R1() {
+    return controller.R1();
   }
 
   @Override
@@ -82,8 +82,8 @@ public class TypePS5Controller implements IController {
   }
 
   @Override
-  public boolean L1() {
-    return controller.L1().getAsBoolean();
+  public Trigger L1() {
+    return controller.L1();
   }
 
   @Override

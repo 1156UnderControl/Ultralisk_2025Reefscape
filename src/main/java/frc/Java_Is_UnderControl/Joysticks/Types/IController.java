@@ -28,13 +28,13 @@ public interface IController {
 
   public Trigger dPadDown();
 
-  public boolean R1();
+  public Trigger R1();
 
   public Trigger R2();
 
   public Trigger R3();
 
-  public boolean L1();
+  public Trigger L1();
 
   public Trigger L2();
 
