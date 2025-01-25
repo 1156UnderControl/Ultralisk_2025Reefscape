@@ -50,6 +50,10 @@ import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   public double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   protected double MaxAngularRate;
+  protected final double driveBaseRadius = Math
+      .hypot(TunerConstants.FrontLeft.LocationX + TunerConstants.FrontRight.LocationX / 2,
+          TunerConstants.FrontLeft.LocationY + TunerConstants.BackLeft.LocationY / 2);
+
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
   private double m_lastSimTime;
@@ -273,7 +277,6 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
 
   public void resetOdometry(Pose2d initialHolonomicPose) {
     this.resetPose(initialHolonomicPose);
-    ;
   }
 
   public void zeroGyro() {
@@ -411,7 +414,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     this.targetHeadingDegrees = Double.NaN;
     applyFieldCentricDrive.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
         .withRotationalRate(speeds.omegaRadiansPerSecond);
-    applyRequest(() -> applyFieldCentricDrive);
+    setControl(applyFieldCentricDrive);
   }
 
   protected void driveRobotOriented(ChassisSpeeds speeds) {
@@ -419,7 +422,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     this.targetHeadingDegrees = Double.NaN;
     applyRobotCentricDrive.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
         .withRotationalRate(speeds.omegaRadiansPerSecond);
-    applyRequest(() -> applyFieldCentricDrive);
+    setControl(applyRobotCentricDrive);
   }
 
   protected ChassisSpeeds inputsToChassisSpeeds(double xInput, double yInput, double AngularRate) {

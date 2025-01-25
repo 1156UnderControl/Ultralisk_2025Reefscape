@@ -50,6 +50,8 @@ public class RobotContainer {
         .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
     NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
 
+    controller.b().whileTrue(drivetrain.wheelRadiusCharacterization());
+
     // reset the field-centric heading on left bumper press
     // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
     // drivetrain.seedFieldCentric()));
