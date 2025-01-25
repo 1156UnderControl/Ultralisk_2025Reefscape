@@ -19,10 +19,6 @@ import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.robot.Joysticks.ControlBoard;
 
-/**
- * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
- * Subsystem so it can easily be used in command-based projects.
- */
 public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements Subsystem {
 
   private ControlBoard controller = ControlBoard.getInstance();
