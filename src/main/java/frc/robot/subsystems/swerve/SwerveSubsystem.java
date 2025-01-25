@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -67,7 +67,5 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
 
   @Override
   protected void updateLogs() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'updateLogs'");
   }
 }
