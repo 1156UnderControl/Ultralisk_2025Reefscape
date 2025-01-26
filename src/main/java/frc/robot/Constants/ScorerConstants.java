@@ -1,25 +1,30 @@
 package frc.robot.constants;
 
 public class ScorerConstants {
-  public static final int pivotMotorPort = 0;
-  public static final int scorerMotorPort = 0;
+  public static final int ID_pivotMotor = 0;
+  public static final int ID_endEffectorMotor = 0;
 
-  public static final double ANGLE_L1 = 0;
-  public static final double ANGLE_L2 = 0;
-  public static final double ANGLE_L3 = 0;
-  public static final double ANGLE_L4 = 0;
-
-  public class TunningValues {
+  public class tunning_values_scorer {
     public static final double KS = 0;
     public static final double KV = 0;
     public static final double MAX_VELOCITY = 0;
     public static final double MAX_ACCELERATION = 0;
-  }
+    public static final double POSITION_ERROR_ALLOWED = 0;
 
-  public class PIDConstants {
-    public static final double P = 0;
-    public static final double I = 0;
-    public static final double D = 0;
-    public static final double F = 0;
+    public class PID {
+      public static final double P = 0;
+      public static final double I = 0;
+      public static final double D = 0;
+      public static final double F = 0;
+      public static final double IZone = 0;
+    }
+
+    public class setpoints {
+      public static final double MAX_ANGLE_PIVOT = 2.5;
+      public static final double MIN_ANGLE_PIVOT = 0;
+
+      public static final double DUTY_CYCLE_INTAKE = 1.0;
+      public static final double DUTY_CYCLE_EXPELL = -1.0;
+    }
   }
 }
