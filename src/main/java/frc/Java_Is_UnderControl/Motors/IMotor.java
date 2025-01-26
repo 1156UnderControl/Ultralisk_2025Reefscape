@@ -6,73 +6,126 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 public interface IMotor {
-    final int maximumRetries = 5;
+  final int maximumRetries = 5;
 
-    String getMotorName();
+  String getMotorName();
 
-    void factoryDefault();
+  void factoryDefault();
 
-    void clearStickyFaults();
+  void clearStickyFaults();
 
-    void configureFeedForward(double Kg, double Ks, double Kv);
+  void configureFeedForward(double Kg, double Ks, double Kv);
 
-    void configurePIDF(double P, double I, double D, double F, double Izone);
+  void configurePIDF(double P, double I, double D, double F, double Izone);
 
-    void configurePIDF(double P, double I, double D, double F);
+  void configurePIDF(double P, double I, double D, double F);
 
-    void configurePIDWrapping(double minInput, double maxInput);
+  void configurePIDWrapping(double minInput, double maxInput);
 
-    void setMotorBrake(boolean isBrakeMode);
+  void setMotorBrake(boolean isBrakeMode);
 
-    void setInverted(boolean inverted);
+  void setInverted(boolean inverted);
 
-    void setInvertedEncoder(boolean inverted);
+  void setInvertedEncoder(boolean inverted);
 
-    void burnFlash();
+  void burnFlash();
 
-    void set(double percentOutput);
+  void set(double percentOutput);
 
-    void set(Voltage percentOutput);
+  void set(Voltage percentOutput);
 
-    void setPositionReference(double position);
+  void setPositionReference(double position);
 
-    void setPositionReferenceMotionProfiling(double position, double velocity, double feedforward);
+  /**
+   * Uses motion magic for TalonFXs and MAXMotion for SparkBases
+   *
+   * @param maxVelocity     Max velocity that the motion profiling is allowed to
+   *                        use
+   *                        <ul>
+   *                        <li><b>Units:</b> rot per sec for TalonFXs, Spark
+   *                        will be the one used in the conversion factor (native
+   *                        is rotations)
+   *                        </ul>
+   * @param maxAcceleration Max acceleration that the motion profiling is allowed
+   *                        to use
+   *                        <ul>
+   *                        <li><b>Units:</b> rot per sec² for TalonFXs, Spark
+   *                        will be the one used in the conversion factor (native
+   *                        is rotations)
+   *                        </ul>
+   */
 
-    double getVoltage();
+  void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration,
+      double positionErrorAllowed);
 
-    double getDutyCycleSetpoint();
+  /**
+   * Uses motion magic for TalonFXs and MAXMotion for SparkBases
+   *
+   * @param maxVelocity     Max velocity that the motion profiling is allowed to
+   *                        use
+   *                        <ul>
+   *                        <li><b>Units:</b> rot per sec for TalonFXs, Spark
+   *                        will be the one used in the conversion factor (native
+   *                        is rotations)
+   *                        </ul>
+   *                        <p>
+   * @param maxAcceleration Max acceleration that the motion profiling is allowed
+   *                        to use
+   *                        <ul>
+   *                        <li><b>Units:</b> rot per sec² for TalonFXs, Spark
+   *                        will be the one used in the conversion factor (native
+   *                        is rotations)
+   *                        </ul>
+   *                        <p>
+   * @param jerk            This is the target jerk (acceleration derivative) that
+   *                        the motion profiling is allowed to use - ONLY FOR
+   *                        TALONFX
+   *                        <ul>
+   *                        <li><b>Units:</b> rot per sec³
+   *                        </ul>
+   */
+  void configureMotionProfiling(double P, double I, double D, double kS, double kV, double kA, double maxVelocity,
+      double maxAcceleration, double jerk);
 
-    void setVoltage(double voltage);
+  void setPositionReferenceMotionProfiling(double position);
 
-    double getAppliedOutput();
+  double getVoltage();
 
-    double getVelocity();
+  double getDutyCycleSetpoint();
 
-    double getPosition();
+  void setVoltage(double voltage);
 
-    void setPositionFactor(double factor);
+  double getAppliedOutput();
 
-    void setVelocityFactor(double factor);
+  double getVelocity();
 
-    void setPosition(double position);
+  double getPosition();
 
-    void setVoltageCompensation(double nominalVoltage);
+  void setPositionFactor(double factor);
 
-    void setCurrentLimit(int currentLimit);
+  void setVelocityFactor(double factor);
 
-    void setLoopRampRate(double rampRate);
+  void setPosition(double position);
 
-    Object getMotor();
+  void setVoltageCompensation(double nominalVoltage);
 
-    void updateLogs();
+  void setCurrentLimit(int currentLimit);
 
-    void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID);
+  void setLoopRampRate(double rampRate);
 
-    void setSysID(Subsystem currentSubsystem);
+  void setFollower(int leaderIDcan, boolean invert);
 
-    void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor);
+  Object getMotor();
 
-    Command sysIdQuasistatic(SysIdRoutine.Direction direction);
+  void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID);
 
-    Command sysIdDynamic(SysIdRoutine.Direction direction);
+  void setSysID(Subsystem currentSubsystem);
+
+  void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor);
+
+  Command sysIdQuasistatic(SysIdRoutine.Direction direction);
+
+  Command sysIdDynamic(SysIdRoutine.Direction direction);
+
+  void updateLogs();
 }
