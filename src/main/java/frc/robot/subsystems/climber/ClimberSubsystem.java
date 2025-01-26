@@ -1,16 +1,31 @@
 package frc.robot.subsystems.climber;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
+import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
+import frc.robot.constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase implements IClimber {
-  private IMotor alignerMotor;
-  private IMotor climberMotor;
+  private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
+  private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor, GravityTypeValue.Arm_Cosine,
+      "CLIMBER_ARM");
 
   public ClimberSubsystem() {
-    this.alignerMotor = new SparkMAXMotor(0);
-    this.climberMotor = new SparkMAXMotor(1);
+    climberArmMotor.setMotorBrake(true);
+    climberArmMotor.configureMotionProfiling(
+        ClimberConstants.tunning_values_climber.PID.P,
+        ClimberConstants.tunning_values_climber.PID.I,
+        ClimberConstants.tunning_values_climber.PID.D,
+        ClimberConstants.tunning_values_climber.KS,
+        ClimberConstants.tunning_values_climber.KV,
+        ClimberConstants.tunning_values_climber.KA,
+        ClimberConstants.tunning_values_climber.MAX_VELOCITY,
+        ClimberConstants.tunning_values_climber.MAX_ACCELERATION,
+        ClimberConstants.tunning_values_climber.JERK);
+    cageIntakeMotor.burnFlash();
   }
 
   @Override
