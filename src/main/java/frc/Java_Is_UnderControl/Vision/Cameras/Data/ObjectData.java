@@ -1,6 +1,5 @@
 package frc.Java_Is_UnderControl.Vision.Cameras.Data;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
@@ -13,7 +12,6 @@ public class ObjectData {
     private double distanceToObject;
     private Transform3d camToRobot;
     private Transform3d bestCameraToObject;
-    private Pose3d objectPose;
 
     ObjectData objectData;
     CustomDoubleLogger pitchLog;
@@ -27,14 +25,12 @@ public class ObjectData {
         ObjectDetection objectDetection,
         double distanceToObject,
         Transform3d bestCameraToobject,
-        Transform3d camToRobot,
-        Pose3d objectPose){
+        Transform3d camToRobot){
         
         this.objectDetection = objectDetection;
         this.distanceToObject = distanceToObject;
         this.bestCameraToObject = bestCameraToobject;
         this.camToRobot = camToRobot;
-        this.objectPose = objectPose;
     }
 
     public String getCameraName() {
@@ -65,10 +61,6 @@ public class ObjectData {
         }
     }
 
-    public Pose3d getTargetPose() {
-        return this.objectPose;
-    }
-
     public Transform3d getBestCameraToTarget() {
         return this.bestCameraToObject;
     }
@@ -77,7 +69,6 @@ public class ObjectData {
         this.pitchLog = new CustomDoubleLogger("/Vision/" + this.objectData.getCameraName() + "/" + (this.hasTargets() ? "/pitch" : "No Objects Seen"));
         this.yawLog = new CustomDoubleLogger("/Vision/" + this.objectData.getCameraName() + "/" + (this.hasTargets() ? "/yaw" : "No Objects Seen"));
         this.distanceToAprilLog = new CustomDoubleLogger("/Vision/" + objectData.getCameraName() + "/" + (this.hasTargets() ? "/distanceToApril" : "No Objects Seen"));
-        this.aprilPoseLog = new CustomPose3dLogger("/Vision/" + objectData.getCameraName() + "/" + (this.hasTargets() ? "/aprilPose" : "No Objects Seen"));
     }
 
     public void updateLogs(){
@@ -86,7 +77,6 @@ public class ObjectData {
             this.pitchLog.append(this.objectData.getPitch());
             this.yawLog.append(this.objectData.getYaw());
             this.distanceToAprilLog.append(this.objectData.getDistanceTarget());
-            this.aprilPoseLog.appendDegrees(this.objectData.getTargetPose());
         }
     }
 

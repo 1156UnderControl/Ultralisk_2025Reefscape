@@ -76,7 +76,7 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject{
         var result = camera.getLatestResult();
         if (result.hasTargets()) {
             for (PhotonTrackedTarget target : result.getTargets()) {
-                this.aprilData = new AprilTagData(cameraName, target.getFiducialId(), target.getYaw(), target.getPitch(), target.getSkew(), target.getArea(), this.getDistanceTarget(target), this.camToRobot, this.getNumberOfTargetsDetected());
+                this.aprilData = new AprilTagData(cameraName, target.getFiducialId(), target.getYaw(), target.getPitch(), target.getArea(), this.getDistanceTarget(target), this.camToRobot, this.getNumberOfTargetsDetected());
             }
         }
     }
@@ -119,7 +119,7 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject{
         if(result.hasTargets()){
             for (PhotonTrackedTarget target : result.getTargets()){
                 this.objectDetection = new ObjectDetection(target.getYaw(), target.getPitch(), (this.objectName != null ? this.objectName : "object"));
-                this.objectData = new ObjectData(this.cameraName, objectDetection, this.getDistanceTarget(target), target.getBestCameraToTarget(), camToRobot, null);
+                this.objectData = new ObjectData(this.cameraName, objectDetection, this.getDistanceTarget(target), target.getBestCameraToTarget(), camToRobot);
             }
         }
     }

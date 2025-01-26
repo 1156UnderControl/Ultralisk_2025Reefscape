@@ -13,7 +13,6 @@ public class AprilTagData {
     private int aprilID;
     private double aprilYaw;
     private double aprilPitch;
-    private double aprilSkew;
     private double aprilArea;
     private double distanceToApril;
     private Transform3d camToRobot;
@@ -23,7 +22,6 @@ public class AprilTagData {
     AprilTagData aprilData;
     CustomDoubleLogger pitchLog;
     CustomDoubleLogger yawLog;
-    CustomDoubleLogger skewLog;
     CustomDoubleLogger areaLog;
     CustomDoubleLogger distanceToAprilLog;
     CustomPose3dLogger aprilPoseLog;
@@ -33,7 +31,6 @@ public class AprilTagData {
             int aprilID,
             double aprilYaw,
             double aprilPitch,
-            double aprilSkew,
             double aprilArea,
             double distanceToApril,
             Transform3d camToRobot,
@@ -42,7 +39,6 @@ public class AprilTagData {
         this.aprilID = aprilID;
         this.aprilYaw = aprilYaw;
         this.aprilPitch = aprilPitch;
-        this.aprilSkew = aprilSkew;
         this.aprilArea = aprilArea;
         this.distanceToApril = distanceToApril;
         this.camToRobot = camToRobot;
@@ -65,10 +61,6 @@ public class AprilTagData {
         return this.aprilYaw;
     }
 
-    public double getSkew() {
-        return this.aprilSkew;
-    }
-
     public double getArea() {
         return this.aprilArea;
     }
@@ -88,7 +80,6 @@ public class AprilTagData {
     public boolean hasAprilTags() {
         if (this.getYaw() == 0 &&
                 this.getPitch() == 0 &&
-                this.getSkew() == 0 &&
                 this.getArea() == 0) {
             return false;
         } else {
@@ -108,7 +99,6 @@ public class AprilTagData {
     private void setLogs(){
         this.pitchLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/pitch" : "No_Tags_Seen"));
         this.yawLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/yaw" : "No_Tags_Seen"));
-        this.skewLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/skew" : "No_Tags_Seen"));
         this.areaLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/area" : "No_Tags_Seen"));
         this.distanceToAprilLog = new CustomDoubleLogger("/Vision/" + aprilData.getCameraName() + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/distanceToApril" : "No_Tags_Seen"));
         this.aprilPoseLog = new CustomPose3dLogger("/Vision/" + aprilData.getCameraName() + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/aprilPose" : "No_Tags_Seen"));
@@ -119,7 +109,6 @@ public class AprilTagData {
             this.setLogs();
             this.pitchLog.append(this.aprilData.getPitch());
             this.yawLog.append(this.aprilData.getYaw());
-            this.skewLog.append(this.aprilData.getSkew());
             this.areaLog.append(this.aprilData.getArea());
             this.distanceToAprilLog.append(this.aprilData.getDistanceTarget());
             this.aprilPoseLog.appendDegrees(this.aprilData.getTargetPose());
