@@ -1,7 +1,5 @@
 package frc.Java_Is_UnderControl.Vision.Cameras.Data;
 
-import java.util.Optional;
-
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -29,7 +27,6 @@ public class AprilTagData {
     CustomDoubleLogger areaLog;
     CustomDoubleLogger distanceToAprilLog;
     CustomPose3dLogger aprilPoseLog;
-    Optional<Pose3d> robotPose;
     int numberOfTargetsUsed;
 
     public AprilTagData(String cameraName,
@@ -40,7 +37,6 @@ public class AprilTagData {
             double aprilArea,
             double distanceToApril,
             Transform3d camToRobot,
-            Optional<Pose3d> robotPose,
             int numbersOfTargetsUsed) {
 
         this.aprilID = aprilID;
@@ -83,10 +79,6 @@ public class AprilTagData {
 
     public Transform3d getCameraPosition() {
         return this.camToRobot;
-    }
-
-    public Optional<Pose3d> getOptional(){
-        return this.robotPose;
     }
 
     public int getNumberOfTargetsUsed(){

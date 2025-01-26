@@ -10,6 +10,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,15 +26,11 @@ import frc.Java_Is_UnderControl.Vision.Object_Detection.ObjectDetection;
 import frc.Java_Is_UnderControl.Vision.Object_Detection.ObjectDetectionCamera;
 import frc.Java_Is_UnderControl.Vision.Object_Detection.ObjectPoseEstimationRobotOriented;
 
-public class PhotonCameras implements ICameraOdometry, ICameraObject{
+public class PhotonVisionCamera implements ICameraOdometry, ICameraObject{
 
     private String cameraName;
     private String objectName;
-    private static PhotonCameras instance;
     private PhotonCamera camera;
-    private double cameraLensHeightMeters;
-    private double goalHeightMeters;
-    private double cameraMountAngleDEG;
     private Rotation2d robotRotation;
     private Transform3d camToRobot;
 
@@ -45,21 +42,13 @@ public class PhotonCameras implements ICameraOdometry, ICameraObject{
     private ObjectPoseEstimationRobotOriented objectPose;
     private AprilTagFieldLayout aprilTagFieldLayout;
     
-    public PhotonCameras getInstance(String cameraName) {
-        this.cameraName = cameraName;
-        if (instance == null) {
-          instance = new PhotonCameras(cameraName);
-          return instance;
-        } else {
-          return instance;
-        }
-      }
-    
-    private PhotonCameras(String cameraName){
+    public PhotonVisionCamera(String cameraName, Translation3d translation, Rotation3d rotation){
         this.camera = new PhotonCamera(cameraName);
+        this.aprilTagFieldLayout = AprilTagFields.k2025Reefscape.loadAprilTagLayoutField();
+        this.setCamToRobot(translation, rotation);
     }
 
-    public void setCamToRobot(Translation3d translation, Rotation3d rotation){//USAR ISSO NO CONSTRUTOR
+    private void setCamToRobot(Translation3d translation, Rotation3d rotation){
         this.camToRobot = new Transform3d(translation, rotation);
     }
 
@@ -71,13 +60,13 @@ public class PhotonCameras implements ICameraOdometry, ICameraObject{
         return camera.getLatestResult();
     }
 
-    private double getDistanceTarget(){
+    private double getDistanceTarget(PhotonTrackedTarget photonTrackedTarget){
         var result = camera.getLatestResult();
         double distance = 0;
         if (result.hasTargets()) {
-            PhotonTrackedTarget target = result.getBestTarget();
-            distance = PhotonUtils.calculateDistanceToTargetMeters(cameraLensHeightMeters/*USAR O TRANSLATION 3D DA CAMERA */, goalHeightMeters/*apenas veja o id da tag q tu ta vendo e coloque a altura dela */, 
-            Units.degreesToRadians(cameraMountAngleDEG), Units.degreesToRadians(target.getPitch()));
+            PhotonTrackedTarget target = photonTrackedTarget;
+            distance = PhotonUtils.calculateDistanceToTargetMeters(this.camToRobot.getY(), aprilTagFieldLayout.getTagPose(target.getFiducialId()).get().getZ(), 
+            Units.degreesToRadians(this.camToRobot.getX()), Units.degreesToRadians(target.getPitch()));
             return distance;
         }
         return distance;
@@ -87,14 +76,14 @@ public class PhotonCameras implements ICameraOdometry, ICameraObject{
         var result = camera.getLatestResult();
         if (result.hasTargets()) {
             for (PhotonTrackedTarget target : result.getTargets()) {
-                this.aprilData = new AprilTagData(cameraName, target.getFiducialId(), target.getYaw(), target.getPitch(), target.getSkew(), target.getArea(), this.getDistanceTarget(), this.camToRobot, this.getRobotPose(), this.getNumberOfTargetsDetected());
+                this.aprilData = new AprilTagData(cameraName, target.getFiducialId(), target.getYaw(), target.getPitch(), target.getSkew(), target.getArea(), this.getDistanceTarget(target), this.camToRobot, this.getNumberOfTargetsDetected());
             }
         }
     }
 
     @Override
     public Optional<Pose3d> getRobotPose(){
-        PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camToRobot);//Utilizar a MESMA maneira que a photonvision usa aqui https://docs.photonvision.org/en/latest/docs/programming/photonlib/robot-pose-estimator.html#using-a-photonposeestimator
+        PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camToRobot);
         var robotPose = poseEstimator.update(getLatestResult());
         if(robotPose.isPresent()){
             return Optional.of(robotPose.get().estimatedPose);
@@ -119,10 +108,10 @@ public class PhotonCameras implements ICameraOdometry, ICameraObject{
         this.objectName = objectName;
     }
 
-    public void setObjectPose(double maxTy, double maxTx){
+    private void setObjectPose(double maxTy, double maxTx){
         this.setObjectData();
         this.objectDetectionCamera = new ObjectDetectionCamera(this.camToRobot, maxTy, maxTx);
-        this.objectPose = new ObjectPoseEstimationRobotOriented(this.objectDetection, this.objectDetectionCamera, cameraMountAngleDEG, cameraLensHeightMeters);
+        this.objectPose = new ObjectPoseEstimationRobotOriented(this.objectDetection, this.objectDetectionCamera);
     }
 
     private void setObjectData(){
@@ -130,7 +119,7 @@ public class PhotonCameras implements ICameraOdometry, ICameraObject{
         if(result.hasTargets()){
             for (PhotonTrackedTarget target : result.getTargets()){
                 this.objectDetection = new ObjectDetection(target.getYaw(), target.getPitch(), (this.objectName != null ? this.objectName : "object"));
-                this.objectData = new ObjectData(this.cameraName, objectDetection, this.getDistanceTarget(), target.getBestCameraToTarget(), camToRobot, null);
+                this.objectData = new ObjectData(this.cameraName, objectDetection, this.getDistanceTarget(target), target.getBestCameraToTarget(), camToRobot, null);
             }
         }
     }
