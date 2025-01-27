@@ -2,34 +2,30 @@ package frc.Java_Is_UnderControl.Vision.Cameras.Data;
 
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
-import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomTransform3dLogger;
 import frc.Java_Is_UnderControl.Vision.Object_Detection.ObjectDetection;
 
 public class ObjectData {
 
     private String cameraName;
+    private String objectName;
     private ObjectDetection objectDetection;
     private double distanceToObject;
     private Transform3d camToRobot;
-    private Transform3d bestCameraToObject;
 
-    ObjectData objectData;
-    CustomDoubleLogger pitchLog;
-    CustomDoubleLogger yawLog;
-    CustomDoubleLogger skewLog;
-    CustomDoubleLogger areaLog;
-    CustomDoubleLogger distanceToAprilLog;
-    CustomPose3dLogger aprilPoseLog;
+    private CustomDoubleLogger yawLog;
+    private CustomDoubleLogger pitchLog;
+    private CustomDoubleLogger distanceToObjectLog;
+    private CustomTransform3dLogger camToRobotLog;
 
     public ObjectData(String cameraName,
-        ObjectDetection objectDetection,
-        double distanceToObject,
-        Transform3d bestCameraToobject,
-        Transform3d camToRobot){
+    String objectName,
+    ObjectDetection objectDetection,
+    double distanceToObject,
+    Transform3d camToRobot){
         
         this.objectDetection = objectDetection;
-        this.distanceToObject = distanceToObject;
-        this.bestCameraToObject = bestCameraToobject;
+        
         this.camToRobot = camToRobot;
     }
 
@@ -61,26 +57,28 @@ public class ObjectData {
         }
     }
 
-    public Transform3d getBestCameraToTarget() {
-        return this.bestCameraToObject;
-    }
-
     private void setLogs(){
-        this.pitchLog = new CustomDoubleLogger("/Vision/" + this.objectData.getCameraName() + "/" + (this.hasTargets() ? "/pitch" : "No Objects Seen"));
-        this.yawLog = new CustomDoubleLogger("/Vision/" + this.objectData.getCameraName() + "/" + (this.hasTargets() ? "/yaw" : "No Objects Seen"));
-        this.distanceToAprilLog = new CustomDoubleLogger("/Vision/" + objectData.getCameraName() + "/" + (this.hasTargets() ? "/distanceToApril" : "No Objects Seen"));
+        this.pitchLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? "pitch" + this.objectName  : "No " + this.objectName + " Objects Seen"));
+        this.yawLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? "yaw" + this.objectName  : "No " + this.objectName + " Objects Seen"));
+        this.distanceToObjectLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? "distanceTo" + this.objectName  : "No " + this.objectName + " Objects Seen"));
+        this.camToRobotLog = new CustomTransform3dLogger("/Vision/" + this.cameraName + "/" + "cameraPosition");
     }
 
     public void updateLogs(){
         if(this.hasTargets()){
             this.setLogs();
-            this.pitchLog.append(this.objectData.getPitch());
-            this.yawLog.append(this.objectData.getYaw());
-            this.distanceToAprilLog.append(this.objectData.getDistanceTarget());
+            this.pitchLog.append(this.getPitch());
+            this.yawLog.append(this.getYaw());
+            this.distanceToObjectLog.append(this.distanceToObject);
+            this.camToRobotLog.appendDegrees(this.camToRobot);
         }
     }
 
     public boolean hasTargets(){
-        return this.objectData.hasTargets();
+        if(this.getPitch() == Double.NaN && this.getYaw() == Double.NaN){
+            return false;
+        } else {
+            return true;
+        }
     }
 }

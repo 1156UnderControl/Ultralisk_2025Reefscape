@@ -9,5 +9,5 @@ public interface ICameraObject {
 
     public void updateLogsObject();
 
-    public Pose2d getObjectPose(String objectName, double maxTy, double maxTx, Pose2d robotPose);
+    public Pose2d getObjectPose();
 }

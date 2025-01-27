@@ -3,8 +3,8 @@ package frc.Java_Is_UnderControl.Vision.Cameras.Types.Interfaces;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilTagData;
+import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 
 public interface ICameraOdometry {
 
@@ -12,5 +12,5 @@ public interface ICameraOdometry {
 
     public void updateLogsAprilTag();
 
-    public Optional<Pose3d> getRobotPose();
+    public Optional<PoseEstimation> getRobotPose();
 }

@@ -1,4 +1,4 @@
-package frc.Java_Is_UnderControl.Vision.ObjectDetection;
+package frc.Java_Is_UnderControl.Vision.Object_Detection;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -35,12 +35,9 @@ public class ObjectPoseEstimationRobotOriented {
 
   double angleObjectInMaxTx;
 
-  public ObjectPoseEstimationRobotOriented(ObjectDetection object, ObjectDetectionCamera camera,
-      double angleObjectInMaxTy, double angleObjectInMaxTx) {
+  public ObjectPoseEstimationRobotOriented(ObjectDetection object, ObjectDetectionCamera camera) {
     this.object = object;
     this.camera = camera;
-    this.angleObjectInMaxTy = angleObjectInMaxTy;
-    this.angleObjectInMaxTx = angleObjectInMaxTx;
     setupLogs();
   }
 

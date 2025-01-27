@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomTransform3dLogger;
 
 public class AprilTagData {
 
@@ -19,13 +20,13 @@ public class AprilTagData {
     private AprilTagFieldLayout aprilTagFieldLayout;
     private Transform3d bestCameraToApril;
 
-    AprilTagData aprilData;
-    CustomDoubleLogger pitchLog;
-    CustomDoubleLogger yawLog;
-    CustomDoubleLogger areaLog;
-    CustomDoubleLogger distanceToAprilLog;
-    CustomPose3dLogger aprilPoseLog;
-    int numberOfTargetsUsed;
+    private CustomDoubleLogger pitchLog;
+    private CustomDoubleLogger yawLog;
+    private CustomDoubleLogger areaLog;
+    private CustomDoubleLogger distanceToAprilLog;
+    private CustomPose3dLogger aprilPoseLog;
+    private CustomTransform3dLogger camToRobotLog;
+    private int numberOfTargetsUsed;
 
     public AprilTagData(String cameraName,
             int aprilID,
@@ -77,7 +78,7 @@ public class AprilTagData {
         return this.numberOfTargetsUsed;
     }
 
-    public boolean hasAprilTags() {
+    public boolean hasTargets() {
         if (this.getYaw() == 0 &&
                 this.getPitch() == 0 &&
                 this.getArea() == 0) {
@@ -97,25 +98,23 @@ public class AprilTagData {
     }
 
     private void setLogs(){
-        this.pitchLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/pitch" : "No_Tags_Seen"));
-        this.yawLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/yaw" : "No_Tags_Seen"));
-        this.areaLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/area" : "No_Tags_Seen"));
-        this.distanceToAprilLog = new CustomDoubleLogger("/Vision/" + aprilData.getCameraName() + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/distanceToApril" : "No_Tags_Seen"));
-        this.aprilPoseLog = new CustomPose3dLogger("/Vision/" + aprilData.getCameraName() + "/" + (this.hasTargets() ? this.aprilData.getAprilID() + "/aprilPose" : "No_Tags_Seen"));
+        this.pitchLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/pitch" : "No_Tags_Seen"));
+        this.yawLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/yaw" : "No_Tags_Seen"));
+        this.areaLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/area" : "No_Tags_Seen"));
+        this.distanceToAprilLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/distanceToApril" : "No_Tags_Seen"));
+        this.aprilPoseLog = new CustomPose3dLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/aprilPose" : "No_Tags_Seen"));
+        this.camToRobotLog = new CustomTransform3dLogger("/Vision/" + this.cameraName + "/" + "cameraPosition");
     }
 
     public void updateLogs(){
         if(this.hasTargets()){
             this.setLogs();
-            this.pitchLog.append(this.aprilData.getPitch());
-            this.yawLog.append(this.aprilData.getYaw());
-            this.areaLog.append(this.aprilData.getArea());
-            this.distanceToAprilLog.append(this.aprilData.getDistanceTarget());
-            this.aprilPoseLog.appendDegrees(this.aprilData.getTargetPose());
+            this.pitchLog.append(this.getPitch());
+            this.yawLog.append(this.getYaw());
+            this.areaLog.append(this.getArea());
+            this.distanceToAprilLog.append(this.getDistanceTarget());
+            this.aprilPoseLog.appendDegrees(this.getTargetPose());
+            this.camToRobotLog.appendDegrees(this.camToRobot);
         }
-    }
-
-    public boolean hasTargets(){
-        return this.aprilData.hasTargets();
     }
 }

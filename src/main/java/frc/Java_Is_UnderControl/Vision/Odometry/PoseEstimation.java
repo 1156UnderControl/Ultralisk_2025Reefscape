@@ -25,7 +25,8 @@ public class PoseEstimation {
   public PoseEstimation(
       Pose3d estimatedPose,
       double timestampSeconds,
-      int numberOfTargetsUsed, double distanceToTag) {
+      int numberOfTargetsUsed,
+      double distanceToTag) {
     this.estimatedPose = estimatedPose;
     this.timestampSeconds = timestampSeconds;
     this.numberOfTargetsUsed = numberOfTargetsUsed;

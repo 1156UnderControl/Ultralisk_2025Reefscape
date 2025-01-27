@@ -5,17 +5,17 @@ import org.photonvision.PhotonUtils;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
-import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilData;
+import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilTagData;
 
 public class PoseEstimation {
 
     private AprilTagFieldLayout aprilTagFieldLayout;
-    private AprilData targetData;
-    private AprilData bestTargetData;
+    private AprilTagData targetData;
+    private AprilTagData bestTargetData;
     private int bestAprilTagID;
     private Pose3d robotPose;
 
-    public PoseEstimation(AprilData targetData){
+    public PoseEstimation(AprilTagData targetData){
         try {
             this.aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
         } catch (Exception e) {
@@ -39,7 +39,7 @@ public class PoseEstimation {
     private void selectBestTarget() {
         double closestDistance = Double.MAX_VALUE;
                 int tagID = this.targetData.getAprilID();
-                AprilData data = this.targetData;
+                AprilTagData data = this.targetData;
 
                 if (data.getDistanceTarget() < closestDistance) {
                     closestDistance = data.getDistanceTarget();

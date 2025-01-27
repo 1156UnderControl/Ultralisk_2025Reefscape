@@ -7,17 +7,17 @@ import org.photonvision.PhotonUtils;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
-import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilData;
+import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilTagData;
 
 public class MultiPoseEstimation {
     private AprilTagFieldLayout aprilTagFieldLayout;
-    private Map<String, AprilData> cameraData;
-    private AprilData bestTargetData;
+    private Map<String, AprilTagData> cameraData;
+    private AprilTagData bestTargetData;
     private int bestAprilTagID;
     private Pose3d robotPose;
     private String cameraName;
 
-    public MultiPoseEstimation(Map<String, AprilData> cameraData) {
+    public MultiPoseEstimation(Map<String, AprilTagData> cameraData) {
         try {
             this.aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
         } catch (Exception e) {
@@ -41,10 +41,10 @@ public class MultiPoseEstimation {
     private void selectBestTarget() {
         double closestDistance = Double.MAX_VALUE;
 
-        for (Map.Entry<String, AprilData> entry : cameraData.entrySet()) {
+        for (Map.Entry<String, AprilTagData> entry : cameraData.entrySet()) {
             this.cameraName = entry.getKey();
             int tagID = entry.getValue().getAprilID();
-            AprilData data = entry.getValue();
+            AprilTagData data = entry.getValue();
 
             if (data.getDistanceTarget() < closestDistance) {
                 closestDistance = data.getDistanceTarget();
