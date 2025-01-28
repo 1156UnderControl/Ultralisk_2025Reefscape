@@ -3,7 +3,7 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
-import frc.robot.constants.IntakeConstants;
+import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase implements IIntake {
   private IMotor intakeMotor = new SparkMAXMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;
@@ -15,6 +15,25 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
 
   @Override
   public void intake() {
+
+  private void activateCoralIntake()
+   intakeMotor.set();
+
+  private void activateAlgaeIntake()
+   intakeMotor.set();
+  }
+
+  public void controlIntake(String itemType) {
+    if (itemType.equals("coral")) {
+      activateCoralIntake();
+    } else if (itemType.equals("algae")) {
+      activateAlgaeIntake();
+    }
+    if (isItemCaptured()) {
+      stopIntake();
+    }
+  }
+
   }
 
   @Override
@@ -33,4 +52,3 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
   public boolean isAtSetPoint() {
     return false;
   }
-}
