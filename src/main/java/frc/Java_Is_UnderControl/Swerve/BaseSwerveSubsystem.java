@@ -43,8 +43,8 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Util.CustomMath;
 import frc.Java_Is_UnderControl.Util.Util;
-import frc.robot.generated.TunerConstants;
-import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.subsystems.swerve.generated.TunerConstants;
+import frc.robot.subsystems.swerve.generated.TunerConstants.TunerSwerveDrivetrain;
 
 public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   public double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
