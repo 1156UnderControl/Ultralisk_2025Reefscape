@@ -1,7 +1,14 @@
 package frc.Java_Is_UnderControl.Motors;
 
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
 public interface IMotor {
     final int maximumRetries = 5;
+
+    String getMotorName();
 
     void factoryDefault();
 
@@ -25,11 +32,15 @@ public interface IMotor {
 
     void set(double percentOutput);
 
+    void set(Voltage percentOutput);
+
     void setPositionReference(double position);
 
     void setPositionReferenceMotionProfiling(double position, double velocity, double feedforward);
 
     double getVoltage();
+
+    double getDutyCycleSetpoint();
 
     void setVoltage(double voltage);
 
@@ -55,4 +66,13 @@ public interface IMotor {
 
     void updateLogs();
 
+    void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID);
+
+    void setSysID(Subsystem currentSubsystem);
+
+    void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor);
+
+    Command sysIdQuasistatic(SysIdRoutine.Direction direction);
+
+    Command sysIdDynamic(SysIdRoutine.Direction direction);
 }
