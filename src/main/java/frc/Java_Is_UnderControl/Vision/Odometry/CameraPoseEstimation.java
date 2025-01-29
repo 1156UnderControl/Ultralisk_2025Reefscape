@@ -54,11 +54,6 @@ public class CameraPoseEstimation implements PoseEstimator {
 
   @Override
   public Optional<PoseEstimation> getEstimatedPose(Pose2d referencePose) {
-    if (!aprilTagData.hasTargets()) {
-      isDetectingLogger.append(false);
-      stateOfPoseUpdate.append("NO_TARGETS");
-      return Optional.empty();
-    }
     isDetectingLogger.append(true);
     PoseEstimation poseEstimation = camera.getRobotPose().get();
     if (only2TagsMeasurements && poseEstimation.numberOfTargetsUsed < 2) {

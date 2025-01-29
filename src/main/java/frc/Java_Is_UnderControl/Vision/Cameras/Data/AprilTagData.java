@@ -10,111 +10,104 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomTransform3dLogger;
 
 public class AprilTagData {
 
-    private String cameraName;
-    private int aprilID;
-    private double aprilYaw;
-    private double aprilPitch;
-    private double aprilArea;
-    private double distanceToApril;
-    private Transform3d camToRobot;
-    private AprilTagFieldLayout aprilTagFieldLayout;
-    private Transform3d bestCameraToApril;
+  private String cameraName;
+  private int aprilID;
+  private double aprilYaw;
+  private double aprilPitch;
+  private double aprilArea;
+  private double distanceToApril;
+  private Transform3d camToRobot;
+  private AprilTagFieldLayout aprilTagFieldLayout;
+  private Transform3d bestCameraToApril;
 
-    private CustomDoubleLogger pitchLog;
-    private CustomDoubleLogger yawLog;
-    private CustomDoubleLogger areaLog;
-    private CustomDoubleLogger distanceToAprilLog;
-    private CustomPose3dLogger aprilPoseLog;
-    private CustomTransform3dLogger camToRobotLog;
-    private int numberOfTargetsUsed;
+  private CustomDoubleLogger pitchLog;
+  private CustomDoubleLogger yawLog;
+  private CustomDoubleLogger areaLog;
+  private CustomDoubleLogger distanceToAprilLog;
+  private CustomPose3dLogger aprilPoseLog;
+  private CustomTransform3dLogger camToRobotLog;
+  private int numberOfTargetsUsed;
 
-    public AprilTagData(String cameraName,
-            int aprilID,
-            double aprilYaw,
-            double aprilPitch,
-            double aprilArea,
-            double distanceToApril,
-            Transform3d camToRobot,
-            int numbersOfTargetsUsed) {
+  public AprilTagData(String cameraName,
+      int aprilID,
+      double aprilYaw,
+      double aprilPitch,
+      double aprilArea,
+      double distanceToApril,
+      Transform3d camToRobot,
+      int numbersOfTargetsUsed) {
 
-        this.aprilID = aprilID;
-        this.aprilYaw = aprilYaw;
-        this.aprilPitch = aprilPitch;
-        this.aprilArea = aprilArea;
-        this.distanceToApril = distanceToApril;
-        this.camToRobot = camToRobot;
-        this.aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
-    }
+    this.aprilID = aprilID;
+    this.aprilYaw = aprilYaw;
+    this.aprilPitch = aprilPitch;
+    this.aprilArea = aprilArea;
+    this.distanceToApril = distanceToApril;
+    this.camToRobot = camToRobot;
+    this.aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
+    this.setLogs();
+  }
 
-    public int getAprilID() {
-        return this.aprilID;
-    }
+  public int getAprilID() {
+    return this.aprilID;
+  }
 
-    public String getCameraName() {
-        return this.cameraName;
-    }
+  public String getCameraName() {
+    return this.cameraName;
+  }
 
-    public double getPitch() {
-        return this.aprilPitch;
-    }
+  public double getPitch() {
+    return this.aprilPitch;
+  }
 
-    public double getYaw() {
-        return this.aprilYaw;
-    }
+  public double getYaw() {
+    return this.aprilYaw;
+  }
 
-    public double getArea() {
-        return this.aprilArea;
-    }
+  public double getArea() {
+    return this.aprilArea;
+  }
 
-    public double getDistanceTarget() {
-        return this.distanceToApril;
-    }
+  public double getDistanceTarget() {
+    return this.distanceToApril;
+  }
 
-    public Transform3d getCameraPosition() {
-        return this.camToRobot;
-    }
+  public Transform3d getCameraPosition() {
+    return this.camToRobot;
+  }
 
-    public int getNumberOfTargetsUsed(){
-        return this.numberOfTargetsUsed;
-    }
+  public int getNumberOfTargetsUsed() {
+    return this.numberOfTargetsUsed;
+  }
 
-    public boolean hasTargets() {
-        if (this.getYaw() == 0 &&
-                this.getPitch() == 0 &&
-                this.getArea() == 0) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+  public Pose3d getTargetPose() {
+    return this.aprilTagFieldLayout.getTagPose(this.aprilID)
+        .orElseThrow(() -> new IllegalAccessError("Pose Not Found"));
+  }
 
-    public Pose3d getTargetPose() {
-        return this.aprilTagFieldLayout.getTagPose(this.aprilID)
-                .orElseThrow(() -> new IllegalAccessError("Pose Not Found"));
-    }
+  public Transform3d getBestCameraToTarget() {
+    return this.bestCameraToApril;
+  }
 
-    public Transform3d getBestCameraToTarget() {
-        return this.bestCameraToApril;
-    }
+  private void setLogs() {
+    this.pitchLog = new CustomDoubleLogger(
+        "/Vision/" + this.cameraName + "/" + this.aprilID + "/pitch");
+    this.yawLog = new CustomDoubleLogger(
+        "/Vision/" + this.cameraName + "/" + this.aprilID + "/yaw");
+    this.areaLog = new CustomDoubleLogger(
+        "/Vision/" + this.cameraName + "/" + this.aprilID + "/area");
+    this.distanceToAprilLog = new CustomDoubleLogger(
+        "/Vision/" + this.cameraName + "/" + this.aprilID + "/distanceToApril");
+    this.aprilPoseLog = new CustomPose3dLogger(
+        "/Vision/" + this.cameraName + "/" + this.aprilID + "/aprilPose");
+    this.camToRobotLog = new CustomTransform3dLogger("/Vision/" + this.cameraName + "/" + "cameraPosition");
+  }
 
-    private void setLogs(){
-        this.pitchLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/pitch" : "No_Tags_Seen"));
-        this.yawLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/yaw" : "No_Tags_Seen"));
-        this.areaLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/area" : "No_Tags_Seen"));
-        this.distanceToAprilLog = new CustomDoubleLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/distanceToApril" : "No_Tags_Seen"));
-        this.aprilPoseLog = new CustomPose3dLogger("/Vision/" + this.cameraName + "/" + (this.hasTargets() ? this.aprilID + "/aprilPose" : "No_Tags_Seen"));
-        this.camToRobotLog = new CustomTransform3dLogger("/Vision/" + this.cameraName + "/" + "cameraPosition");
-    }
-
-    public void updateLogs(){
-        if(this.hasTargets()){
-            this.setLogs();
-            this.pitchLog.append(this.getPitch());
-            this.yawLog.append(this.getYaw());
-            this.areaLog.append(this.getArea());
-            this.distanceToAprilLog.append(this.getDistanceTarget());
-            this.aprilPoseLog.appendDegrees(this.getTargetPose());
-            this.camToRobotLog.appendDegrees(this.camToRobot);
-        }
-    }
+  public void updateLogs() {
+    this.pitchLog.append(this.getPitch());
+    this.yawLog.append(this.getYaw());
+    this.areaLog.append(this.getArea());
+    this.distanceToAprilLog.append(this.getDistanceTarget());
+    this.aprilPoseLog.appendDegrees(this.getTargetPose());
+    this.camToRobotLog.appendDegrees(this.camToRobot);
+  }
 }

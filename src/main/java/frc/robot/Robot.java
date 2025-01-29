@@ -4,11 +4,14 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.commands.PathfindingCommand;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilTagData;
 import frc.robot.cameras.Arducam;
 import frc.robot.cameras.LimeLight3G;
 
@@ -32,8 +35,15 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    arducam.getAprilTagData().updateLogs();
-    limeLight3G.getAprilTagData().updateLogs();
+    Optional<AprilTagData> aprilTagDataArducam = arducam.getAprilTagData();
+    Optional<AprilTagData> aprilTagDataLimeLight = limeLight3G.getAprilTagData();
+
+    if (!aprilTagDataArducam.isEmpty()) {
+      arducam.getAprilTagData().get().updateLogs();
+    }
+    if (!aprilTagDataLimeLight.isEmpty()) {
+      limeLight3G.getAprilTagData().get().updateLogs();
+    }
   }
 
   @Override
