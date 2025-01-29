@@ -14,12 +14,26 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
       "CLIMBER_ARM");
 
   public ClimberSubsystem() {
+    climberArmMotor.setMotorBrake(true);
+    climberArmMotor.configureMotionProfiling(
+        ClimberConstants.tunning_values_climber.PID.P,
+        ClimberConstants.tunning_values_climber.PID.I,
+        ClimberConstants.tunning_values_climber.PID.D,
+        ClimberConstants.tunning_values_climber.KS,
+        ClimberConstants.tunning_values_climber.KV,
+        ClimberConstants.tunning_values_climber.KA,
+        ClimberConstants.tunning_values_climber.MAX_VELOCITY,
+        ClimberConstants.tunning_values_climber.MAX_ACCELERATION,
+        ClimberConstants.tunning_values_climber.JERK);
+    cageIntakeMotor.burnFlash();
   }
 
-  public void climb () {
+  public void climb() {
+
+  }
 
   private void activateRollers(double speed) {
-    rollersMotor.set(speed);
+    cageIntakeMotor.set(speed);
   }
 
   private void moveArmsToPosition(double position) {
@@ -27,11 +41,9 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
   }
 
   private void stopAll() {
-    rollersMotor.stopMotor();
-    ArmMotor.stopMotor();
+    cageIntakeMotor.setMotorBrake(true);
+    climberArmMotor.setMotorBrake(true);
   }
-
-  climberArmMotor.setMotorBrake(true);climberArmMotor.configureMotionProfiling(ClimberConstants.tunning_values_climber.PID.P,ClimberConstants.tunning_values_climber.PID.I,ClimberConstants.tunning_values_climber.PID.D,ClimberConstants.tunning_values_climber.KS,ClimberConstants.tunning_values_climber.KV,ClimberConstants.tunning_values_climber.KA,ClimberConstants.tunning_values_climber.MAX_VELOCITY,ClimberConstants.tunning_values_climber.MAX_ACCELERATION,ClimberConstants.tunning_values_climber.JERK);cageIntakeMotor.burnFlash();
 
   }
 
