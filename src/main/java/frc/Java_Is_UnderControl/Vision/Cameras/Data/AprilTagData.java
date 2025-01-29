@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomTransform3dLogger;
 
@@ -26,7 +27,7 @@ public class AprilTagData {
   private CustomDoubleLogger distanceToAprilLog;
   private CustomPose3dLogger aprilPoseLog;
   private CustomTransform3dLogger camToRobotLog;
-  private int numberOfTargetsUsed;
+  private CustomIntegerLogger aprilIDLog;
 
   public AprilTagData(String cameraName,
       int aprilID,
@@ -34,8 +35,7 @@ public class AprilTagData {
       double aprilPitch,
       double aprilArea,
       double distanceToApril,
-      Transform3d camToRobot,
-      int numbersOfTargetsUsed) {
+      Transform3d camToRobot) {
 
     this.aprilID = aprilID;
     this.aprilYaw = aprilYaw;
@@ -75,10 +75,6 @@ public class AprilTagData {
     return this.camToRobot;
   }
 
-  public int getNumberOfTargetsUsed() {
-    return this.numberOfTargetsUsed;
-  }
-
   public Pose3d getTargetPose() {
     return this.aprilTagFieldLayout.getTagPose(this.aprilID)
         .orElseThrow(() -> new IllegalAccessError("Pose Not Found"));
@@ -86,6 +82,26 @@ public class AprilTagData {
 
   public Transform3d getBestCameraToTarget() {
     return this.bestCameraToApril;
+  }
+
+  public void setPitch(double pitch) {
+    this.aprilPitch = pitch;
+  }
+
+  public void setYaw(double yaw) {
+    this.aprilYaw = yaw;
+  }
+
+  public void setArea(double area) {
+    this.aprilArea = area;
+  }
+
+  public void setDistanceTarget(double distanceToApril) {
+    this.distanceToApril = distanceToApril;
+  }
+
+  public void setBestCameraToTarget(Transform3d bestcameraToTarget) {
+    this.bestCameraToApril = bestcameraToTarget;
   }
 
   private void setLogs() {
@@ -99,7 +115,10 @@ public class AprilTagData {
         "/Vision/" + this.cameraName + "/" + this.aprilID + "/distanceToApril");
     this.aprilPoseLog = new CustomPose3dLogger(
         "/Vision/" + this.cameraName + "/" + this.aprilID + "/aprilPose");
-    this.camToRobotLog = new CustomTransform3dLogger("/Vision/" + this.cameraName + "/" + "cameraPosition");
+    this.camToRobotLog = new CustomTransform3dLogger("/Vision/" + this.cameraName
+        + "/" + "cameraPosition");
+    this.aprilIDLog = new CustomIntegerLogger("/Vision/" + this.cameraName + "/"
+        + this.aprilID);
   }
 
   public void updateLogs() {

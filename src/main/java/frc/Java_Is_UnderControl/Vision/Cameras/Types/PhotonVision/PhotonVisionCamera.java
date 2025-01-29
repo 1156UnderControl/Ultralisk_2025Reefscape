@@ -45,9 +45,12 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject {
   private ObjectPoseEstimationRobotOriented objectPose;
   private AprilTagFieldLayout aprilTagFieldLayout;
 
+  private boolean firstTime = true;
+
   public PhotonVisionCamera(String cameraName, String objectName, double maxTx, double maxTy, Pose2d robotPose,
       Translation3d translation, Rotation3d rotation) {
     this.camera = new PhotonCamera(cameraName);
+    this.cameraName = cameraName;
     this.objectName = objectName;
     this.maxTx = maxTx;
     this.maxTy = maxTy;
@@ -79,28 +82,37 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject {
       PhotonTrackedTarget target = photonTrackedTarget;
       distance = PhotonUtils.calculateDistanceToTargetMeters(this.camToRobot.getY(),
           aprilTagFieldLayout.getTagPose(target.getFiducialId()).get().getZ(),
-          Units.degreesToRadians(this.camToRobot.getX()), Units.degreesToRadians(target.getPitch()));
+          Units.degreesToRadians(this.camToRobot.getX()),
+          Units.degreesToRadians(target.getPitch()));
+      return distance;
+    } else {
       return distance;
     }
-    return distance;
   }
 
   @Override
   public Optional<AprilTagData> getAprilTagData() {
     var result = camera.getLatestResult();
-    double[] aprilIds = new double[this.aprilTagFieldLayout.getTags().size()];
+    double[] aprilComparator = new double[this.aprilTagFieldLayout.getTags().size()];
+    AprilTagData[] aprilTagInstances = new AprilTagData[this.aprilTagFieldLayout.getTags().size()];
     if (result.hasTargets()) {
       for (PhotonTrackedTarget target : result.getTargets()) {
-        AprilTagData aprilTagData;
 
-        if (Double.isNaN(aprilIds[target.getFiducialId()])
-            && (((aprilIds[target.getFiducialId()] - (target.getPitch() + target.getYaw() + target.getArea())) > 0.001)
-                || (aprilIds[target.getFiducialId()]
-                    - (target.getPitch() + target.getYaw() + target.getArea())) < -0.001)) {
-          aprilTagData = new AprilTagData(cameraName, target.getFiducialId(), target.getYaw(), target.getPitch(),
-              target.getArea(), this.getDistanceAprilTag(target), this.camToRobot, this.getNumberOfTargetsDetected());
-          aprilIds[aprilTagData.getAprilID()] = aprilTagData.getPitch() + aprilTagData.getYaw()
-              + aprilTagData.getArea();
+        boolean canCreateAprilData = !Double.isNaN(aprilComparator[target.getFiducialId()])
+            && (this.firstTime == true || (((aprilComparator[target.getFiducialId()]
+                - (target.getPitch() + target.getYaw() + target.getArea())) > 0.001)
+                || (aprilComparator[target.getFiducialId()]
+                    - (target.getPitch() + target.getYaw() + target.getArea())) < -0.001));
+
+        if (canCreateAprilData && aprilTagInstances[target.getFiducialId()] == null) {
+          this.firstTime = false;
+          AprilTagData aprilTagData = new AprilTagData(cameraName, target.getFiducialId(),
+              target.getYaw(), target.getPitch(),
+              target.getArea(), this.getDistanceAprilTag(target), this.camToRobot);
+          aprilComparator[aprilTagInstances[target.getFiducialId()]
+              .getAprilID()] = aprilTagInstances[target.getFiducialId()].getPitch()
+                  + aprilTagInstances[target.getFiducialId()].getYaw()
+                  + aprilTagInstances[target.getFiducialId()].getArea();
           return Optional.of(aprilTagData);
         } else {
           return Optional.empty();
