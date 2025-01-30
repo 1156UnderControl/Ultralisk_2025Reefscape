@@ -1,4 +1,4 @@
-package frc.robot.Joysticks;
+package frc.robot.joysticks;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.Java_Is_UnderControl.Util.Util;
-import frc.robot.Constants.JoystickConstants;
+import frc.robot.constants.JoystickConstants;
 
 public class DriverController implements IDriverController {
 
@@ -74,22 +74,22 @@ public class DriverController implements IDriverController {
   }
 
   @Override
-  public Trigger setHeadingBack() {
+  public Trigger a() {
     return driverController.a();
   }
 
   @Override
-  public Trigger setHeadingFront() {
+  public Trigger y() {
     return driverController.y();
   }
 
   @Override
-  public Trigger setHeadingLeft() {
+  public Trigger x() {
     return driverController.x();
   }
 
   @Override
-  public Trigger setHeadingRight() {
+  public Trigger b() {
     return driverController.b();
   }
 

@@ -3,9 +3,10 @@ package frc.Java_Is_UnderControl.Logging.EnhancedLoggers;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.Pose2dLogEntry;
 
 public class CustomPose2dLogger extends Pose2dLogEntry {
@@ -31,11 +32,9 @@ public class CustomPose2dLogger extends Pose2dLogEntry {
       this.loggedValue = pose;
       super.appendRadians(pose);
       if (!CustomPose2dLogger.isFmsMatch) {
-        double[] data = new double[3];
-        data[0] = pose.getTranslation().getX();
-        data[1] = pose.getTranslation().getY();
-        data[2] = pose.getRotation().getRadians();
-        SmartDashboard.putNumberArray(this.name, data);
+        StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+            .getStructTopic(name, Pose2d.struct).publish();
+        publisher.set(pose);
       }
     }
   }
@@ -44,11 +43,9 @@ public class CustomPose2dLogger extends Pose2dLogEntry {
   public void appendDegrees(Pose2d pose) {
     super.appendDegrees(pose);
     if (CustomPose2dLogger.isFmsMatch) {
-      double[] data = new double[3];
-      data[0] = pose.getTranslation().getX();
-      data[1] = pose.getTranslation().getY();
-      data[2] = pose.getRotation().getDegrees();
-      SmartDashboard.putNumberArray(this.name, data);
+      StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
+          .getStructTopic(name, Pose2d.struct).publish();
+      publisher.set(pose);
     }
   }
 
