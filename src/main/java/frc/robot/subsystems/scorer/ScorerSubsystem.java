@@ -1,5 +1,8 @@
 package frc.robot.subsystems.scorer;
 
+import frc.robot.constants.Coral;
+import frc.robot.constants.Status;
+import frc.robot.constants.Coral;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
@@ -20,14 +23,26 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
     setConfigsElevator();
   }
 
+  private class coral {
+    public static Status is = new Status();
+  }
+
+  private class Status {
+    public boolean collected;
+
+ public void collected(boolean b) {
+ throw new UnsupportedOperationException("Unimplemented method 'collected'");}throw new UnsupportedOperationException("Unimplemented method 'collected'");
+  }}
+
+  int Previousvelocity;
+
   private void setConfigsElevator() {
     elevatorMotorLeader.setMotorBrake(true);
     elevatorMotorFollower.setMotorBrake(true);
     elevatorMotorLeader.setLoopRampRate(0.5);
     elevatorMotorFollower.setLoopRampRate(0.5);
     elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor, true);
-    elevatorMotorLeader
-        .setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROT_TO_METERS);
+    elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROT_TO_METERS);
     elevatorMotorLeader.configureMotionProfiling(
         ElevatorConstants.tunning_values_elevator.PID.P,
         ElevatorConstants.tunning_values_elevator.PID.I,
@@ -42,11 +57,16 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   @Override
   public boolean hasCoral() {
-    return false;
+    if (endEffectorMotor.getVelocity() < Previousvelocity - 50) {
+      coral.is.collected(true);
+    } else {
+      coral.is.collected(false);
+    }
   }
 
   @Override
   public void intake() {
+
   }
 
   @Override
@@ -95,4 +115,3 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   public boolean isAtSetPoint() {
     return false;
   }
-}

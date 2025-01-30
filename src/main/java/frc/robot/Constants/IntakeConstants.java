@@ -14,4 +14,6 @@ public class IntakeConstants {
       public static final double SPEED_EXPELL = 0;
     }
   }
+
+  public static Object setpoints;
 }
