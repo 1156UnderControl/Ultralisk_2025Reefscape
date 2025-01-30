@@ -1,14 +1,11 @@
 package frc.robot.subsystems.scorer;
 
-import frc.robot.constants.Coral;
-import frc.robot.constants.Status;
-import frc.robot.constants.Coral;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
-import frc.robot.constants.ElevatorConstants;
-import frc.robot.constants.ScorerConstants;
+import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.ScorerConstants;
 
 public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
@@ -18,21 +15,11 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   private final IMotor pivotMotor = new SparkMAXMotor(ScorerConstants.ID_pivotMotor, true, "PIVOT");
   private final IMotor endEffectorMotor = new SparkMAXMotor(ScorerConstants.ID_endEffectorMotor, "END_EFFECTOR");
+  private boolean hascollected = false;
 
   public ScorerSubsystem() {
     setConfigsElevator();
   }
-
-  private class coral {
-    public static Status is = new Status();
-  }
-
-  private class Status {
-    public boolean collected;
-
- public void collected(boolean b) {
- throw new UnsupportedOperationException("Unimplemented method 'collected'");}throw new UnsupportedOperationException("Unimplemented method 'collected'");
-  }}
 
   int Previousvelocity;
 
@@ -52,15 +39,17 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
         ElevatorConstants.tunning_values_elevator.MAX_ACCELERATION,
         ElevatorConstants.tunning_values_elevator.POSITION_ERROR_ALLOWED);
     elevatorMotorFollower.burnFlash();
-    elevatorMotorLeader.burnFlash();
   }
 
   @Override
-  public boolean hasCoral() {
+  public void periodic() {
+  }
+
+  public void detectthecollect() {
     if (endEffectorMotor.getVelocity() < Previousvelocity - 50) {
-      coral.is.collected(true);
+      hascollected = true;
     } else {
-      coral.is.collected(false);
+      hascollected = false;
     }
   }
 
@@ -115,3 +104,4 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   public boolean isAtSetPoint() {
     return false;
   }
+}

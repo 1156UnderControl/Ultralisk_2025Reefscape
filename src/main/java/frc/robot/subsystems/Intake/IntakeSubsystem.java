@@ -28,6 +28,13 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
 
   public boolean isCoralDetected() {
     return !infraredSensor.get();
+
+  }
+
+  private void detectthecollect() {
+    if (infraredSensor.get()) {
+      this.isCoralDetected = true;
+    }
   }
 
   private void stopIntake() {
