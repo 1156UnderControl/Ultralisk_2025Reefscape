@@ -1,4 +1,4 @@
-package frc.robot.Joysticks;
+package frc.robot.joysticks;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -52,23 +52,23 @@ public class ControlBoard implements IDriverController, IOperatorController {
   }
 
   @Override
-  public Trigger setHeadingBack() {
-    return mDriverController.setHeadingBack();
+  public Trigger a() {
+    return mDriverController.a();
   }
 
   @Override
-  public Trigger setHeadingFront() {
-    return mDriverController.setHeadingFront();
+  public Trigger y() {
+    return mDriverController.y();
   }
 
   @Override
-  public Trigger setHeadingLeft() {
-    return mDriverController.setHeadingLeft();
+  public Trigger x() {
+    return mDriverController.x();
   }
 
   @Override
-  public Trigger setHeadingRight() {
-    return mDriverController.setHeadingRight();
+  public Trigger b() {
+    return mDriverController.b();
   }
 
   @Override

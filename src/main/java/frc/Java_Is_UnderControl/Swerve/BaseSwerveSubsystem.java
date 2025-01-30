@@ -1,5 +1,6 @@
 package frc.Java_Is_UnderControl.Swerve;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -49,6 +50,9 @@ import frc.robot.subsystems.swerve.generated.TunerConstants.TunerSwerveDrivetrai
 public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   public double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
   protected double MaxAngularRate;
+  protected final double driveBaseRadius = Math
+      .hypot(TunerConstants.FrontLeft.LocationX + TunerConstants.FrontRight.LocationX / 2,
+          TunerConstants.FrontLeft.LocationY + TunerConstants.BackLeft.LocationY / 2);
 
   private static final double kSimLoopPeriod = 0.005; // 5 ms
   private Notifier m_simNotifier = null;
@@ -61,7 +65,8 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
 
-  private final SwerveRequest.ApplyRobotSpeeds applyRobotCentricSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+  private final SwerveRequest.ApplyRobotSpeeds applyRobotCentricSpeeds = new SwerveRequest.ApplyRobotSpeeds()
+      .withDriveRequestType(DriveRequestType.Velocity);
   private final SwervePathPlannerConfig pathPlannerConfig;
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -163,7 +168,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
           this));
 
   /* The SysId routine to test */
-  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
+  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
 
   protected BaseSwerveSubsystem(BaseSwerveConfig config,
       SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,
@@ -174,7 +179,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
         config.headingPidConfig.kI, config.headingPidConfig.kD);
     applyFieldCentricDrivePointingAtAngle.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     MaxAngularRate = RotationsPerSecond.of(config.maxRotationRate).in(RadiansPerSecond); // fraction of a rotation per
-                                                                                         // second
+    // second
     pathPlannerConfig = config.pathPlannerConfig;
     if (Utils.isSimulation()) {
       startSimThread();
@@ -232,6 +237,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   }
 
   private void configureAutoBuilder() {
+
     try {
       var config = RobotConfig.fromGUISettings();
       // Configure AutoBuilder last
@@ -271,7 +277,6 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
 
   public void resetOdometry(Pose2d initialHolonomicPose) {
     this.resetPose(initialHolonomicPose);
-    ;
   }
 
   public void zeroGyro() {
@@ -334,6 +339,14 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
 
   protected Rotation2d getHeading() {
     return super.getState().RawHeading;
+  }
+
+  protected double[] getWheelRadiusCharacterizationPositions() {
+    double[] values = new double[4];
+    for (int i = 0; i < 4; i++) {
+      values[i] = getState().ModulePositions[i].distanceMeters / TunerConstants.kWheelRadius.in(Meters);
+    }
+    return values;
   }
 
   public Supplier<SwerveRequest> lock() {
@@ -401,7 +414,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     this.targetHeadingDegrees = Double.NaN;
     applyFieldCentricDrive.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
         .withRotationalRate(speeds.omegaRadiansPerSecond);
-    applyRequest(() -> applyFieldCentricDrive);
+    setControl(applyFieldCentricDrive);
   }
 
   protected void driveRobotOriented(ChassisSpeeds speeds) {
@@ -409,7 +422,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     this.targetHeadingDegrees = Double.NaN;
     applyRobotCentricDrive.withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond)
         .withRotationalRate(speeds.omegaRadiansPerSecond);
-    applyRequest(() -> applyFieldCentricDrive);
+    setControl(applyRobotCentricDrive);
   }
 
   protected ChassisSpeeds inputsToChassisSpeeds(double xInput, double yInput, double AngularRate) {
