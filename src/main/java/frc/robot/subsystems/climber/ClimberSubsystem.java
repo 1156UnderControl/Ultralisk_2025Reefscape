@@ -13,6 +13,9 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
   private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor, GravityTypeValue.Arm_Cosine,
       "CLIMBER_ARM");
 
+  private int Previousvelocity = 0;
+  private Cage cage = new Cage();
+
   public ClimberSubsystem() {
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.configureMotionProfiling(
@@ -28,6 +31,14 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
     cageIntakeMotor.burnFlash();
   }
 
+  private class Cage {
+    public Status is = new Status();
+  }
+
+  private class Status {
+    public boolean collected;
+  }
+
   public void climb() {
 
   }
@@ -40,11 +51,6 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
     climberArmMotor.set(position);
   }
 
-  private void stopAll() {
-    cageIntakeMotor.setMotorBrake(true);
-    climberArmMotor.setMotorBrake(true);
-  }
-
   @Override
   public void isAtSetPoint() {
   }
@@ -54,10 +60,18 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
   }
 
   @Override
-  public void stop() {
+  public void release() {
+    if (cageIntakeMotor.getVelocity() < Previousvelocity - 50) {
+      cage.is.collected = true;
+    } else {
+      cage.is.collected = false;
+    }
   }
 
   @Override
-  public void release() {
+  public void stop() {
+    this.cageIntakeMotor.set(0);
+    this.climberArmMotor.set(0);
+
   }
 }

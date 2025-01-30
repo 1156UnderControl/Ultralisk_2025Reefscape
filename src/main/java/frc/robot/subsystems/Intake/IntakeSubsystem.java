@@ -1,10 +1,10 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase implements IIntake {
   private static final int IR = 0;
@@ -20,18 +20,16 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
 
   @Override
   public void intake() {
-    if (infraredSensor.get()) {
-      this.isCoralDetected = true;
-    }
+    runCoralDetection();
     this.intakeMotor.set(0);
   }
 
   public boolean isCoralDetected() {
-    return !infraredSensor.get();
+    return this.isCoralDetected;
 
   }
 
-  private void detectthecollect() {
+  private void runCoralDetection() {
     if (infraredSensor.get()) {
       this.isCoralDetected = true;
     }

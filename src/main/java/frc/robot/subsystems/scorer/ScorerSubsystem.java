@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
-import frc.robot.Constants.ElevatorConstants;
-import frc.robot.Constants.ScorerConstants;
+import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.ScorerConstants;
 
 public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
@@ -15,7 +15,7 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   private final IMotor pivotMotor = new SparkMAXMotor(ScorerConstants.ID_pivotMotor, true, "PIVOT");
   private final IMotor endEffectorMotor = new SparkMAXMotor(ScorerConstants.ID_endEffectorMotor, "END_EFFECTOR");
-  private boolean hascollected = false;
+  private boolean hasCoral = false;
 
   public ScorerSubsystem() {
     setConfigsElevator();
@@ -47,10 +47,15 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   public void detectthecollect() {
     if (endEffectorMotor.getVelocity() < Previousvelocity - 50) {
-      hascollected = true;
+      hasCoral = true;
     } else {
-      hascollected = false;
+      hasCoral = false;
     }
+  }
+
+  @Override
+  public boolean hasCoral() {
+    return hasCoral;
   }
 
   @Override

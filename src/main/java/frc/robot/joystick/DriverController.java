@@ -1,4 +1,4 @@
-package frc.robot.joysticks;
+package frc.robot.joystick;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;

@@ -10,6 +10,6 @@ public interface IIntake {
 
   void goToSecuredPosition();
 
-  boolean isAtSetPoint();
+  boolean isCoralDetected();
 
 }
