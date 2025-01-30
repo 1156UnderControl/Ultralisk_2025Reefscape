@@ -1,9 +1,9 @@
-package frc.robot.subsystems.Intake;
+package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase implements IIntake {
   private IMotor intakeMotor = new SparkMAXMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;

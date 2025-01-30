@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
-import frc.robot.Constants.ClimberConstants;
+import frc.robot.constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase implements IClimber {
   private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
@@ -45,8 +45,6 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
     climberArmMotor.setMotorBrake(true);
   }
 
-  }
-
   @Override
   public void isAtSetPoint() {
   }
@@ -62,3 +60,4 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
   @Override
   public void release() {
   }
+}

@@ -15,11 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-<<<<<<< HEAD
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.generated.TunerConstants;
-=======
->>>>>>> main
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -29,8 +24,6 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   private ControlBoard controller = ControlBoard.getInstance();
-
-  // private final CommandXboxController joystick = new CommandXboxController(0);
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
