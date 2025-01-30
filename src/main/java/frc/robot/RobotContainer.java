@@ -7,23 +7,18 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
 public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
-
-  private ControlBoard controller = ControlBoard.getInstance();
 
   // private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -45,12 +40,6 @@ public class RobotContainer {
   private void configureBindings() {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
-
-    controller.a()
-        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
-    NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
-
-    controller.b().whileTrue(drivetrain.wheelRadiusCharacterization());
 
     // reset the field-centric heading on left bumper press
     // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
