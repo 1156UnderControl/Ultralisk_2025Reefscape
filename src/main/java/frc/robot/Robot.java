@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
-import frc.robot.Constants.FieldConstants.Reef;
-import frc.robot.Constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefHeight;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
