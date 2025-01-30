@@ -9,15 +9,20 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
+=======
+>>>>>>> main
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.swerve.generated.TunerConstants;
 
 public class RobotContainer {
 
@@ -31,10 +36,6 @@ public class RobotContainer {
 
   public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
-
-  public class ElevatorSubsystem {
-
-  }
 
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -50,12 +51,11 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    controller.setHeadingBack().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    controller.setHeadingFront().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    controller.setHeadingRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    controller.setHeadingLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
+    controller.a()
+        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
     NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
+
+    controller.b().whileTrue(drivetrain.wheelRadiusCharacterization());
 
     // reset the field-centric heading on left bumper press
     // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->

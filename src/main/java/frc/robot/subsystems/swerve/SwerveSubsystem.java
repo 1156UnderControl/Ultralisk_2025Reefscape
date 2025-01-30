@@ -5,10 +5,12 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.PIDConstants;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
@@ -17,10 +19,6 @@ import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.robot.joysticks.ControlBoard;
 
-/**
- * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
- * Subsystem so it can easily be used in command-based projects.
- */
 public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements Subsystem {
 
   private ControlBoard controller = ControlBoard.getInstance();
@@ -39,7 +37,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
         new PIDConstants(5, 0, 0)),
         new NoPoseEstimator(),
         new NoPoseEstimator(),
-        new PIDConfig(6, 0, 0),
+        new PIDConfig(7.1, 0, 0.06),
         new PIDConfig(0.5, 0, 0)),
         drivetrainConstants,
         modules);
@@ -61,11 +59,17 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
     this.driveFieldOrientedLockedAngle(desiredSpeeds, new Rotation2d(angleTarget));
   }
 
+  public Command goToPoseWithPathfind(Pose2d pose) {
+    return driveToPoseWithPathfinding(pose);
+  }
+
   @Override
   public void periodic() {
   }
 
   @Override
   protected void updateLogs() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'updateLogs'");
   }
 }

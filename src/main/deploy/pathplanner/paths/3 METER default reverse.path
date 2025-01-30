@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.640969264839,
-        "y": 7.3875457983335
+        "x": 3.0,
+        "y": 0.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.191286701850361,
-        "y": 6.2994052320437355
+        "x": 2.75,
+        "y": 3.061616997868383e-17
       },
       "isLocked": false,
-      "linkedName": "First Collect - 4 Corals Path END"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.159402436541667,
-        "y": 4.205048177219241
+        "x": 0.0,
+        "y": 0.0
       },
       "prevControl": {
-        "x": 2.525479289351196,
-        "y": 5.596237850200827
+        "x": -0.25,
+        "y": 3.061616997868383e-17
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "TEST",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.02737338510359
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
