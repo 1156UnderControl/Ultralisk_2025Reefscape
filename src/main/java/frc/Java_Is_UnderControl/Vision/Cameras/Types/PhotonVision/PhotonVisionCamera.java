@@ -17,7 +17,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilTagData;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomTransform3dLogger;
 import frc.Java_Is_UnderControl.Vision.Cameras.Data.ObjectData;
 import frc.Java_Is_UnderControl.Vision.Cameras.Types.Interfaces.ICameraObject;
 import frc.Java_Is_UnderControl.Vision.Cameras.Types.Interfaces.ICameraOdometry;
@@ -37,15 +39,26 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject {
   private Rotation2d robotRotation;
   private Transform3d camToRobot;
 
-  private AprilTagData aprilData;
-
   private ObjectData objectData;
   private ObjectDetection objectDetection;
   private ObjectDetectionCamera objectDetectionCamera;
   private ObjectPoseEstimationRobotOriented objectPose;
   private AprilTagFieldLayout aprilTagFieldLayout;
 
-  private boolean firstTime = true;
+  private CustomDoubleLogger pitchLog;
+  private CustomDoubleLogger yawLog;
+  private CustomDoubleLogger areaLog;
+  private CustomDoubleLogger distanceToAprilLog;
+  private CustomPose3dLogger aprilPoseLog;
+  private CustomTransform3dLogger camToRobotLog;
+
+  private double pitch = 0;
+
+  private double yaw = 0;
+
+  private double area = 0;
+
+  private double distanceToTarget = 0;
 
   public PhotonVisionCamera(String cameraName, String objectName, double maxTx, double maxTy, Pose2d robotPose,
       Translation3d translation, Rotation3d rotation) {
@@ -91,57 +104,57 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject {
   }
 
   @Override
-  public Optional<AprilTagData> getAprilTagData() {
-    var result = camera.getLatestResult();
-    double[] aprilComparator = new double[this.aprilTagFieldLayout.getTags().size()];
-    AprilTagData[] aprilTagInstances = new AprilTagData[this.aprilTagFieldLayout.getTags().size()];
-    if (result.hasTargets()) {
-      for (PhotonTrackedTarget target : result.getTargets()) {
-
-        boolean canCreateAprilData = !Double.isNaN(aprilComparator[target.getFiducialId()])
-            && (this.firstTime == true || (((aprilComparator[target.getFiducialId()]
-                - (target.getPitch() + target.getYaw() + target.getArea())) > 0.001)
-                || (aprilComparator[target.getFiducialId()]
-                    - (target.getPitch() + target.getYaw() + target.getArea())) < -0.001));
-
-        if (canCreateAprilData && aprilTagInstances[target.getFiducialId()] == null) {
-          this.firstTime = false;
-          AprilTagData aprilTagData = new AprilTagData(cameraName, target.getFiducialId(),
-              target.getYaw(), target.getPitch(),
-              target.getArea(), this.getDistanceAprilTag(target), this.camToRobot);
-          aprilComparator[aprilTagInstances[target.getFiducialId()]
-              .getAprilID()] = aprilTagInstances[target.getFiducialId()].getPitch()
-                  + aprilTagInstances[target.getFiducialId()].getYaw()
-                  + aprilTagInstances[target.getFiducialId()].getArea();
-          return Optional.of(aprilTagData);
-        } else {
-          return Optional.empty();
-        }
-      }
-      return Optional.empty();
-    } else {
-      return Optional.empty();
-    }
-
-  }
-
-  @Override
   public Optional<PoseEstimation> getRobotPose() {
     PhotonPoseEstimator poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout,
         PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camToRobot);
     var robotPose = poseEstimator.update(this.getLatestResult());
     if (robotPose.isPresent()) {
-      return Optional.of(new PoseEstimation(robotPose.get().estimatedPose, robotPose.get().timestampSeconds,
-          robotPose.get().targetsUsed.size(), this.getDistanceAprilTag(this.getLatestResult().getBestTarget())));
+      return Optional.of(new PoseEstimation(robotPose.get().estimatedPose,
+          robotPose.get().timestampSeconds,
+          robotPose.get().targetsUsed.size(),
+          this.getDistanceAprilTag(this.getLatestResult().getBestTarget())));
     } else {
       return Optional.empty();
     }
   }
 
   @Override
+  public void setAprilTagData() {
+    PhotonPipelineResult result = camera.getLatestResult();
+    if (result.hasTargets()) {
+      this.setPitch(result.getBestTarget().getPitch());
+      this.setYaw(result.getBestTarget().getYaw());
+      this.setArea(this.getDistanceAprilTag(result.getBestTarget()));
+      this.setDistanceTarget(this.getDistanceAprilTag(result.getBestTarget()));
+    }
+  }
+
+  private void setPitch(double pitch) {
+    this.pitch = pitch;
+    this.updateLogsAprilTag();
+  }
+
+  private void setYaw(double yaw) {
+    this.yaw = yaw;
+    this.updateLogsAprilTag();
+  }
+
+  private void setArea(double area) {
+    this.area = area;
+    this.updateLogsAprilTag();
+  }
+
+  private void setDistanceTarget(double distanceToTarget) {
+    this.distanceToTarget = distanceToTarget;
+    this.updateLogsAprilTag();
+  }
+
+  @Override
   public void updateLogsAprilTag() {
-    this.getAprilTagData();
-    this.aprilData.updateLogs();
+    this.pitchLog.append(this.pitch);
+    this.yawLog.append(this.yaw);
+    this.areaLog.append(this.area);
+    this.camToRobotLog.appendDegrees(this.camToRobot);
   }
 
   private void setObjectName(String objectName) {
@@ -162,8 +175,10 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject {
     double distance = 0;
     if (result.hasTargets()) {
       PhotonTrackedTarget target = photonTrackedTarget;
-      distance = PhotonUtils.calculateDistanceToTargetMeters(this.camToRobot.getY(), this.getObjectPose().getY(),
-          Units.degreesToRadians(this.camToRobot.getX()), Units.degreesToRadians(target.getPitch()));
+      distance = PhotonUtils.calculateDistanceToTargetMeters(this.camToRobot.getY(),
+          this.getObjectPose().getY(),
+          Units.degreesToRadians(this.camToRobot.getX()),
+          Units.degreesToRadians(target.getPitch()));
       return distance;
     }
     return distance;
@@ -199,7 +214,6 @@ public class PhotonVisionCamera implements ICameraOdometry, ICameraObject {
   @Override
   public void updateLogsObject() {
     this.setObjectData();
-    this.aprilData.updateLogs();
   }
 
   public void setRobotRotation(Rotation2d rotation) {

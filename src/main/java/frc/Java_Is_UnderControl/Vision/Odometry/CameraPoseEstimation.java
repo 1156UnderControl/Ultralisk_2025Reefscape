@@ -10,13 +10,12 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
-import frc.Java_Is_UnderControl.Vision.Cameras.Data.AprilTagData;
 import frc.Java_Is_UnderControl.Vision.Cameras.Types.Interfaces.ICameraOdometry;
 
 public class CameraPoseEstimation implements PoseEstimator {
 
   ICameraOdometry camera;
-  AprilTagData aprilTagData;
+
   Transform3d cameraPosition;
 
   boolean only2TagsMeasurements = false;
@@ -31,25 +30,24 @@ public class CameraPoseEstimation implements PoseEstimator {
 
   PhotonPoseEstimator photonPoseEstimator;
 
-  public CameraPoseEstimation(ICameraOdometry camera, AprilTagData aprilTagData, Transform3d cameraPosition) {
-    this(camera, aprilTagData, cameraPosition, false);
+  public CameraPoseEstimation(ICameraOdometry camera, String cameraName, Transform3d cameraPosition) {
+    this(camera, cameraName, cameraPosition, false);
   }
 
-  public CameraPoseEstimation(ICameraOdometry camera, AprilTagData aprilTagData, Transform3d cameraPosition,
+  public CameraPoseEstimation(ICameraOdometry camera, String cameraName, Transform3d cameraPosition,
       boolean only2TagsMeasurements) {
     this.only2TagsMeasurements = only2TagsMeasurements;
     this.camera = camera;
-    this.aprilTagData = aprilTagData;
     this.cameraPosition = cameraPosition;
 
     this.detectedPoseLogger = new CustomPose2dLogger(
-        "/Vision/PhotonVisionPoseEstimator/" + aprilTagData.getCameraName() + "/DetectedPose");
+        "/Vision/PhotonVisionPoseEstimator/" + cameraName + "/DetectedPose");
     this.numberOfDetectedTagsLogger = new CustomDoubleLogger(
-        "/Vision/PhotonVisionPoseEstimator/" + aprilTagData.getCameraName() + "/NumberOfDetectedTags");
+        "/Vision/PhotonVisionPoseEstimator/" + cameraName + "/NumberOfDetectedTags");
     this.isDetectingLogger = new CustomBooleanLogger(
-        "/Vision/PhotonVisionPoseEstimator/" + aprilTagData.getCameraName() + "/IsDetecting");
+        "/Vision/PhotonVisionPoseEstimator/" + cameraName + "/IsDetecting");
     this.stateOfPoseUpdate = new CustomStringLogger(
-        "/Vision/PhotonVisionPoseEstimator/" + aprilTagData.getCameraName() + "/StateOfPoseUpdate");
+        "/Vision/PhotonVisionPoseEstimator/" + cameraName + "/StateOfPoseUpdate");
   }
 
   @Override
