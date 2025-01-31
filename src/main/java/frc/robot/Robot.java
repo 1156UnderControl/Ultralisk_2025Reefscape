@@ -17,7 +17,7 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  frc.robot.joysticks.KeyboardController keyBoard = new KeyboardController();
+  KeyboardController keyBoard = new KeyboardController();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
