@@ -20,51 +20,51 @@ public class OperatorController implements IOperatorController {
   }
 
   public Trigger goToReefA() {
-    return keyboard.getGTrigger();
+    return keyboard.getATrigger();
   }
 
   public Trigger goToReefB() {
-    return keyboard.getHTrigger();
+    return keyboard.getBTrigger();
   }
 
   public Trigger goToReefC() {
-    return keyboard.getJTrigger();
+    return keyboard.getCTrigger();
   }
 
   public Trigger goToReefD() {
-    return keyboard.getKTrigger();
+    return keyboard.getDTrigger();
   }
 
   public Trigger goToReefE() {
-    return keyboard.getITrigger();
-  }
-
-  public Trigger goToReefF() {
-    return keyboard.getUTrigger();
-  }
-
-  public Trigger goToReefG() {
-    return keyboard.getYTrigger();
-  }
-
-  public Trigger goToReefH() {
-    return keyboard.getTTrigger();
-  }
-
-  public Trigger goToReefI() {
-    return keyboard.getRTrigger();
-  }
-
-  public Trigger goToReefJ() {
     return keyboard.getETrigger();
   }
 
-  public Trigger goToReeK() {
+  public Trigger goToReefF() {
     return keyboard.getFTrigger();
   }
 
-  public Trigger goToReeL() {
-    return keyboard.getDTrigger();
+  public Trigger goToReefG() {
+    return keyboard.getGTrigger();
+  }
+
+  public Trigger goToReefH() {
+    return keyboard.getHTrigger();
+  }
+
+  public Trigger goToReefI() {
+    return keyboard.getITrigger();
+  }
+
+  public Trigger goToReefJ() {
+    return keyboard.getJTrigger();
+  }
+
+  public Trigger goToReefK() {
+    return keyboard.getKTrigger();
+  }
+
+  public Trigger goToReefL() {
+    return keyboard.getLTrigger();
   }
 
   public Trigger reefL1() {
