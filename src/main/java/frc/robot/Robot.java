@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
+import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
 
@@ -36,7 +37,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    Pose3d pose = AllianceFlipUtil.apply(Reef.branchPositions.get(0).get(ReefHeight.L2));
+    Pose3d pose = CoordinatesTransform
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(0).get(ReefHeight.L2)), 1.0);
     logPosesred.appendRadians(pose.transformBy(pose.minus(new Pose3d(1, 1, 0, new Rotation3d()))));
     CommandScheduler.getInstance().run();
   }
