@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -34,7 +36,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    logPosesred.appendRadians(AllianceFlipUtil.apply(Reef.branchPositions.get(0).get(ReefHeight.L2)));
+    Pose3d pose = AllianceFlipUtil.apply(Reef.branchPositions.get(0).get(ReefHeight.L2));
+    logPosesred.appendRadians(pose.transformBy(pose.minus(new Pose3d(1, 1, 0, new Rotation3d()))));
     CommandScheduler.getInstance().run();
   }
 
