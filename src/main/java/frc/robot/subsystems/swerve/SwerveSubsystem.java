@@ -22,11 +22,11 @@ import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.robot.constants.SwerveConstants;
-import frc.robot.joysticks.ControlBoard;
+import frc.robot.joysticks.DriverController;
 
 public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements Subsystem {
 
-  private ControlBoard controller = ControlBoard.getInstance();
+  private DriverController controller = DriverController.getInstance();
 
   private Matrix<N3, N1> defaultVisionStandardDeviation;
 

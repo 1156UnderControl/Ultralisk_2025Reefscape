@@ -9,13 +9,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.joysticks.ControlBoard;
+import frc.robot.constants.FieldConstants;
+import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
@@ -23,7 +23,7 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
-  private ControlBoard controller = ControlBoard.getInstance();
+  private OperatorController controller = OperatorController.getInstance();
 
   // private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -46,12 +46,55 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    controller.a()
-        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
-    NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
+    // Left Reef Positions
+    controller.goToReefA()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[0]));
+    NamedCommands.registerCommand("score/collect/A", Commands.waitSeconds(1));
 
-    controller.b().whileTrue(drivetrain.wheelRadiusCharacterization());
+    controller.goToReefL()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[1]));
+    NamedCommands.registerCommand("score/collect/L", Commands.waitSeconds(1));
 
+    controller.goToReefK()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[2]));
+    NamedCommands.registerCommand("score/collect/K", Commands.waitSeconds(1));
+
+    controller.goToReefJ()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[3]));
+    NamedCommands.registerCommand("score/collect/J", Commands.waitSeconds(1));
+
+    controller.goToReefI()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[4]));
+    NamedCommands.registerCommand("score/collect/I", Commands.waitSeconds(1));
+
+    controller.goToReefH()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[5]));
+    NamedCommands.registerCommand("score/collect/H", Commands.waitSeconds(1));
+
+    // Right Reef Positions
+    controller.goToReefB()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[0]));
+    NamedCommands.registerCommand("score/collect/B", Commands.waitSeconds(1));
+
+    controller.goToReefC()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[1]));
+    NamedCommands.registerCommand("score/collect/C", Commands.waitSeconds(1));
+
+    controller.goToReefD()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[2]));
+    NamedCommands.registerCommand("score/collect/D", Commands.waitSeconds(1));
+
+    controller.goToReefE()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[3]));
+    NamedCommands.registerCommand("score/collect/E", Commands.waitSeconds(1));
+
+    controller.goToReefF()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[4]));
+    NamedCommands.registerCommand("score/collect/F", Commands.waitSeconds(1));
+
+    controller.goToReefG()
+        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[5]));
+    NamedCommands.registerCommand("score/collect/G", Commands.waitSeconds(1));
     // reset the field-centric heading on left bumper press
     // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
     // drivetrain.seedFieldCentric()));
