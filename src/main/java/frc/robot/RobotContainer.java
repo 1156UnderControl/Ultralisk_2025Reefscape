@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -15,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -32,9 +32,9 @@ public class RobotContainer {
   public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
 
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
+
+  private ReefHeight reefLevel = ReefHeight.L4;
 
   public RobotContainer() {
     configureBindings();
@@ -48,56 +48,80 @@ public class RobotContainer {
 
     // Left Reef Positions
     controller.goToReefA()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[0]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(0).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/A", Commands.waitSeconds(1));
 
     controller.goToReefL()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[1]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(1).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/L", Commands.waitSeconds(1));
 
     controller.goToReefK()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[2]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(2).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/K", Commands.waitSeconds(1));
 
     controller.goToReefJ()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[3]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(3).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/J", Commands.waitSeconds(1));
 
     controller.goToReefI()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[4]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(4).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/I", Commands.waitSeconds(1));
 
     controller.goToReefH()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions[5]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(5).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/H", Commands.waitSeconds(1));
 
-    // Right Reef Positions
     controller.goToReefB()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[0]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(0).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/B", Commands.waitSeconds(1));
 
     controller.goToReefC()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[1]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(1).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/C", Commands.waitSeconds(1));
 
     controller.goToReefD()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[2]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(2).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/D", Commands.waitSeconds(1));
 
     controller.goToReefE()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[3]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(3).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/E", Commands.waitSeconds(1));
 
     controller.goToReefF()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[4]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(4).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/F", Commands.waitSeconds(1));
 
     controller.goToReefG()
-        .whileTrue(drivetrain.goToPoseWithPathfind(FieldConstants.Reef.rightCenterFaces[5]));
+        .whileTrue(
+            drivetrain.goToPoseWithPathfind(FieldConstants.Reef.branchPositions.get(5).get(reefLevel).toPose2d()));
     NamedCommands.registerCommand("score/collect/G", Commands.waitSeconds(1));
-    // reset the field-centric heading on left bumper press
-    // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
-    // drivetrain.seedFieldCentric()));
+
+    if (controller.reefL1().getAsBoolean()) {
+      reefLevel = ReefHeight.L1;
+    }
+
+    if (controller.reefL2().getAsBoolean()) {
+      reefLevel = ReefHeight.L2;
+    }
+
+    if (controller.reefL3().getAsBoolean()) {
+      reefLevel = ReefHeight.L3;
+    }
+
+    if (controller.reefL4().getAsBoolean()) {
+      reefLevel = ReefHeight.L4;
+    }
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
