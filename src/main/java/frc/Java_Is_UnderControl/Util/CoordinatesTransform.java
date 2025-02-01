@@ -20,6 +20,10 @@ public class CoordinatesTransform {
     return pose.plus(backwardsTransform);
   }
 
+  public static Pose3d applyRotationToPoseAngle(Pose3d pose, Rotation3d rotation) {
+    return new Pose3d(pose.getX(), pose.getY(), pose.getZ(), pose.getRotation().rotateBy(rotation));
+  }
+
   public static Pose2d fromRobotRelativeToF(Pose2d robotPose, Pose2d poseForConversion) {
     Pose2d poseInTheField = robotPose
         .plus(new Transform2d(poseForConversion.getTranslation(), poseForConversion.getRotation()));

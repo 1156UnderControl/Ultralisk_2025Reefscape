@@ -382,7 +382,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   }
 
   private void updateBaseLogs() {
-    this.poseLogger.appendRadians(this.getPose());
+    // this.poseLogger.appendRadians(this.getPose());
     this.targetSpeedsLogger.append(this.targetSpeeds);
     this.absoluteTargetSpeedLogger.append(CustomMath.toAbsoluteSpeed(this.targetSpeeds));
     this.measuredSpeedsLogger.append(this.getRobotVelocity());
