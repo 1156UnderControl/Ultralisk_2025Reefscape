@@ -48,7 +48,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
         new NoPoseEstimator(),
-        new LimelightPoseEstimator("limelight"),
+        new LimelightPoseEstimator("limelight-reef"),
         new PIDConfig(7.1, 0, 0.06),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_X_PID, SwerveConstants.MOVE_TO_POSE_X_CONSTRAINTS,
             SwerveConstants.MOVE_TO_POSE_Y_PID, SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
@@ -57,11 +57,12 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
   }
 
   public void driveAlignAngleJoy() {
-    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(-controller.getYtranslation(),
-        -controller.getXtranslation());
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
+        controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_JOY";
     this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, controller.getCOS_Joystick(),
         controller.getSIN_Joystick());
+    System.out.println("RODANDO");
   }
 
   public void driveRotatingButton() {
@@ -83,12 +84,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
 
   @Override
   public void periodic() {
-    LimelightHelpers.SetRobotOrientation("limelight-reef", robotAngularVelocity, this.getPose().getX(), 0, 0, 0, 0);
+    super.periodic();
+    LimelightHelpers.SetRobotOrientation("limelight-reef",
+        OdometryEnabledSwerveSubsystem.robotOrientation,
+        OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
   }
 
   @Override
   protected void updateLogs() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'updateLogs'");
+
   }
 }
