@@ -1,4 +1,4 @@
-package frc.robot.Joysticks;
+package frc.robot.joysticks;
 
 public interface IOperatorController {
 
