@@ -16,7 +16,7 @@ public class CoordinatesTransform {
    */
   public static Pose3d getRetreatPose(Pose3d pose, double distance) {
     // Move backwards along the robot's forward X-axis in local space
-    Transform3d backwardsTransform = new Transform3d(-distance, 0, 0, new Rotation3d());
+    Transform3d backwardsTransform = new Transform3d(distance, 0, 0, new Rotation3d());
     return pose.plus(backwardsTransform);
   }
 
