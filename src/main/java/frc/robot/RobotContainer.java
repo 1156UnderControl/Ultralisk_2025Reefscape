@@ -9,6 +9,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,7 +20,7 @@ import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
-import frc.robot.joysticks.OperatorController;
+import frc.robot.joysticks.DriverController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
@@ -26,7 +28,7 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
-  private OperatorController controller = OperatorController.getInstance();
+  private DriverController driverController = DriverController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
@@ -44,18 +46,19 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    Pose3d posebranch1Score = CoordinatesTransform
-        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefHeight.L2)), 1.0);
+    Pose3d posebranch1Score = CoordinatesTransform.applyRotationToPoseAngle(CoordinatesTransform
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefHeight.L2)), 1.0),
+        new Rotation3d(Rotation2d.k180deg));
     Pose3d posebranch7Score = CoordinatesTransform
         .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(7).get(ReefHeight.L2)), 1.0);
 
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    controller.goToReefB()
+    driverController.a()
         .onTrue(
             drivetrain.goToPoseWithPathfind(posebranch1Score));
-    controller.goToReefG()
+    driverController.b()
         .onTrue(
             drivetrain.goToPoseWithPathfind(posebranch7Score));
 
