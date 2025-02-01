@@ -14,7 +14,7 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
       "CLIMBER_ARM");
 
   private int Previousvelocity = 0;
-  private Cage cage = new Cage();
+  private boolean isCageCollected;
 
   public ClimberSubsystem() {
     climberArmMotor.setMotorBrake(true);
@@ -29,14 +29,6 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
         ClimberConstants.tunning_values_climber.MAX_ACCELERATION,
         ClimberConstants.tunning_values_climber.JERK);
     cageIntakeMotor.burnFlash();
-  }
-
-  private class Cage {
-    public Status is = new Status();
-  }
-
-  private class Status {
-    public boolean collected;
   }
 
   public void climb() {
@@ -61,11 +53,6 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
 
   @Override
   public void release() {
-    if (cageIntakeMotor.getVelocity() < Previousvelocity - 50) {
-      cage.is.collected = true;
-    } else {
-      cage.is.collected = false;
-    }
   }
 
   @Override
@@ -73,5 +60,13 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
     this.cageIntakeMotor.set(0);
     this.climberArmMotor.set(0);
 
+  }
+
+  public void detectcagecollect() {
+    if (cageIntakeMotor.getVelocity() < Previousvelocity - 50) {
+      isCageCollected = true;
+    } else {
+      isCageCollected = false;
+    }
   }
 }
