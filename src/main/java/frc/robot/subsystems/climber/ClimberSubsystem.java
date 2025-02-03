@@ -9,6 +9,7 @@ import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
 import frc.robot.constants.ClimberConstants;
 
 public class ClimberSubsystem extends SubsystemBase implements IClimber {
+  private static ClimberSubsystem instance;
   private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
   private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor, GravityTypeValue.Arm_Cosine,
       "CLIMBER_ARM");
@@ -16,7 +17,14 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
   private int Previousvelocity = 0;
   private boolean isCageCollected;
 
-  public ClimberSubsystem() {
+  public static ClimberSubsystem getInstance() {
+    if (instance == null) {
+      instance = new ClimberSubsystem();
+    }
+    return instance;
+  }
+
+  private ClimberSubsystem() {
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.configureMotionProfiling(
         ClimberConstants.tunning_values_climber.PID.P,
