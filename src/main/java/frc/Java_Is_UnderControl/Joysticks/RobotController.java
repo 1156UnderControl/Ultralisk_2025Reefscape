@@ -1,12 +1,12 @@
-package frc.Java_Is_UnderControl.Joysticks;
+package frc.Java_Is_UnderControl.joysticks;
 
-import frc.Java_Is_UnderControl.Joysticks.Types.IController;
+import frc.Java_Is_UnderControl.joysticks.Types.IController;
 
 public class RobotController {
 
-    public IController typeController;
-  
-    public RobotController(IController typeController, int controllerID) {
-      this.typeController = typeController;
-    }
+  public IController typeController;
+
+  public RobotController(IController typeController, int controllerID) {
+    this.typeController = typeController;
   }
+}
