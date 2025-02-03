@@ -7,12 +7,20 @@ import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.robot.constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase implements IIntake {
+  private static IntakeSubsystem instance;
   private static final int IR = 0;
   private IMotor intakeMotor = new SparkMAXMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;
   private DigitalInput infraredSensor;
   private boolean isCoralDetected;
 
-  public IntakeSubsystem() {
+  public static IntakeSubsystem getInstance() {
+    if (instance == null) {
+      instance = new IntakeSubsystem();
+    }
+    return instance;
+  }
+
+  private IntakeSubsystem() {
     intakeMotor.setMotorBrake(false);
     intakeMotor.burnFlash();
     this.infraredSensor = new DigitalInput(IR);

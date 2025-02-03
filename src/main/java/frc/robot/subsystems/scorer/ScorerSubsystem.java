@@ -9,6 +9,7 @@ import frc.robot.constants.ScorerConstants;
 
 public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
+  private static ScorerSubsystem instance;
   private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor, "ELEVATOR_MASTER");
   private IMotor elevatorMotorFollower = new SparkFlexMotor(ElevatorConstants.ID_elevatorFollowerMotor,
       "ELEVATOR_FOLLOWER");
@@ -17,7 +18,14 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   private final IMotor endEffectorMotor = new SparkMAXMotor(ScorerConstants.ID_endEffectorMotor, "END_EFFECTOR");
   private boolean hasCoral = false;
 
-  public ScorerSubsystem() {
+  public static ScorerSubsystem getInstance() {
+    if (instance == null) {
+      instance = new ScorerSubsystem();
+    }
+    return instance;
+  }
+
+  private ScorerSubsystem() {
     setConfigsElevator();
   }
 
