@@ -91,4 +91,9 @@ public class ControlBoard implements IDriverController, IOperatorController {
     return mDriverController.isForcingDriverControl();
   }
 
+  public Object getDoNotScore() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getDoNotScore'");
+  }
+
 }

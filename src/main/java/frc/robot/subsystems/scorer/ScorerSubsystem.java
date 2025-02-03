@@ -1,11 +1,13 @@
 package frc.robot.subsystems.scorer;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.ScorerConstants;
+import frc.robot.joysticks.ControlBoard;
 
 public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
@@ -17,6 +19,9 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   private final IMotor pivotMotor = new SparkMAXMotor(ScorerConstants.ID_pivotMotor, true, "PIVOT");
   private final IMotor endEffectorMotor = new SparkMAXMotor(ScorerConstants.ID_endEffectorMotor, "END_EFFECTOR");
   private boolean hasCoral = false;
+  private ControlBoard controlBoard = ControlBoard.getInstance();
+  private boolean setCoastScorer;
+  private boolean setBrakeScorer;
 
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
@@ -30,6 +35,7 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   }
 
   int Previousvelocity;
+  private Object scorer;
 
   private void setConfigsElevator() {
     elevatorMotorLeader.setMotorBrake(true);
@@ -51,6 +57,20 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   @Override
   public void periodic() {
+    SmartDashboard.putData("Subsystem Scorer", ScorerSubsystem.getInstance());
+  }
+
+  public void setCoastToRobot() {
+    this.setCoastScorer = true;
+  }
+
+  public void setBrakeToRobot() {
+    this.setBrakeScorer = true;
+  }
+
+  public boolean isRobotAbleToScore() {
+    return this.pivotMotor.isPivotAtSetPointForAutoScore()
+        && this.elevatorMotorLeader.isElevatorAtSetPointForScoring();
   }
 
   public void detectthecollect() {

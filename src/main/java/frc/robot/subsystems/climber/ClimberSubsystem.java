@@ -2,6 +2,7 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -49,6 +50,14 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
 
   private void moveArmsToPosition(double position) {
     climberArmMotor.set(position);
+  }
+
+  public void setCoastToRobot() {
+    this.climberArmMotor.setCoastMode(true);
+  }
+
+  public void periodic() {
+    SmartDashboard.putData("Subsystem Climber", ClimberSubsystem.getInstance());
   }
 
   @Override

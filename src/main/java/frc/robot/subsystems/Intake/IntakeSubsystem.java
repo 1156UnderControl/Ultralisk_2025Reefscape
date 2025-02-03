@@ -1,6 +1,7 @@
 package frc.robot.subsystems.intake;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -12,6 +13,8 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
   private IMotor intakeMotor = new SparkMAXMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;
   private DigitalInput infraredSensor;
   private boolean isCoralDetected;
+  private boolean setCoastScorer;
+  private boolean setBrakeScorer;
 
   public static IntakeSubsystem getInstance() {
     if (instance == null) {
@@ -47,6 +50,14 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
     this.intakeMotor.set(0);
   }
 
+  public void setCoastToRobot() {
+    this.intakeMotor.setCoastScorer();
+  }
+
+  public void setBrakeToRobot() {
+    this.intakeMotor.setBrakeScorer();
+  }
+
   @Override
   public void expell() {
   }
@@ -57,5 +68,9 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
 
   @Override
   public void goToSecuredPosition() {
+  }
+
+  public void periodic() {
+    SmartDashboard.putData("Subsystem Intake", IntakeSubsystem.getInstance());
   }
 }
