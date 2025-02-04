@@ -4,8 +4,6 @@ public interface IScorer {
 
   void periodic();
 
-  void detectthecollect();
-
   boolean hasCoral();
 
   void intake();

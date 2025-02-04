@@ -7,7 +7,6 @@ import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.ScorerConstants;
-import frc.robot.joysticks.ControlBoard;
 
 public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
@@ -18,10 +17,9 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   private final IMotor pivotMotor = new SparkMAXMotor(ScorerConstants.ID_pivotMotor, true, "PIVOT");
   private final IMotor endEffectorMotor = new SparkMAXMotor(ScorerConstants.ID_endEffectorMotor, "END_EFFECTOR");
+
   private boolean hasCoral = false;
-  private ControlBoard controlBoard = ControlBoard.getInstance();
-  private boolean setCoastScorer;
-  private boolean setBrakeScorer;
+  private double previousVelocity;
 
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
@@ -33,9 +31,6 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   private ScorerSubsystem() {
     setConfigsElevator();
   }
-
-  int Previousvelocity;
-  private Object scorer;
 
   private void setConfigsElevator() {
     elevatorMotorLeader.setMotorBrake(true);
@@ -60,24 +55,17 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
     SmartDashboard.putData("Subsystem Scorer", ScorerSubsystem.getInstance());
   }
 
-  public void setCoastToRobot() {
-    this.setCoastScorer = true;
-  }
-
-  public void setBrakeToRobot() {
-    this.setBrakeScorer = true;
-  }
-
   public boolean isRobotAbleToScore() {
     return false;
   }
 
-  public void detectthecollect() {
-    if (endEffectorMotor.getVelocity() < Previousvelocity - 50) {
+  public void runCoralIntakeDetection() {
+    if (endEffectorMotor.getVelocity() < previousVelocity - 50) {
       hasCoral = true;
     } else {
       hasCoral = false;
     }
+    previousVelocity = endEffectorMotor.getVelocity();
   }
 
   @Override
