@@ -62,7 +62,19 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
   public void goToSecuredPosition() {
   }
 
+  @Override
   public void periodic() {
     SmartDashboard.putData("Subsystem Intake", IntakeSubsystem.getInstance());
+  }
+
+  public void setBrakeIntake() {
+    this.intakeMotor.setMotorBrake(true);
+    this.intakeMotor.burnFlash();
+    ;
+  }
+
+  public void setCoastIntake() {
+    this.intakeMotor.setMotorBrake(false);
+    this.intakeMotor.burnFlash();
   }
 }

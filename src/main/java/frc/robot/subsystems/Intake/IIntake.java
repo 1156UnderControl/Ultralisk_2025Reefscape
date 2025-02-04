@@ -12,4 +12,7 @@ public interface IIntake {
 
   boolean isCoralDetected();
 
+  void periodic();
+
+  void setBrakeIntake();
 }

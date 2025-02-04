@@ -12,4 +12,5 @@ public interface IClimber {
 
   void stop();
 
+  void periodic();
 }
