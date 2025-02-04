@@ -44,9 +44,9 @@ public class SuperStructure extends SubsystemBase {
     SmartDashboard.putData("Subsystem Scorer", ScorerSubsystem.getInstance());
     SmartDashboard.putData("Subsystem Intake", IntakeSubsystem.getInstance());
     SmartDashboard.putData("Subsystem Climber", ClimberSubsystem.getInstance());
-    // this.scorer.periodic();
-    // this.intake.periodic();
-    // this.climber.periodic();
+    this.scorer.periodic();
+    this.intake.periodic();
+    this.climber.periodic();
     this.batteryVoltageLogEntry.append(this.powerDistributionHub.getVoltage());
     this.totalCurrentDrawLogEntry.append(this.powerDistributionHub.getTotalCurrent());
   }
@@ -66,17 +66,15 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public void setBrakeToRobot() {
-    // this.scorer.setBrakeScorer();
-    // this.intake.setBrakeScorer();
-    // this.climber.setBrakeScorer();
+    this.intake.setBrakeIntake();
   }
 
-  // public boolean isRobotAbleToScore() {
-  // if (this.controlBoard.getDoNotScore().getAsBoolean()) {
-  // return false;
-  // }
-  // return this.scorer.isPivotAtSetPointForAutoScore()
-  // && this.scorer.isElevatorAtSetPointForScoring();
-  // }
-
+  public boolean isRobotAbleToScore() {
+    // if (this.controlBoard.getDoNotScore()) {
+    return false;
+    // }
+    // return this.scorer.isPivotAtSetPointForAutoScore()
+    // && this.scorer.isElevatorAtSetPointForScoring();
+    // }
+  }
 }
