@@ -52,10 +52,6 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
     climberArmMotor.set(position);
   }
 
-  public void setCoastToRobot() {
-    this.climberArmMotor.setCoastMode(true);
-  }
-
   public void periodic() {
     SmartDashboard.putData("Subsystem Climber", ClimberSubsystem.getInstance());
   }

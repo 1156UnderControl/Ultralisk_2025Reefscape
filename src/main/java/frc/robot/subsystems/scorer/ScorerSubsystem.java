@@ -43,7 +43,7 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
     elevatorMotorLeader.setLoopRampRate(0.5);
     elevatorMotorFollower.setLoopRampRate(0.5);
     elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor, true);
-    elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROT_TO_METERS);
+    elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS);
     elevatorMotorLeader.configureMotionProfiling(
         ElevatorConstants.tunning_values_elevator.PID.P,
         ElevatorConstants.tunning_values_elevator.PID.I,
@@ -69,8 +69,7 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   }
 
   public boolean isRobotAbleToScore() {
-    return this.pivotMotor.isPivotAtSetPointForAutoScore()
-        && this.elevatorMotorLeader.isElevatorAtSetPointForScoring();
+    return false;
   }
 
   public void detectthecollect() {

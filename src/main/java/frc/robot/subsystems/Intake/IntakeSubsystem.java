@@ -50,14 +50,6 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
     this.intakeMotor.set(0);
   }
 
-  public void setCoastToRobot() {
-    this.intakeMotor.setCoastScorer();
-  }
-
-  public void setBrakeToRobot() {
-    this.intakeMotor.setBrakeScorer();
-  }
-
   @Override
   public void expell() {
   }

@@ -128,15 +128,4 @@ public interface IMotor {
   Command sysIdDynamic(SysIdRoutine.Direction direction);
 
   void updateLogs();
-
-  void setCoastMode(boolean b);
-
-  void setBrakeScorer();
-
-  void setCoastScorer();
-
-  boolean isPivotAtSetPointForAutoScore();
-
-  boolean isElevatorAtSetPointForScoring();
-
 }
