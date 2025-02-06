@@ -4,6 +4,7 @@ public class ElevatorConstants {
   public static final int ID_elevatorLeaderMotor = 0;
   public static final int ID_elevatorFollowerMotor = 0;
   public static final double POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS = 0;
+  public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_METERS_PER_SECOND = 0;
 
   public class tunning_values_elevator {
     public static final double KS = 0;

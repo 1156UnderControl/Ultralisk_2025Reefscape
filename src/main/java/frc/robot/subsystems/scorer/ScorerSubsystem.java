@@ -6,7 +6,8 @@ import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.robot.constants.ElevatorConstants;
-import frc.robot.constants.ScorerConstants;
+import frc.robot.constants.EndEffectorConstants;
+import frc.robot.constants.PivotConstants;
 
 public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
@@ -15,8 +16,8 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   private IMotor elevatorMotorFollower = new SparkFlexMotor(ElevatorConstants.ID_elevatorFollowerMotor,
       "ELEVATOR_FOLLOWER");
 
-  private final IMotor pivotMotor = new SparkMAXMotor(ScorerConstants.ID_pivotMotor, true, "PIVOT");
-  private final IMotor endEffectorMotor = new SparkMAXMotor(ScorerConstants.ID_endEffectorMotor, "END_EFFECTOR");
+  private final IMotor pivotMotor = new SparkMAXMotor(PivotConstants.ID_pivotMotor, true, "PIVOT");
+  private final IMotor endEffectorMotor = new SparkMAXMotor(EndEffectorConstants.ID_endEffectorMotor, "END_EFFECTOR");
 
   private boolean hasCoral = false;
   private double previousVelocity;
@@ -30,6 +31,8 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   private ScorerSubsystem() {
     setConfigsElevator();
+    setConfigsPivot();
+    setConfigsEndEffector();
   }
 
   private void setConfigsElevator() {
@@ -50,6 +53,28 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
     elevatorMotorFollower.burnFlash();
   }
 
+  private void setConfigsPivot() {
+    pivotMotor.setMotorBrake(true);
+    pivotMotor.setLoopRampRate(0.2);
+    pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_DEGREES);
+    pivotMotor.configureMotionProfiling(
+        PivotConstants.tunning_values_pivot.PID.P,
+        PivotConstants.tunning_values_pivot.PID.I,
+        PivotConstants.tunning_values_pivot.PID.D,
+        PivotConstants.tunning_values_pivot.PID.F,
+        PivotConstants.tunning_values_pivot.MAX_VELOCITY,
+        PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
+        PivotConstants.tunning_values_pivot.POSITION_ERROR_ALLOWED);
+    pivotMotor.burnFlash();
+  }
+
+  private void setConfigsEndEffector() {
+    endEffectorMotor.setMotorBrake(true);
+    endEffectorMotor.setLoopRampRate(0.1);
+    endEffectorMotor.setVelocityFactor(EndEffectorConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_RPM);
+    endEffectorMotor.burnFlash();
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putData("Subsystem Scorer", ScorerSubsystem.getInstance());
@@ -60,7 +85,8 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   }
 
   public void runCoralIntakeDetection() {
-    if (endEffectorMotor.getVelocity() < previousVelocity - 50) {
+    if (endEffectorMotor.getVelocity() < previousVelocity
+        - EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION) {
       hasCoral = true;
     } else {
       hasCoral = false;
