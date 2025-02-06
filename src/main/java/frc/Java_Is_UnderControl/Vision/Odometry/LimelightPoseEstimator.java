@@ -6,13 +6,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers;
-import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers.PoseEstimate;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
+import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers;
+import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers.PoseEstimate;
 
 public class LimelightPoseEstimator implements PoseEstimator {
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -98,7 +98,6 @@ public class LimelightPoseEstimator implements PoseEstimator {
       this.stateOfPoseUpdate.append("REJECTED_BY_ONLY_2_TAGS_MEASUREMENTS");
       return Optional.empty();
     }
-
     return Optional.of(poseEstimation);
   }
 

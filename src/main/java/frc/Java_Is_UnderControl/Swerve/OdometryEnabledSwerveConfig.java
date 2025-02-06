@@ -9,11 +9,11 @@ public class OdometryEnabledSwerveConfig extends BaseSwerveConfig {
 
   public final PoseEstimator teleoperatedPoseEstimator;
 
-  public final PIDConfig moveToPosePIDConfig;
+  public final MoveToPosePIDConfig moveToPosePIDConfig;
 
   public OdometryEnabledSwerveConfig(double maxRotationSpeed,
       SwervePathPlannerConfig pathPlannerConfig, PoseEstimator autonomousPoseEstimator,
-      PoseEstimator teleoperatedPoseEstimator, PIDConfig headingPIDConfig, PIDConfig moveToPosePIDConfig) {
+      PoseEstimator teleoperatedPoseEstimator, PIDConfig headingPIDConfig, MoveToPosePIDConfig moveToPosePIDConfig) {
     super(maxRotationSpeed, pathPlannerConfig, headingPIDConfig);
     this.autonomousPoseEstimator = autonomousPoseEstimator;
     this.teleoperatedPoseEstimator = teleoperatedPoseEstimator;

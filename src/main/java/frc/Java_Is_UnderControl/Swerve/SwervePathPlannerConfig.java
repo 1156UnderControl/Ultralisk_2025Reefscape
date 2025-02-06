@@ -1,6 +1,7 @@
 package frc.Java_Is_UnderControl.Swerve;
 
 import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.path.PathConstraints;
 
 public class SwervePathPlannerConfig {
   public PIDConstants translationPid;
@@ -9,8 +10,12 @@ public class SwervePathPlannerConfig {
 
   public double maxModuleSpeed;
 
-  public SwervePathPlannerConfig(PIDConstants translationPid, PIDConstants anglePid) {
+  public final PathConstraints pathFinderConstraints;
+
+  public SwervePathPlannerConfig(PIDConstants translationPid, PIDConstants anglePid,
+      PathConstraints pathFindeConstraints) {
     this.translationPid = translationPid;
     this.anglePid = anglePid;
+    this.pathFinderConstraints = pathFindeConstraints;
   }
 }
