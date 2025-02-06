@@ -32,7 +32,7 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
   @Override
   public void intake() {
     runCoralDetection();
-    this.intakeMotor.set(0);
+    this.intakeMotor.set(IntakeConstants.tunning_values_intake.setpoints.SPEED_INTAKE);
   }
 
   public boolean isCoralDetected() {
@@ -46,7 +46,8 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
     }
   }
 
-  private void stopIntake() {
+  @Override
+  public void stopIntake() {
     this.intakeMotor.set(0);
   }
 
@@ -55,26 +56,7 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
   }
 
   @Override
-  public void goToIntakePosition() {
-  }
-
-  @Override
-  public void goToSecuredPosition() {
-  }
-
-  @Override
   public void periodic() {
     SmartDashboard.putData("Subsystem Intake", IntakeSubsystem.getInstance());
-  }
-
-  public void setBrakeIntake() {
-    this.intakeMotor.setMotorBrake(true);
-    this.intakeMotor.burnFlash();
-    ;
-  }
-
-  public void setCoastIntake() {
-    this.intakeMotor.setMotorBrake(false);
-    this.intakeMotor.burnFlash();
   }
 }
