@@ -66,7 +66,6 @@ public class SuperStructure extends SubsystemBase {
   }
 
   public void setBrakeToRobot() {
-    this.intake.setBrakeIntake();
   }
 
   public boolean isRobotAbleToScore() {
