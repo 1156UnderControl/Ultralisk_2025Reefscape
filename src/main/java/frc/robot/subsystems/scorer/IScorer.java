@@ -10,13 +10,7 @@ public interface IScorer {
 
   void intakeFromHP();
 
-  void prepareToPlaceL1();
-
-  void prepareToPlaceL2();
-
-  void prepareToPlaceL3();
-
-  void prepareToPlaceL4();
+  void prepareToPlaceCoral();
 
   void place();
 
