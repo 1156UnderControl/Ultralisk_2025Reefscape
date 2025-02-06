@@ -109,19 +109,7 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
   }
 
   @Override
-  public void prepareToPlaceL1() {
-  }
-
-  @Override
-  public void prepareToPlaceL2() {
-  }
-
-  @Override
-  public void prepareToPlaceL3() {
-  }
-
-  @Override
-  public void prepareToPlaceL4() {
+  public void prepareToPlaceCoral() {
   }
 
   @Override
