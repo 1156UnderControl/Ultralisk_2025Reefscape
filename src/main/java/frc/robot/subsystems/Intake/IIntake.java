@@ -6,13 +6,10 @@ public interface IIntake {
 
   void expell();
 
-  void goToIntakePosition();
-
-  void goToSecuredPosition();
+  void stopIntake();
 
   boolean isCoralDetected();
 
   void periodic();
 
-  void setBrakeIntake();
 }
