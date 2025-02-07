@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.robot.joysticks.ControlBoard;
@@ -36,9 +35,6 @@ public class SuperStructure extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putData("Subsystem Scorer", ScorerSubsystem.getInstance());
-    SmartDashboard.putData("Subsystem Intake", IntakeSubsystem.getInstance());
-    SmartDashboard.putData("Subsystem Climber", ClimberSubsystem.getInstance());
     this.scorer.periodic();
     this.intake.periodic();
     this.climber.periodic();
