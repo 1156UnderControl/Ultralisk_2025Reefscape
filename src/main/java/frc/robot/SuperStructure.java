@@ -17,10 +17,6 @@ public class SuperStructure extends SubsystemBase {
   public IIntake intake;
   public IClimber climber;
 
-  private SubsystemBase scorerSubsystem;
-  private SubsystemBase intakeSubsystem;
-  private SubsystemBase climberSubsystem;
-
   private ControlBoard controlBoard = ControlBoard.getInstance();
 
   private PowerDistribution powerDistributionHub;
@@ -33,7 +29,6 @@ public class SuperStructure extends SubsystemBase {
     this.scorer = ScorerSubsystem.getInstance();
     this.intake = IntakeSubsystem.getInstance();
     this.climber = ClimberSubsystem.getInstance();
-    this.scorerSubsystem = ScorerSubsystem.getInstance();
     this.powerDistributionHub = new PowerDistribution();
     this.batteryVoltageLogEntry.append(this.powerDistributionHub.getVoltage());
     this.totalCurrentDrawLogEntry.append(this.powerDistributionHub.getTotalCurrent());

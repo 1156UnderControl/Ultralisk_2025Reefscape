@@ -2,14 +2,12 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
 import frc.robot.constants.ClimberConstants;
 
-public class ClimberSubsystem extends SubsystemBase implements IClimber {
+public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
   private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
   private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor, GravityTypeValue.Arm_Cosine,
@@ -53,7 +51,6 @@ public class ClimberSubsystem extends SubsystemBase implements IClimber {
   }
 
   public void periodic() {
-    SmartDashboard.putData("Subsystem Climber", ClimberSubsystem.getInstance());
   }
 
   @Override

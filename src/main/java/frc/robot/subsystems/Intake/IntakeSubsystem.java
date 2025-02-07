@@ -2,15 +2,13 @@ package frc.robot.subsystems.intake;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Sensors.DigitalInput;
 import frc.Java_Is_UnderControl.Sensors.InfraRed;
 import frc.robot.constants.IntakeConstants;
 
-public class IntakeSubsystem extends SubsystemBase implements IIntake {
+public class IntakeSubsystem implements IIntake {
   private static IntakeSubsystem instance;
 
   private IMotor intakeMotor = new SparkMAXMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;
@@ -70,6 +68,5 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
   @Override
   public void periodic() {
     this.intakeMotor.updateLogs();
-    SmartDashboard.putData("Subsystem Intake", IntakeSubsystem.getInstance());
   }
 }

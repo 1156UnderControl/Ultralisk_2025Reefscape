@@ -1,7 +1,5 @@
 package frc.robot.subsystems.scorer;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -9,7 +7,7 @@ import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.PivotConstants;
 
-public class ScorerSubsystem extends SubsystemBase implements IScorer {
+public class ScorerSubsystem implements IScorer {
 
   private static ScorerSubsystem instance;
   private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor, "ELEVATOR_MASTER");
@@ -77,7 +75,7 @@ public class ScorerSubsystem extends SubsystemBase implements IScorer {
 
   @Override
   public void periodic() {
-    SmartDashboard.putData("Subsystem Scorer", ScorerSubsystem.getInstance());
+
   }
 
   public boolean isRobotAbleToScore() {
