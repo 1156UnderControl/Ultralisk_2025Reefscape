@@ -1,5 +1,6 @@
 package frc.robot.subsystems.scorer;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -98,28 +99,23 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void intake() {
-
-  }
-
-  @Override
   public void intakeFromHP() {
   }
 
   @Override
-  public void prepareToPlaceCoral() {
+  public void prepareToPlaceCoralOnBranch(Pose3d branchPose) {
   }
 
   @Override
-  public void place() {
+  public void removeAlgaeFromBranch(Pose3d reefFaceToRemove) {
   }
 
   @Override
-  public void expell() {
+  public void placeCoral() {
   }
 
   @Override
-  public boolean isSecuredToPlace() {
+  public boolean isSecuredToPlaceCoral() {
     return false;
   }
 
@@ -128,12 +124,4 @@ public class ScorerSubsystem implements IScorer {
     return false;
   }
 
-  @Override
-  public void stopIntaking() {
-  }
-
-  @Override
-  public boolean isAtSetPoint() {
-    return false;
-  }
 }

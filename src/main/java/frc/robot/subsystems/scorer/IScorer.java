@@ -1,27 +1,23 @@
 package frc.robot.subsystems.scorer;
 
+import edu.wpi.first.math.geometry.Pose3d;
+
 public interface IScorer {
 
   void periodic();
 
   boolean hasCoral();
 
-  void intake();
-
   void intakeFromHP();
 
-  void prepareToPlaceCoral();
+  void prepareToPlaceCoralOnBranch(Pose3d branchPose);
 
-  void place();
+  void removeAlgaeFromBranch(Pose3d reefFaceToRemove);
 
-  void expell();
+  void placeCoral();
 
-  boolean isSecuredToPlace();
+  boolean isSecuredToPlaceCoral();
 
   boolean hasPlaced();
-
-  void stopIntaking();
-
-  boolean isAtSetPoint();
 
 }
