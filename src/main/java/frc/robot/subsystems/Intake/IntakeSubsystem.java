@@ -1,20 +1,27 @@
 package frc.robot.subsystems.intake;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
+import frc.Java_Is_UnderControl.Sensors.DigitalInput;
+import frc.Java_Is_UnderControl.Sensors.InfraRed;
 import frc.robot.constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase implements IIntake {
   private static IntakeSubsystem instance;
-  private static final int IR = 0;
+
   private IMotor intakeMotor = new SparkMAXMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;
-  private DigitalInput infraredSensor;
+
+  private DigitalInput beamBreakSensor;
+
+  @Logged(name = "isCoralDetected", importance = Importance.CRITICAL)
   private boolean isCoralDetected;
-  private boolean setCoastScorer;
-  private boolean setBrakeScorer;
+
+  @Logged(name = "State", importance = Importance.INFO)
+  private String state = "START";
 
   public static IntakeSubsystem getInstance() {
     if (instance == null) {
@@ -26,37 +33,43 @@ public class IntakeSubsystem extends SubsystemBase implements IIntake {
   private IntakeSubsystem() {
     intakeMotor.setMotorBrake(false);
     intakeMotor.burnFlash();
-    this.infraredSensor = new DigitalInput(IR);
+    this.beamBreakSensor = new InfraRed(IntakeConstants.port_IR, false);
   }
 
   @Override
   public void intake() {
     runCoralDetection();
     this.intakeMotor.set(IntakeConstants.tunning_values_intake.setpoints.SPEED_INTAKE);
+    this.state = "INTAKING";
   }
 
   public boolean isCoralDetected() {
     return this.isCoralDetected;
-
   }
 
   private void runCoralDetection() {
-    if (infraredSensor.get()) {
+    if (beamBreakSensor.getBoolean()) {
       this.isCoralDetected = true;
+    } else {
+      this.isCoralDetected = false;
     }
   }
 
   @Override
   public void stopIntake() {
     this.intakeMotor.set(0);
+    this.state = "STOPPED";
   }
 
   @Override
   public void expell() {
+    this.intakeMotor.set(IntakeConstants.tunning_values_intake.setpoints.SPEED_EXPELL);
+    this.state = "EXPELLING";
   }
 
   @Override
   public void periodic() {
+    this.intakeMotor.updateLogs();
     SmartDashboard.putData("Subsystem Intake", IntakeSubsystem.getInstance());
   }
 }
