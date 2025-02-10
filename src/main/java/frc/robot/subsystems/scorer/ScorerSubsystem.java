@@ -87,8 +87,6 @@ public class ScorerSubsystem implements IScorer {
     if (endEffectorMotor.getVelocity() < previousVelocity
         - EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION) {
       hasCoral = true;
-    } else {
-      hasCoral = false;
     }
     previousVelocity = endEffectorMotor.getVelocity();
   }
@@ -112,6 +110,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
+    hasCoral = false;
   }
 
   @Override
