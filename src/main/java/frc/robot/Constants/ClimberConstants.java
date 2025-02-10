@@ -5,6 +5,8 @@ public class ClimberConstants {
   public static final int ID_climberArmMotor = 0;
 
   public class tunning_values_climber {
+    public static final double VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION = 100;
+
     public static final double KS = 0;
     public static final double KG = 0;
     public static final double KV = 0;
@@ -24,6 +26,7 @@ public class ClimberConstants {
   }
 
   public class setpoints {
-
+    public static final double DUTY_CYCLE_INTAKE = 1.0;
+    public static final double DUTY_CYCLE_EXPELL = -1.0;
   }
 }

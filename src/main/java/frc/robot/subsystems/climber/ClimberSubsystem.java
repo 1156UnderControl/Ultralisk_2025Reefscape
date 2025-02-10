@@ -13,8 +13,8 @@ public class ClimberSubsystem implements IClimber {
   private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor, GravityTypeValue.Arm_Cosine,
       "CLIMBER_ARM");
 
-  private int Previousvelocity = 0;
-  private boolean isCageCollected;
+  private double previousVelocity = 0;
+  private boolean isCageCollected = false;
 
   public static ClimberSubsystem getInstance() {
     if (instance == null) {
@@ -24,6 +24,10 @@ public class ClimberSubsystem implements IClimber {
   }
 
   private ClimberSubsystem() {
+    configureClimberMotor();
+  }
+
+  private void configureClimberMotor() {
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.configureMotionProfiling(
         ClimberConstants.tunning_values_climber.PID.P,
@@ -38,6 +42,7 @@ public class ClimberSubsystem implements IClimber {
     cageIntakeMotor.burnFlash();
   }
 
+  @Override
   public void climb() {
 
   }
@@ -58,25 +63,31 @@ public class ClimberSubsystem implements IClimber {
   }
 
   @Override
-  public void climbDeep() {
+  public void raiseClimber() {
+    isCageCollected = false;
   }
 
   @Override
-  public void release() {
+  public void intakeCage() {
+    runCageIntakeDetection();
+    cageIntakeMotor.set(ClimberConstants.setpoints.DUTY_CYCLE_INTAKE);
   }
 
-  @Override
-  public void stop() {
-    this.cageIntakeMotor.set(0);
-    this.climberArmMotor.set(0);
-
-  }
-
-  public void detectcagecollect() {
-    if (cageIntakeMotor.getVelocity() < Previousvelocity - 50) {
+  public void runCageIntakeDetection() {
+    if (cageIntakeMotor.getVelocity() < previousVelocity
+        - ClimberConstants.tunning_values_climber.VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION) {
       isCageCollected = true;
-    } else {
-      isCageCollected = false;
     }
+    previousVelocity = cageIntakeMotor.getVelocity();
+  }
+
+  @Override
+  public boolean isCageCollected() {
+    return isCageCollected;
+  }
+
+  @Override
+  public void stopIntakingCage() {
+    cageIntakeMotor.set(0);
   }
 }

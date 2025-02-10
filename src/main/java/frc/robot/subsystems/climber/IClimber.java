@@ -6,11 +6,13 @@ public interface IClimber {
 
   void isAtSetPoint();
 
-  void climbDeep();
+  void raiseClimber();
 
-  void release();
+  void intakeCage();
 
-  void stop();
+  void stopIntakingCage();
+
+  boolean isCageCollected();
 
   void periodic();
 }
