@@ -16,6 +16,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
@@ -54,6 +55,8 @@ public class SparkFlexMotor implements IMotor {
   private double rampRate = Double.NaN;
 
   private double maxAcceleration = 0;
+
+  private boolean usingAlternateEncoder = false;
 
   private CustomDoubleLogger appliedOutputLog;
   private CustomDoubleLogger targetOutputLog;
@@ -95,7 +98,7 @@ public class SparkFlexMotor implements IMotor {
     this.config = new SparkFlexConfig();
     this.m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(this.maxVelocity, this.maxAcceleration));
     this.motorName = motorName;
-
+    this.usingAlternateEncoder = usingAlternateEncoder;
     this.setAlternateEncoder(usingAlternateEncoder);
     this.setupLogs(motorID, usingAlternateEncoder);
     this.updateLogs();
@@ -103,6 +106,14 @@ public class SparkFlexMotor implements IMotor {
   }
 
   private void setAlternateEncoder(boolean usingAlternateEncoder) {
+    if (usingAlternateEncoder) {
+      this.config.closedLoop
+          .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
+      this.config.externalEncoder.countsPerRevolution(8192);
+    } else {
+      this.config.closedLoop
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    }
   }
 
   private void setupLogs(int motorId, boolean isAlternateEncoder) {
@@ -335,11 +346,18 @@ public class SparkFlexMotor implements IMotor {
 
   @Override
   public double getPosition() {
-    return motor.getEncoder().getPosition();
+    if (usingAlternateEncoder) {
+      return motor.getExternalEncoder().getPosition();
+
+    }
+    return motor.getExternalEncoder().getPosition();
   }
 
   @Override
   public double getVelocity() {
+    if (usingAlternateEncoder) {
+      return motor.getExternalEncoder().getVelocity();
+    }
     return motor.getEncoder().getVelocity();
   }
 

@@ -55,6 +55,7 @@ public class SparkMAXMotor implements IMotor {
   private SparkMaxConfig config;
   private String motorName;
   private boolean isInverted = false;
+  private boolean usingAlternateEncoder = false;
 
   private CustomDoubleLogger appliedOutputLog;
   private CustomDoubleLogger targetOutputLog;
@@ -89,6 +90,7 @@ public class SparkMAXMotor implements IMotor {
     this.motor = new SparkMax(motorID, MotorType.kBrushless);
     this.config = new SparkMaxConfig();
     this.motorName = motorName;
+    this.usingAlternateEncoder = usingAlternateEncoder;
     clearStickyFaults();
     this.setAlternateEncoder(usingAlternateEncoder);
     this.setupLogs(motorID, usingAlternateEncoder);
@@ -333,11 +335,17 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public double getPosition() {
+    if (usingAlternateEncoder) {
+      return motor.getAlternateEncoder().getPosition();
+    }
     return motor.getEncoder().getPosition();
   }
 
   @Override
   public double getVelocity() {
+    if (usingAlternateEncoder) {
+      return motor.getAlternateEncoder().getVelocity();
+    }
     return motor.getEncoder().getVelocity();
   }
 
