@@ -87,7 +87,7 @@ public interface IMotor {
   void configureMotionProfiling(double P, double I, double D, double kS, double kV, double kA, double maxVelocity,
       double maxAcceleration, double jerk);
 
-  void setPositionReferenceMotionProfiling(double position);
+  void setPositionReferenceMotionProfiling(double position, double arbFF);
 
   double getVoltage();
 

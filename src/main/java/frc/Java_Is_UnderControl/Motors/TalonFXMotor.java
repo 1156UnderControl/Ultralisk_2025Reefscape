@@ -347,7 +347,7 @@ public class TalonFXMotor implements IMotor {
     cfg.apply(configuration);
   }
 
-  public void setPositionReferenceMotionProfiling(double position) {
+  public void setPositionReferenceMotionProfiling(double position, double arbFF) {
     motor.setControl(magicVoltage.withPosition(position));
   }
 

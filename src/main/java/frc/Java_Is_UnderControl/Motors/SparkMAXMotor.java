@@ -296,13 +296,14 @@ public class SparkMAXMotor implements IMotor {
   }
 
   @Override
-  public void setPositionReferenceMotionProfiling(double position) {
-    motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
+  public void setPositionReferenceMotionProfiling(double position, double arbFF) {
+    motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl,
+        ClosedLoopSlot.kSlot0, arbFF);
   }
 
-  public void setVelocityReference(double velocity, ClosedLoopSlot feedforward) {
+  public void setVelocityReference(double velocity, double arbFF) {
     if (this.getVelocity() != velocity) {
-      motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, feedforward);
+      motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0, arbFF);
     }
     this.targetPercentage = Double.NaN;
     this.targetVelocity = velocity;
