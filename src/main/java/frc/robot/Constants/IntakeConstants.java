@@ -1,7 +1,7 @@
 package frc.robot.constants;
 
 public class IntakeConstants {
-  public static final int ID_intakeMotor = 0;
+  public static final int ID_intakeMotor = 15;
   public static final int port_IR = 0;
 
   public class tunning_values_intake {

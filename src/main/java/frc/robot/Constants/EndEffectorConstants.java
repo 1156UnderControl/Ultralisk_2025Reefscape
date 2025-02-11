@@ -1,7 +1,7 @@
 package frc.robot.constants;
 
 public class EndEffectorConstants {
-  public static final int ID_endEffectorMotor = 0;
+  public static final int ID_endEffectorMotor = 18;
   public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_RPM = 0;
 
   public class tunning_values_endeffector {

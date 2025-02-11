@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -34,6 +37,8 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
 
+  public final SuperStructure superStructure = new SuperStructure();
+
   public RobotContainer() {
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
@@ -49,7 +54,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
 
     controller.b().whileTrue(drivetrain.wheelRadiusCharacterization());
-
+    new Trigger(() -> DriverStation.isTeleopEnabled())
+        .whileTrue(Commands.run(
+            () -> superStructure.scorer.prepareToPlaceCoralOnBranch(Reef.branchPositions.get(0).get(ReefHeight.L2)),
+            superStructure));
     // reset the field-centric heading on left bumper press
     // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
     // drivetrain.seedFieldCentric()));
