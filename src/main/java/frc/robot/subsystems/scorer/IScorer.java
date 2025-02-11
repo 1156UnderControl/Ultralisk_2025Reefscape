@@ -16,6 +16,8 @@ public interface IScorer {
 
   void placeCoral();
 
+  void homeElevator();
+
   boolean isSecuredToPlaceCoral();
 
   boolean hasPlaced();
