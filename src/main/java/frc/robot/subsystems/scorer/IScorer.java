@@ -18,6 +18,10 @@ public interface IScorer {
 
   void homeElevator();
 
+  void setElevatorTestPosition(double testPosition);
+
+  void setPivotTestPosition(double testPosition);
+
   boolean isSecuredToPlaceCoral();
 
   boolean hasPlaced();

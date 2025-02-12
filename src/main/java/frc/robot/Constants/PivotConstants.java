@@ -28,6 +28,13 @@ public class PivotConstants {
       public static final double L2_ANGLE = 30;
       public static final double L3_ANGLE = 50;
       public static final double L4_ANGLE = 70;
+
+      public static final double FACE0_ALGAE_REMOVAL = 15;
+      public static final double FACE1_ALGAE_REMOVAL = 25;
+      public static final double FACE2_ALGAE_REMOVAL = 35;
+      public static final double FACE3_ALGAE_REMOVAL = 45;
+      public static final double FACE4_ALGAE_REMOVAL = 55;
+      public static final double FACE5_ALGAE_REMOVAL = 65;
     }
   }
 }

@@ -9,6 +9,7 @@ import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.PivotConstants;
 
@@ -113,6 +114,8 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void intakeFromHP() {
+
+    state = "INTAKING_FROM_HP";
   }
 
   @Override
@@ -120,9 +123,9 @@ public class ScorerSubsystem implements IScorer {
     ReefHeight selectedLevel = getReefHeightFromPose(branchPose);
     if (selectedLevel != null) {
       assignSetpointsForLevel(selectedLevel);
-      state = "Setting coral to Reef Level " + selectedLevel.name();
+      state = "PREPARE_TO_PLACE_ON" + selectedLevel.name();
     } else {
-      state = "No matching ReefHeight for Pose z=" + branchPose.getZ();
+      state = "NO_MATCH_FOR_REEF_HEIGHT" + branchPose.getZ();
     }
   }
 
@@ -162,6 +165,61 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void removeAlgaeFromBranch(Pose3d reefFaceToRemove) {
+    int faceIndex = getReefFaceIndexFromPose(reefFaceToRemove);
+    if (faceIndex >= 0) {
+      assignAlgaeRemovalSetpointsForFace(faceIndex);
+      state = "REMOVING_ALGAE_FROM_REEF_FACE" + faceIndex;
+    } else {
+      state = "NO_MATCHING_REEF_FACE" + reefFaceToRemove;
+    }
+  }
+
+  private int getReefFaceIndexFromPose(Pose3d pose) {
+    double minDistance = Double.MAX_VALUE;
+    int bestIndex = -1;
+    for (int i = 0; i < FieldConstants.Reef.centerFaces.length; i++) {
+      var facePose = FieldConstants.Reef.centerFaces[i];
+      double dx = pose.getX() - facePose.getTranslation().getX();
+      double dy = pose.getY() - facePose.getTranslation().getY();
+      double distance = Math.hypot(dx, dy);
+      if (distance < minDistance) {
+        minDistance = distance;
+        bestIndex = i;
+      }
+    }
+    return bestIndex;
+  }
+
+  private void assignAlgaeRemovalSetpointsForFace(int faceIndex) {
+    switch (faceIndex) {
+      case 0:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE0_ALGAE_REMOVAL;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE0_ALGAE_REMOVAL;
+        break;
+      case 1:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE1_ALGAE_REMOVAL;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE1_ALGAE_REMOVAL;
+        break;
+      case 2:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE2_ALGAE_REMOVAL;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE2_ALGAE_REMOVAL;
+        break;
+      case 3:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE3_ALGAE_REMOVAL;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE3_ALGAE_REMOVAL;
+        break;
+      case 4:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE4_ALGAE_REMOVAL;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE4_ALGAE_REMOVAL;
+        break;
+      case 5:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE5_ALGAE_REMOVAL;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE5_ALGAE_REMOVAL;
+        break;
+      default:
+        // Se desejar, defina um comportamento padrão para índices inválidos.
+        break;
+    }
   }
 
   @Override
@@ -178,6 +236,7 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public void placeCoral() {
     hasCoral = false;
+    elevatorHasHomed = false;
   }
 
   @Override
@@ -208,6 +267,16 @@ public class ScorerSubsystem implements IScorer {
     } else {
       return goal;
     }
+  }
+
+  @Override
+  public void setElevatorTestPosition(double testPosition) {
+    goalElevator = testPosition;
+  }
+
+  @Override
+  public void setPivotTestPosition(double testPosition) {
+    goalPivot = testPosition;
   }
 
 }
