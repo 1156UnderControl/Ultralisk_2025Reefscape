@@ -14,6 +14,8 @@ public interface IScorer {
 
   void removeAlgaeFromBranch(Pose3d reefFaceToRemove);
 
+  void moveScorerToDefaultPosition();
+
   void placeCoral();
 
   void homeElevator();
