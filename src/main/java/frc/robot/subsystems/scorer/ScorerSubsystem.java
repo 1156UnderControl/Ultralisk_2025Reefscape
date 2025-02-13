@@ -47,8 +47,8 @@ public class ScorerSubsystem implements IScorer {
 
   private ScorerSubsystem() {
     setConfigsElevator();
-    setConfigsPivot();
-    setConfigsEndEffector();
+    // setConfigsPivot();
+    // setConfigsEndEffector();
   }
 
   private void setConfigsElevator() {
@@ -93,11 +93,13 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void periodic() {
-    elevatorMotorLeader.setPositionReferenceMotionProfiling(limitGoalElevator(goalElevator),
-        ElevatorConstants.tunning_values_elevator.PID.arbFF);
-    pivotMotor.setPositionReferenceMotionProfiling(limitGoalPivot(goalElevator),
-        PivotConstants.tunning_values_pivot.PID.arbFF);
-
+    // elevatorMotorLeader.setPositionReferenceMotionProfiling(limitGoalElevator(goalElevator),
+    // ElevatorConstants.tunning_values_elevator.PID.arbFF);
+    // pivotMotor.setPositionReferenceMotionProfiling(limitGoalPivot(goalElevator),
+    // PivotConstants.tunning_values_pivot.PID.arbFF);
+    elevatorMotorLeader.updateLogs();
+    elevatorMotorFollower.updateLogs();
+    // pivotMotor.updateLogs();
     SmartDashboard.putString("state", state);
   }
 
@@ -296,5 +298,15 @@ public class ScorerSubsystem implements IScorer {
   public void setPivotTestPosition(double testPosition) {
     goalPivot = testPosition;
     this.state = "PIVOT_TEST_POSITION" + testPosition;
+  }
+
+  @Override
+  public void setElevatorDutyCycle(double dutyCycle) {
+    if (elevatorMotorLeader.getPosition() > ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT
+        && elevatorMotorLeader.getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT) {
+      elevatorMotorLeader.set(dutyCycle);
+    } else {
+      elevatorMotorLeader.set(0);
+    }
   }
 }

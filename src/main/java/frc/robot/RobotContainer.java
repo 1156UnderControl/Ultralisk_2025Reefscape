@@ -7,16 +7,12 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.constants.FieldConstants.Reef;
@@ -56,25 +52,26 @@ public class RobotContainer {
     Pose3d posebranch7Score = CoordinatesTransform
         .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(7).get(ReefHeight.L2)), 1.0);
 
-    drivetrain.setDefaultCommand(
-        Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
+    // drivetrain.setDefaultCommand(
+    // Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() ->
+    // DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
-    NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(0.1),
+            () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
 
-    driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
-    new Trigger(() -> DriverStation.isTeleopEnabled())
-        .whileTrue(Commands.run(
-            () -> superStructure.scorer.prepareToPlaceCoralOnBranch(Reef.branchPositions.get(0).get(ReefHeight.L2)),
-            superStructure));
+    driverController.b()
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(-0.1),
+            () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
 
-    operatorPanel.goToReefB()
-        .onTrue(
-            drivetrain.goToPoseWithPathfind(posebranch1Score));
-    operatorPanel.goToReefG()
-        .onTrue(
-            drivetrain.goToPoseWithPathfind(posebranch7Score));
+    // driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
+
+    // operatorPanel.goToReefB()
+    // .onTrue(
+    // drivetrain.goToPoseWithPathfind(posebranch1Score));
+    // operatorPanel.goToReefG()
+    // .onTrue(
+    // drivetrain.goToPoseWithPathfind(posebranch7Score));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

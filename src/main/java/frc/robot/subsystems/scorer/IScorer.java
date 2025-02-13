@@ -24,6 +24,8 @@ public interface IScorer {
 
   void setPivotTestPosition(double testPosition);
 
+  void setElevatorDutyCycle(double dutyCycle);
+
   boolean isSecuredToPlaceCoral();
 
   boolean hasPlaced();
