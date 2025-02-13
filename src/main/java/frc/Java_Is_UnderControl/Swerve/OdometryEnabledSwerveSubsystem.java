@@ -11,7 +11,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -38,9 +38,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private PoseEstimator teleopPoseEstimator;
 
-  private PIDController moveToPoseXAxisPid;
+  private ProfiledPIDController moveToPoseXAxisPid;
 
-  private PIDController moveToPoseYAxisPid;
+  private ProfiledPIDController moveToPoseYAxisPid;
 
   private Pose2d targetPose;
 
@@ -62,17 +62,14 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   // Create the constraints to use while pathfinding. The constraints defined in
   // the path will only be used for the path.
-  PathConstraints constraints = new PathConstraints(
-      3.0, 4.0,
-      Units.degreesToRadians(540), Units.degreesToRadians(720));
+  PathConstraints constraints;
 
   public OdometryEnabledSwerveSubsystem(OdometryEnabledSwerveConfig config,
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants... modules) {
     super(config, drivetrainConstants, modules);
-    this.moveToPoseXAxisPid = new PIDController(config.moveToPosePIDConfig.kP, config.moveToPosePIDConfig.kI,
-        config.moveToPosePIDConfig.kD);
-    this.moveToPoseYAxisPid = new PIDController(config.moveToPosePIDConfig.kP, config.moveToPosePIDConfig.kI,
-        config.moveToPosePIDConfig.kD);
+    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getProfiledPIDY();
+    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getProfiledPIDX();
+    this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();
@@ -86,10 +83,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
       SwerveModuleConstants... modules) {
     super(config, drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
         modules);
-    this.moveToPoseXAxisPid = new PIDController(config.moveToPosePIDConfig.kP, config.moveToPosePIDConfig.kI,
-        config.moveToPosePIDConfig.kD);
-    this.moveToPoseYAxisPid = new PIDController(config.moveToPosePIDConfig.kP, config.moveToPosePIDConfig.kI,
-        config.moveToPosePIDConfig.kD);
+    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getProfiledPIDY();
+    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getProfiledPIDX();
+    this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();

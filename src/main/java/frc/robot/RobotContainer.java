@@ -7,9 +7,8 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +18,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.ControlBoard;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
+import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
+import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
@@ -27,6 +31,7 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   private ControlBoard controller = ControlBoard.getInstance();
+  private OperatorController controller = OperatorController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
@@ -46,6 +51,11 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    Pose3d posebranch1Score = CoordinatesTransform
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefHeight.L2)), 1.0);
+    Pose3d posebranch7Score = CoordinatesTransform
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(7).get(ReefHeight.L2)), 1.0);
+
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
@@ -58,9 +68,13 @@ public class RobotContainer {
         .whileTrue(Commands.run(
             () -> superStructure.scorer.prepareToPlaceCoralOnBranch(Reef.branchPositions.get(0).get(ReefHeight.L2)),
             superStructure));
-    // reset the field-centric heading on left bumper press
-    // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
-    // drivetrain.seedFieldCentric()));
+
+    controller.goToReefB()
+        .onTrue(
+            drivetrain.goToPoseWithPathfind(posebranch1Score));
+    controller.goToReefG()
+        .onTrue(
+            drivetrain.goToPoseWithPathfind(posebranch7Score));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
