@@ -7,7 +7,9 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,13 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.constants.FieldConstants.Reef;
-import frc.robot.constants.FieldConstants.ReefHeight;
-import frc.robot.joysticks.ControlBoard;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.joysticks.ControlBoard;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -30,8 +30,8 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
-  private ControlBoard controller = ControlBoard.getInstance();
-  private OperatorController controller = OperatorController.getInstance();
+  private ControlBoard driverController = ControlBoard.getInstance();
+  private OperatorController operatorPanel = OperatorController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
@@ -59,20 +59,20 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    controller.a()
+    driverController.a()
         .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
     NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
 
-    controller.b().whileTrue(drivetrain.wheelRadiusCharacterization());
+    driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
     new Trigger(() -> DriverStation.isTeleopEnabled())
         .whileTrue(Commands.run(
             () -> superStructure.scorer.prepareToPlaceCoralOnBranch(Reef.branchPositions.get(0).get(ReefHeight.L2)),
             superStructure));
 
-    controller.goToReefB()
+    operatorPanel.goToReefB()
         .onTrue(
             drivetrain.goToPoseWithPathfind(posebranch1Score));
-    controller.goToReefG()
+    operatorPanel.goToReefG()
         .onTrue(
             drivetrain.goToPoseWithPathfind(posebranch7Score));
 
