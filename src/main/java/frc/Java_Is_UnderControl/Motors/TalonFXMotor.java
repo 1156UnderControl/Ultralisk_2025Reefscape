@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.Volts;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -20,7 +21,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VoltageUnit;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -38,7 +38,7 @@ import frc.Java_Is_UnderControl.Driver.Phoenix6Util;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomIntegerLogger;
 
-public class TalonFXMotor implements IMotor{
+public class TalonFXMotor implements IMotor {
   private TalonFX motor;
 
   private GravityTypeValue gravityType;
@@ -56,6 +56,8 @@ public class TalonFXMotor implements IMotor{
   private double targetOutput = Double.NaN;
 
   private boolean factoryDefaultOcurred = false;
+
+  private MotionMagicVoltage magicVoltage = new MotionMagicVoltage(0);
 
   private CustomDoubleLogger appliedOutputLog;
 
@@ -78,8 +80,6 @@ public class TalonFXMotor implements IMotor{
   private MotorOutputConfigs configs = new MotorOutputConfigs();
 
   private TalonFXConfigurator cfg;
-
-  private MotionMagicVoltage magicVoltage;
 
   private String motorName;
 
@@ -118,7 +118,7 @@ public class TalonFXMotor implements IMotor{
     this.clearStickyFaults();
     this.motorName = motorName;
   }
-  
+
   public TalonFXMotor(int id, String motorName, String canivoreBus) {
     this(id, GravityTypeValue.Elevator_Static, motorName, canivoreBus);
   }
@@ -126,7 +126,6 @@ public class TalonFXMotor implements IMotor{
   public TalonFXMotor(int id, String motorName) {
     this(id, GravityTypeValue.Elevator_Static, motorName);
   }
-  
 
   private void setupLogs(int motorId) {
     this.appliedOutputLog = new CustomDoubleLogger("/motors/" + motorId + "/appliedOutput");
@@ -139,7 +138,7 @@ public class TalonFXMotor implements IMotor{
     this.targetPositionLog = new CustomDoubleLogger("/motors/" + motorId + "/targetPosition");
     this.targetSpeedLog = new CustomDoubleLogger("/motors/" + motorId + "/targetSpeed");
     StringLogEntry descriptionLog = new StringLogEntry(DataLogManager.getLog(),
-      "/motors/" + motorId + "/Description");
+        "/motors/" + motorId + "/Description");
     descriptionLog.append(this.motor.getDescription());
     BooleanLogEntry isInvertedLog = new BooleanLogEntry(DataLogManager.getLog(), "/motors/" + motorId + "/isInverted");
     isInvertedLog.append(isInverted());
@@ -158,13 +157,13 @@ public class TalonFXMotor implements IMotor{
   }
 
   @Override
-  public String getMotorName(){
+  public String getMotorName() {
     return this.motorName;
   }
 
   @Override
   public void factoryDefault() {
-   if (!factoryDefaultOcurred) {
+    if (!factoryDefaultOcurred) {
       configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(configuration, 100));
       m_angleVoltageSetter.UpdateFreqHz = 0;
@@ -282,12 +281,17 @@ public class TalonFXMotor implements IMotor{
 
   @Override
   public void setInvertedEncoder(boolean inverted) {
-    //do nothing
+    // do nothing
   }
 
   @Override
   public void burnFlash() {
-    //do nothing
+    // do nothing
+  }
+
+  @Override
+  public void setFollower(int leaderIDcan, boolean invert) {
+    motor.setControl(new Follower(leaderIDcan, invert));
   }
 
   @Override
@@ -320,34 +324,31 @@ public class TalonFXMotor implements IMotor{
   }
 
   @Override
-  public void setPositionReferenceMotionProfiling(double position, double velocity, double feedforward) {
-    double positionInRotations = Units.degreesToRotations(position);
-    targetPosition = position;
-    targetOutput = Double.NaN;
-    targetVelocity = Double.NaN;
-    motor.setControl(new PositionDutyCycle(positionInRotations).withFeedForward(feedforward).withVelocity(velocity));
-  }
-
-  public void configureMotionMagic(double P, double I, double D, double S, double V, double A, double cruiseVelocity, double acceleration, double jerk){
+  public void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity,
+      double maxAcceleration, double positionErrorAllowed) {
     cfg.refresh(configuration.Slot0);
-    configuration.Slot0.withKP(P).withKI(I).withKD(D).withKS(S).withKV(V).withKA(A);
-
+    configuration.Slot0.withKP(P).withKI(I).withKD(D);
     var motionMagicConfigs = configuration.MotionMagic;
-    motionMagicConfigs.MotionMagicCruiseVelocity = cruiseVelocity;
-    motionMagicConfigs.MotionMagicAcceleration = acceleration;
-    motionMagicConfigs.MotionMagicJerk = jerk;
-
+    motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
+    motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
     cfg.apply(configuration);
   }
 
-  public void setPositionMotionMagic(double position){
-    magicVoltage = new MotionMagicVoltage(0);
-    motor.setControl(magicVoltage.withPosition(position));
+  @Override
+  public void configureMotionProfiling(double P, double I, double D, double kS, double kV, double kA,
+      double maxVelocity,
+      double maxAcceleration, double jerk) {
+    cfg.refresh(configuration.Slot0);
+    configuration.Slot0.withKP(P).withKI(I).withKD(D).withKS(kS).withKV(kV).withKA(kA);
+    var motionMagicConfigs = configuration.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
+    motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
+    motionMagicConfigs.MotionMagicJerk = jerk;
+    cfg.apply(configuration);
   }
 
-  public void setAngleMotionMagic(Angle angle){
-    magicVoltage = new MotionMagicVoltage(0);
-    motor.setControl(magicVoltage.withPosition(angle));
+  public void setPositionReferenceMotionProfiling(double position, double arbFF) {
+    motor.setControl(magicVoltage.withPosition(position));
   }
 
   public void setVelocityReference(double velocity, double feedforward) {
@@ -362,7 +363,7 @@ public class TalonFXMotor implements IMotor{
     return motor.getMotorVoltage().getValueAsDouble();
   }
 
-  public double getDutyCycleSetpoint(){
+  public double getDutyCycleSetpoint() {
     return motor.get();
   }
 
@@ -390,7 +391,7 @@ public class TalonFXMotor implements IMotor{
   public void setPositionFactor(double factor) {
     this.cfg = motor.getConfigurator();
     cfg.refresh(configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-    .withSensorToMechanismRatio(factor));
+        .withSensorToMechanismRatio(factor));
     cfg.apply(configuration);
   }
 
@@ -398,7 +399,7 @@ public class TalonFXMotor implements IMotor{
   public void setVelocityFactor(double factor) {
     this.cfg = motor.getConfigurator();
     cfg.refresh(configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-    .withSensorToMechanismRatio(factor));
+        .withSensorToMechanismRatio(factor));
     cfg.apply(configuration);
   }
 
@@ -428,13 +429,13 @@ public class TalonFXMotor implements IMotor{
     cfg.apply(configuration.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(rampRate));
   }
 
-  private boolean isInverted(){
+  private boolean isInverted() {
     motor.getConfigurator().refresh(configs);
     if (configs.Inverted == InvertedValue.Clockwise_Positive) {
       return false;
     } else {
       return true;
-    }  
+    }
   }
 
   @Override
@@ -443,62 +444,63 @@ public class TalonFXMotor implements IMotor{
   }
 
   @Override
-  public void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID){
+  public void configureSysID(double quasistaticVoltagePerSecond, double dynamicVoltage, double timeoutSysID) {
     this.quasistaticVoltagePerSecond = Volts.of(quasistaticVoltagePerSecond).per(Second);
     this.dynamicVoltage = Volts.of(dynamicVoltage);
     this.timeoutSysID = Seconds.of(timeoutSysID);
-}
+  }
 
-   @Override
-    public void setSysID(Subsystem currentSubsystem){
-        this.sysIdRoutine = new SysIdRoutine(
+  @Override
+  public void setSysID(Subsystem currentSubsystem) {
+    this.sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(this.quasistaticVoltagePerSecond, this.dynamicVoltage, this.timeoutSysID),
         new SysIdRoutine.Mechanism(
             voltage -> {
               this.set(voltage);
             },
             log -> {
-                log.motor(this.motorName)
-                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
-                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
-                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+              log.motor(this.motorName)
+                  .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput() * RobotController.getBatteryVoltage(),
+                      Volts))
+                  .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                  .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
             },
-            currentSubsystem
-            )    
-        );  
-    }
-    @Override
-    public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor){
-        this.sysIdRoutine = new SysIdRoutine(
+            currentSubsystem));
+  }
+
+  @Override
+  public void setTwoSysIDMotors(Subsystem currentSubsystem, IMotor otherMotor) {
+    this.sysIdRoutine = new SysIdRoutine(
         new SysIdRoutine.Config(this.quasistaticVoltagePerSecond, this.dynamicVoltage, this.timeoutSysID),
         new SysIdRoutine.Mechanism(
             voltage -> {
-                this.set(voltage);
-                otherMotor.set(voltage);
+              this.set(voltage);
+              otherMotor.set(voltage);
             },
             log -> {
-                log.motor(this.motorName)
-                .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
-                .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
-                .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
+              log.motor(this.motorName)
+                  .voltage(m_appliedVoltage.mut_replace(this.getAppliedOutput() * RobotController.getBatteryVoltage(),
+                      Volts))
+                  .linearPosition(m_distance.mut_replace(this.getPosition(), Meters))
+                  .linearVelocity(m_velocity.mut_replace(this.getVelocity(), MetersPerSecond));
 
-                log.motor(otherMotor.getMotorName())
-                .voltage(m_appliedVoltage.mut_replace(otherMotor.getAppliedOutput()* RobotController.getBatteryVoltage(), Volts))
-                .linearPosition(m_distance.mut_replace(otherMotor.getPosition(), Meters))
-                .linearVelocity(m_velocity.mut_replace(otherMotor.getVelocity(), MetersPerSecond));
+              log.motor(otherMotor.getMotorName())
+                  .voltage(m_appliedVoltage
+                      .mut_replace(otherMotor.getAppliedOutput() * RobotController.getBatteryVoltage(), Volts))
+                  .linearPosition(m_distance.mut_replace(otherMotor.getPosition(), Meters))
+                  .linearVelocity(m_velocity.mut_replace(otherMotor.getVelocity(), MetersPerSecond));
             },
-            currentSubsystem
-            )    
-        );  
-    }
+            currentSubsystem));
+  }
 
-    @Override
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return this.sysIdRoutine.quasistatic(direction);
-    }
+  @Override
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return this.sysIdRoutine.quasistatic(direction);
+  }
 
-    @Override
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return this.sysIdRoutine.dynamic(direction);
-    }
+  @Override
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return this.sysIdRoutine.dynamic(direction);
+  }
+
 }

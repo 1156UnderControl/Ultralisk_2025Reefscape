@@ -14,6 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.joysticks.ControlBoard;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.constants.FieldConstants.Reef;
@@ -26,6 +30,7 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
+  private ControlBoard controller = ControlBoard.getInstance();
   private OperatorController controller = OperatorController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
@@ -36,6 +41,8 @@ public class RobotContainer {
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
+
+  public final SuperStructure superStructure = new SuperStructure();
 
   public RobotContainer() {
     configureBindings();
@@ -51,6 +58,16 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
+
+    controller.a()
+        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
+    NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
+
+    controller.b().whileTrue(drivetrain.wheelRadiusCharacterization());
+    new Trigger(() -> DriverStation.isTeleopEnabled())
+        .whileTrue(Commands.run(
+            () -> superStructure.scorer.prepareToPlaceCoralOnBranch(Reef.branchPositions.get(0).get(ReefHeight.L2)),
+            superStructure));
 
     controller.goToReefB()
         .onTrue(

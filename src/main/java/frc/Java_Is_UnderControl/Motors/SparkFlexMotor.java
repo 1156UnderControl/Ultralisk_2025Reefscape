@@ -16,13 +16,13 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.VoltageUnit;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
 import edu.wpi.first.units.measure.MutVoltage;
@@ -55,6 +55,8 @@ public class SparkFlexMotor implements IMotor {
   private double rampRate = Double.NaN;
 
   private double maxAcceleration = 0;
+
+  private boolean usingAlternateEncoder = false;
 
   private CustomDoubleLogger appliedOutputLog;
   private CustomDoubleLogger targetOutputLog;
@@ -96,7 +98,7 @@ public class SparkFlexMotor implements IMotor {
     this.config = new SparkFlexConfig();
     this.m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(this.maxVelocity, this.maxAcceleration));
     this.motorName = motorName;
-
+    this.usingAlternateEncoder = usingAlternateEncoder;
     this.setAlternateEncoder(usingAlternateEncoder);
     this.setupLogs(motorID, usingAlternateEncoder);
     this.updateLogs();
@@ -104,6 +106,14 @@ public class SparkFlexMotor implements IMotor {
   }
 
   private void setAlternateEncoder(boolean usingAlternateEncoder) {
+    if (usingAlternateEncoder) {
+      this.config.closedLoop
+          .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
+      this.config.externalEncoder.countsPerRevolution(8192);
+    } else {
+      this.config.closedLoop
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+    }
   }
 
   private void setupLogs(int motorId, boolean isAlternateEncoder) {
@@ -264,16 +274,27 @@ public class SparkFlexMotor implements IMotor {
   }
 
   @Override
-  public void setPositionReferenceMotionProfiling(double position, double maxVelocity, double maxAcceleration) {
+  public void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity,
+      double maxAcceleration,
+      double positionErrorAllowed) {
     this.maxVelocity = maxVelocity;
     this.maxAcceleration = maxAcceleration;
-    if (this.getPosition() != position) {
-      // not implemented
-    }
-    this.targetPercentage = Double.NaN;
-    this.targetVelocity = Double.NaN;
-    this.targetPosition = position;
-    this.updateLogs();
+    config.closedLoop.maxMotion
+        .maxVelocity(maxVelocity, ClosedLoopSlot.kSlot0)
+        .maxAcceleration(maxAcceleration, ClosedLoopSlot.kSlot0)
+        .allowedClosedLoopError(positionErrorAllowed, ClosedLoopSlot.kSlot0);
+    config.closedLoop
+        .p(P, ClosedLoopSlot.kSlot0)
+        .i(I, ClosedLoopSlot.kSlot0)
+        .d(D, ClosedLoopSlot.kSlot0)
+        .velocityFF(ff, ClosedLoopSlot.kSlot0)
+        .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
+  }
+
+  @Override
+  public void configureMotionProfiling(double P, double I, double D, double kS, double kV, double kA,
+      double maxVelocity, double maxAcceleration, double jerk) {
+    configureMotionProfiling(P, I, D, 0, maxVelocity, maxAcceleration, 0.05);
   }
 
   public void configureMaxMagic(double P, double I, double D, double S, double V, double A, double maxVelocity,
@@ -288,14 +309,9 @@ public class SparkFlexMotor implements IMotor {
         .pidf(P, I, D, ff);
   }
 
-  public void setPositionMaxMagic(double position, double velocity) {
-    this.velocityFF = velocity;
-    motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
-  }
-
-  public void setVelocityReference(double velocity, ClosedLoopSlot feedforward) {
+  public void setVelocityReference(double velocity, double feedforward) {
     if (this.getVelocity() != velocity) {
-      motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, feedforward);
+      motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0, feedforward);
     }
     this.targetPercentage = Double.NaN;
     this.targetVelocity = velocity;
@@ -303,26 +319,9 @@ public class SparkFlexMotor implements IMotor {
     this.updateLogs();
   }
 
-  public void configureMaxMotion(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration,
-      double positionErrorAllowed) {
-    config.closedLoop.maxMotion
-        .maxVelocity(maxVelocity, ClosedLoopSlot.kSlot0)
-        .maxAcceleration(maxAcceleration, ClosedLoopSlot.kSlot0)
-        .allowedClosedLoopError(positionErrorAllowed, ClosedLoopSlot.kSlot0);
-    config.closedLoop
-        .p(P, ClosedLoopSlot.kSlot0)
-        .i(I, ClosedLoopSlot.kSlot0)
-        .d(D, ClosedLoopSlot.kSlot0)
-        .velocityFF(ff, ClosedLoopSlot.kSlot0)
-        .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
-  }
-
-  public void setPositionMaxMotion(double position) {
-    motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
-  }
-
-  public void setAngleMaxMagic(Angle angle) {
-
+  public void setPositionReferenceMotionProfiling(double position, double arbFF) {
+    motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl,
+        ClosedLoopSlot.kSlot0, arbFF);
   }
 
   @Override
@@ -347,11 +346,18 @@ public class SparkFlexMotor implements IMotor {
 
   @Override
   public double getPosition() {
-    return motor.getEncoder().getPosition();
+    if (usingAlternateEncoder) {
+      return motor.getExternalEncoder().getPosition();
+
+    }
+    return motor.getExternalEncoder().getPosition();
   }
 
   @Override
   public double getVelocity() {
+    if (usingAlternateEncoder) {
+      return motor.getExternalEncoder().getVelocity();
+    }
     return motor.getEncoder().getVelocity();
   }
 
@@ -387,6 +393,11 @@ public class SparkFlexMotor implements IMotor {
       config.openLoopRampRate(rampRate);
     }
     this.rampRate = rampRate;
+  }
+
+  @Override
+  public void setFollower(int leaderIDcan, boolean invert) {
+    config.follow(leaderIDcan, invert);
   }
 
   @Override

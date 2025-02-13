@@ -17,10 +17,10 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
@@ -44,12 +44,6 @@ public class SparkMAXMotor implements IMotor {
 
   private boolean factoryDefaultOcurred = false;
 
-  private final TrapezoidProfile m_profile;
-
-  private TrapezoidProfile.State m_goal = new TrapezoidProfile.State();
-
-  private TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
-
   private double maxVelocity = 0;
 
   private double maxAcceleration = 0;
@@ -61,6 +55,7 @@ public class SparkMAXMotor implements IMotor {
   private SparkMaxConfig config;
   private String motorName;
   private boolean isInverted = false;
+  private boolean usingAlternateEncoder = false;
 
   private CustomDoubleLogger appliedOutputLog;
   private CustomDoubleLogger targetOutputLog;
@@ -94,9 +89,9 @@ public class SparkMAXMotor implements IMotor {
   public SparkMAXMotor(int motorID, boolean usingAlternateEncoder, String motorName) {
     this.motor = new SparkMax(motorID, MotorType.kBrushless);
     this.config = new SparkMaxConfig();
-    this.m_profile = new TrapezoidProfile(new TrapezoidProfile.Constraints(this.maxVelocity, this.maxAcceleration));
     this.motorName = motorName;
-
+    this.usingAlternateEncoder = usingAlternateEncoder;
+    clearStickyFaults();
     this.setAlternateEncoder(usingAlternateEncoder);
     this.setupLogs(motorID, usingAlternateEncoder);
     this.updateLogs();
@@ -104,9 +99,12 @@ public class SparkMAXMotor implements IMotor {
 
   private void setAlternateEncoder(boolean usingAlternateEncoder) {
     if (usingAlternateEncoder) {
+      this.config.closedLoop
+          .feedbackSensor(FeedbackSensor.kAlternateOrExternalEncoder);
       this.config.alternateEncoder.countsPerRevolution(8192);
     } else {
-      this.motor.getEncoder();
+      this.config.closedLoop
+          .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
     }
   }
 
@@ -276,20 +274,11 @@ public class SparkMAXMotor implements IMotor {
   }
 
   @Override
-  public void setPositionReferenceMotionProfiling(double position, double maxVelocity, double maxAcceleration) {
+  public void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity,
+      double maxAcceleration,
+      double positionErrorAllowed) {
     this.maxVelocity = maxVelocity;
     this.maxAcceleration = maxAcceleration;
-    if (this.getPosition() != position) {
-      // not implemented
-    }
-    this.targetPercentage = Double.NaN;
-    this.targetVelocity = Double.NaN;
-    this.targetPosition = position;
-    this.updateLogs();
-  }
-
-  public void configureMaxMotion(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration,
-      double positionErrorAllowed) {
     config.closedLoop.maxMotion
         .maxVelocity(maxVelocity, ClosedLoopSlot.kSlot0)
         .maxAcceleration(maxAcceleration, ClosedLoopSlot.kSlot0)
@@ -302,13 +291,21 @@ public class SparkMAXMotor implements IMotor {
         .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
   }
 
-  public void setPositionMaxMotion(double position) {
-    motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl);
+  @Override
+  public void configureMotionProfiling(double P, double I, double D, double kS, double kV, double kA,
+      double cruiseVelocity, double acceleration, double jerk) {
+    configureMotionProfiling(P, I, D, 0, maxVelocity, maxAcceleration, 0.05);
   }
 
-  public void setVelocityReference(double velocity, ClosedLoopSlot feedforward) {
+  @Override
+  public void setPositionReferenceMotionProfiling(double position, double arbFF) {
+    motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl,
+        ClosedLoopSlot.kSlot0, arbFF);
+  }
+
+  public void setVelocityReference(double velocity, double arbFF) {
     if (this.getVelocity() != velocity) {
-      motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, feedforward);
+      motor.getClosedLoopController().setReference(velocity, ControlType.kVelocity, ClosedLoopSlot.kSlot0, arbFF);
     }
     this.targetPercentage = Double.NaN;
     this.targetVelocity = velocity;
@@ -338,11 +335,17 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public double getPosition() {
+    if (usingAlternateEncoder) {
+      return motor.getAlternateEncoder().getPosition();
+    }
     return motor.getEncoder().getPosition();
   }
 
   @Override
   public double getVelocity() {
+    if (usingAlternateEncoder) {
+      return motor.getAlternateEncoder().getVelocity();
+    }
     return motor.getEncoder().getVelocity();
   }
 
@@ -375,6 +378,11 @@ public class SparkMAXMotor implements IMotor {
   public void setLoopRampRate(double rampRate) {
     config.closedLoopRampRate(rampRate)
         .openLoopRampRate(rampRate);
+  }
+
+  @Override
+  public void setFollower(int leaderIDcan, boolean invert) {
+    config.follow(leaderIDcan, invert);
   }
 
   @Override
