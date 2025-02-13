@@ -32,6 +32,12 @@ public class ScorerSubsystem implements IScorer {
   @Logged(name = "State", importance = Importance.INFO)
   private String state = "START";
 
+  @Logged(name = "Target Branch Height", importance = Importance.INFO)
+  private String branchHeightTarget = "NONE";
+
+  @Logged(name = "Target Reef Face To Remove Algae", importance = Importance.INFO)
+  private String reefFaceTarget = "NONE";
+
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
       instance = new ScorerSubsystem();
@@ -123,9 +129,10 @@ public class ScorerSubsystem implements IScorer {
     ReefHeight selectedLevel = getReefHeightFromPose(branchPose);
     if (selectedLevel != null) {
       assignSetpointsForLevel(selectedLevel);
-      state = "PREPARE_TO_PLACE_ON" + selectedLevel.name();
+      state = "PREPARE_TO_PLACE_CORAL";
+      branchHeightTarget = selectedLevel.name();
     } else {
-      state = "NO_MATCH_FOR_REEF_HEIGHT" + branchPose.getZ();
+
     }
   }
 
@@ -168,9 +175,10 @@ public class ScorerSubsystem implements IScorer {
     int faceIndex = getReefFaceIndexFromPose(reefFaceToRemove);
     if (faceIndex >= 0) {
       assignAlgaeRemovalSetpointsForFace(faceIndex);
-      state = "REMOVING_ALGAE_FROM_REEF_FACE" + faceIndex;
+      state = "REMOVING_ALGAE_FROM_REEF";
+      reefFaceTarget = "/Starting facing the driver station in clockwise order: " + Integer.toString(faceIndex);
     } else {
-      state = "NO_MATCHING_REEF_FACE" + reefFaceToRemove;
+      reefFaceTarget = "NO_MATCHING_REEF_FACE" + reefFaceToRemove;
     }
   }
 
@@ -217,7 +225,6 @@ public class ScorerSubsystem implements IScorer {
         goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE5_ALGAE_REMOVAL;
         break;
       default:
-        // Se desejar, defina um comportamento padrão para índices inválidos.
         break;
     }
   }
@@ -226,7 +233,9 @@ public class ScorerSubsystem implements IScorer {
   public void homeElevator() {
     if (!elevatorHasHomed) {
       elevatorMotorLeader.set(0.1);
+      this.state = "HOMING_ELEVATOR";
     } else if (Math.abs(elevatorMotorLeader.getVelocity()) < 0.1) {
+      this.state = "ELEVATOR_HOMED";
       elevatorMotorLeader.set(0);
       elevatorMotorLeader.setPosition(0);
       elevatorHasHomed = true;
@@ -237,6 +246,7 @@ public class ScorerSubsystem implements IScorer {
   public void placeCoral() {
     hasCoral = false;
     elevatorHasHomed = false;
+    this.state = "PLACING_CORAL";
   }
 
   @Override
@@ -272,11 +282,13 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public void setElevatorTestPosition(double testPosition) {
     goalElevator = testPosition;
+    this.state = "ELEVATOR_TEST_POSITION" + testPosition;
   }
 
   @Override
   public void setPivotTestPosition(double testPosition) {
     goalPivot = testPosition;
+    this.state = "PIVOT_TEST_POSITION" + testPosition;
   }
 
 }
