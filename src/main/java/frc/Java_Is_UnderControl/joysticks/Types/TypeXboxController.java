@@ -1,4 +1,4 @@
-package frc.Java_Is_UnderControl.joysticks.Types;
+package frc.Java_Is_UnderControl.Joysticks.Types;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;

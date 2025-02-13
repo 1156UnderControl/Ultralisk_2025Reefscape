@@ -1,4 +1,4 @@
-package frc.Java_Is_UnderControl.joysticks;
+package frc.Java_Is_UnderControl.Joysticks;
 
 import frc.Java_Is_UnderControl.joysticks.Types.IController;
 
