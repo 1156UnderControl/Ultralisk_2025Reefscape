@@ -24,6 +24,8 @@ public class PivotConstants {
       public static final double MAX_ANGLE = 2.5;
       public static final double MIN_ANGLE = 0;
 
+      public static final double DEFAULT_ANGLE = 0;
+
       public static final double L1_ANGLE = 10;
       public static final double L2_ANGLE = 30;
       public static final double L3_ANGLE = 50;

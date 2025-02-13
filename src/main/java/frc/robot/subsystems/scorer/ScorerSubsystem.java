@@ -223,6 +223,13 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
+  public void moveScorerToDefaultPosition() {
+    goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
+    goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
+    state = "DEFAULT";
+  }
+
+  @Override
   public void homeElevator() {
     if (!elevatorHasHomed) {
       elevatorMotorLeader.set(0.1);
@@ -278,5 +285,4 @@ public class ScorerSubsystem implements IScorer {
   public void setPivotTestPosition(double testPosition) {
     goalPivot = testPosition;
   }
-
 }
