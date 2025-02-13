@@ -1,6 +1,6 @@
 package frc.Java_Is_UnderControl.Joysticks;
 
-import frc.Java_Is_UnderControl.joysticks.Types.IController;
+import frc.Java_Is_UnderControl.Joysticks.Types.IController;
 
 public class RobotController {
 
