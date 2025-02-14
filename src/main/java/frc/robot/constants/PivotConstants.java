@@ -34,6 +34,9 @@ public class PivotConstants {
       public static final double FACE3_ALGAE_REMOVAL = 45;
       public static final double FACE4_ALGAE_REMOVAL = 55;
       public static final double FACE5_ALGAE_REMOVAL = 65;
+      public static final double SECURE_FOR_ELEVATOR_UP = 45;
+
+      public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 45;
     }
   }
 }
