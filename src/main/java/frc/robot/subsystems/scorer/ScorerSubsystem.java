@@ -93,12 +93,39 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void periodic() {
-    elevatorMotorLeader.setPositionReferenceMotionProfiling(limitGoalElevator(goalElevator),
-        ElevatorConstants.tunning_values_elevator.PID.arbFF);
-    pivotMotor.setPositionReferenceMotionProfiling(limitGoalPivot(goalElevator),
-        PivotConstants.tunning_values_pivot.PID.arbFF);
-
+    if (state != "HOMING_ELEVATOR") {
+      setScorerStructureGoals();
+    }
     SmartDashboard.putString("state", state);
+  }
+
+  private void setScorerStructureGoals() {
+    if (goalElevator > elevatorMotorLeader.getPosition()) {
+      if (pivotSecureForElevator()) {
+        elevatorMotorLeader.setPositionReferenceMotionProfiling(limitGoalElevator(goalElevator),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        pivotMotor.setPositionReferenceMotionProfiling(limitGoalPivot(goalPivot),
+            PivotConstants.tunning_values_pivot.PID.arbFF);
+      } else {
+        elevatorMotorLeader.setPositionReferenceMotionProfiling(elevatorMotorLeader.getPosition(),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        pivotMotor.setPositionReferenceMotionProfiling(limitGoalPivot(goalPivot),
+            PivotConstants.tunning_values_pivot.PID.arbFF);
+      }
+    } else {
+      if (!elevatorSecureForPivot()
+          && goalPivot > PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP) {
+        elevatorMotorLeader.setPositionReferenceMotionProfiling(limitGoalElevator(goalElevator),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        pivotMotor.setPositionReferenceMotionProfiling(pivotMotor.getPosition(),
+            PivotConstants.tunning_values_pivot.PID.arbFF);
+      } else {
+        elevatorMotorLeader.setPositionReferenceMotionProfiling(limitGoalElevator(goalElevator),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        pivotMotor.setPositionReferenceMotionProfiling(limitGoalPivot(goalPivot),
+            PivotConstants.tunning_values_pivot.PID.arbFF);
+      }
+    }
   }
 
   public boolean isRobotAbleToScore() {
@@ -132,7 +159,6 @@ public class ScorerSubsystem implements IScorer {
       state = "PREPARE_TO_PLACE_CORAL";
       branchHeightTarget = selectedLevel.name();
     } else {
-
     }
   }
 
@@ -267,9 +293,9 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private double limitGoalElevator(double goal) {
-    if (goal > ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT) {
+    if (goal >= ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT) {
       return ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT;
-    } else if (goal < ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT) {
+    } else if (goal <= ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT) {
       return ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
     } else {
       return goal;
@@ -296,5 +322,14 @@ public class ScorerSubsystem implements IScorer {
   public void setPivotTestPosition(double testPosition) {
     goalPivot = testPosition;
     this.state = "PIVOT_TEST_POSITION" + testPosition;
+  }
+
+  private boolean pivotSecureForElevator() {
+    return pivotMotor.getPosition() > PivotConstants.tunning_values_pivot.setpoints.SECURE_FOR_ELEVATOR_UP;
+  }
+
+  private boolean elevatorSecureForPivot() {
+    return elevatorMotorLeader
+        .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
   }
 }
