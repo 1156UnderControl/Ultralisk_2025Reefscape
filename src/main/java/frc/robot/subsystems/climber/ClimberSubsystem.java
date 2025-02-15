@@ -5,13 +5,12 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
-import frc.robot.constants.ClimberArmConstants;
-import frc.robot.constants.ClimberIntakeConstants;
+import frc.robot.constants.ClimberConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
-  private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberIntakeConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
-  private IMotor climberArmMotor = new TalonFXMotor(ClimberIntakeConstants.ID_climberArmMotor,
+  private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
+  private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor,
       GravityTypeValue.Arm_Cosine,
       "CLIMBER_ARM");
 
@@ -32,15 +31,15 @@ public class ClimberSubsystem implements IClimber {
   private void configureClimberMotor() {
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.configureMotionProfiling(
-        ClimberIntakeConstants.tunning_values_climber.PID.P,
-        ClimberIntakeConstants.tunning_values_climber.PID.I,
-        ClimberIntakeConstants.tunning_values_climber.PID.D,
-        ClimberIntakeConstants.tunning_values_climber.KS,
-        ClimberIntakeConstants.tunning_values_climber.KV,
-        ClimberIntakeConstants.tunning_values_climber.KA,
-        ClimberIntakeConstants.tunning_values_climber.MAX_VELOCITY,
-        ClimberIntakeConstants.tunning_values_climber.MAX_ACCELERATION,
-        ClimberIntakeConstants.tunning_values_climber.JERK);
+        ClimberConstants.tunning_values_arm.PID.P,
+        ClimberConstants.tunning_values_arm.PID.I,
+        ClimberConstants.tunning_values_arm.PID.D,
+        ClimberConstants.tunning_values_arm.KS,
+        ClimberConstants.tunning_values_arm.KV,
+        ClimberConstants.tunning_values_arm.KA,
+        ClimberConstants.tunning_values_arm.MAX_VELOCITY,
+        ClimberConstants.tunning_values_arm.MAX_ACCELERATION,
+        ClimberConstants.tunning_values_arm.JERK);
     cageIntakeMotor.burnFlash();
   }
 
@@ -71,12 +70,12 @@ public class ClimberSubsystem implements IClimber {
   @Override
   public void intakeCage() {
     runCageIntakeDetection();
-    cageIntakeMotor.set(ClimberIntakeConstants.setpoints.DUTY_CYCLE_INTAKE);
+    cageIntakeMotor.set(ClimberConstants.tunning_values_intake.setpoints.DUTY_CYCLE_INTAKE);
   }
 
   public void runCageIntakeDetection() {
     if (cageIntakeMotor.getVelocity() < previousVelocity
-        - ClimberIntakeConstants.tunning_values_climber.VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION) {
+        - ClimberConstants.tunning_values_intake.VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION) {
       isCageCollected = true;
     }
     previousVelocity = cageIntakeMotor.getVelocity();
@@ -106,10 +105,10 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void setArmDutyCycle(double dutyCycle) {
-    if (climberArmMotor.getPosition() <= ClimberArmConstants.tunning_values_climber.setpoints.MIN_ANGLE
+    if (climberArmMotor.getPosition() <= ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE
         && dutyCycle > 0) {
       climberArmMotor.set(dutyCycle);
-    } else if (climberArmMotor.getPosition() >= ClimberArmConstants.tunning_values_climber.setpoints.MAX_ANGLE
+    } else if (climberArmMotor.getPosition() >= ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE
         && dutyCycle < 0) {
       climberArmMotor.set(dutyCycle);
     } else {
