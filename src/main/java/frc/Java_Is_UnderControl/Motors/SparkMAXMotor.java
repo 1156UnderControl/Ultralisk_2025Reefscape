@@ -351,12 +351,20 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void setPositionFactor(double factor) {
-    config.encoder.positionConversionFactor(factor);
+    if (usingAlternateEncoder) {
+      config.alternateEncoder.positionConversionFactor(factor);
+    } else {
+      config.encoder.positionConversionFactor(factor);
+    }
   }
 
   @Override
   public void setVelocityFactor(double factor) {
-    config.encoder.velocityConversionFactor(factor);
+    if (usingAlternateEncoder) {
+      config.alternateEncoder.positionConversionFactor(factor);
+    } else {
+      config.encoder.positionConversionFactor(factor);
+    }
   }
 
   @Override
