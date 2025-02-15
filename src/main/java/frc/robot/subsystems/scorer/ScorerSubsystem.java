@@ -100,6 +100,9 @@ public class ScorerSubsystem implements IScorer {
     if (!manualControl) {
       setScorerStructureGoals();
     }
+    SmartDashboard.putNumber("Pivot Position", pivotMotor.getPosition());
+    SmartDashboard.putNumber("Elevator Position", elevatorMotorLeader.getPosition());
+    SmartDashboard.putNumber("EndEffector Velocity", endEffectorMotor.getVelocity());
     SmartDashboard.putString("state", state);
   }
 
