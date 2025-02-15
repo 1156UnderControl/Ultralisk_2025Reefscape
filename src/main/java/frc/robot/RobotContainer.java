@@ -7,9 +7,7 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,17 +57,25 @@ public class RobotContainer {
     // DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
-    NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(1),
+            () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
 
+<<<<<<< HEAD
     driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
+=======
+    driverController.b()
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(-0.5),
+            () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
+>>>>>>> feat/run-elevator
 
-    operatorPanel.goToReefB()
-        .onTrue(
-            drivetrain.goToPoseWithPathfind(posebranch1Score));
-    operatorPanel.goToReefG()
-        .onTrue(
-            drivetrain.goToPoseWithPathfind(posebranch7Score));
+    // driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
+
+    // operatorPanel.goToReefB()
+    // .onTrue(
+    // drivetrain.goToPoseWithPathfind(posebranch1Score));
+    // operatorPanel.goToReefG()
+    // .onTrue(
+    // drivetrain.goToPoseWithPathfind(posebranch7Score));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

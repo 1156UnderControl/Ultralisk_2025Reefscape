@@ -3,8 +3,8 @@ package frc.robot.constants;
 public class ElevatorConstants {
   public static final int ID_elevatorLeaderMotor = 14;
   public static final int ID_elevatorFollowerMotor = 16;
-  public static final double POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS = 0;
-  public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_METERS_PER_SECOND = 0;
+  public static final double POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS = 1;
+  public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_METERS_PER_SECOND = 1;
 
   public class tunning_values_elevator {
     public static final double KS = 0;
@@ -22,7 +22,7 @@ public class ElevatorConstants {
     }
 
     public class setpoints {
-      public static final double MAX_HEIGHT = 2.5;
+      public static final double MAX_HEIGHT = 65.0;
       public static final double MIN_HEIGHT = 0;
       public static final double L1_HEIGHT = 0.5;
       public static final double L2_HEIGHT = 1.0;

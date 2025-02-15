@@ -16,7 +16,8 @@ import frc.robot.constants.PivotConstants;
 public class ScorerSubsystem implements IScorer {
 
   private static ScorerSubsystem instance;
-  private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor, "ELEVATOR_MASTER");
+  private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor,
+      "ELEVATOR_MASTER");
   private IMotor elevatorMotorFollower = new SparkFlexMotor(ElevatorConstants.ID_elevatorFollowerMotor,
       "ELEVATOR_FOLLOWER");
 
@@ -49,8 +50,8 @@ public class ScorerSubsystem implements IScorer {
 
   private ScorerSubsystem() {
     setConfigsElevator();
-    setConfigsPivot();
-    setConfigsEndEffector();
+    // setConfigsPivot();
+    // setConfigsEndEffector();
   }
 
   private void setConfigsElevator() {
@@ -58,7 +59,8 @@ public class ScorerSubsystem implements IScorer {
     elevatorMotorFollower.setMotorBrake(true);
     elevatorMotorLeader.setLoopRampRate(0.5);
     elevatorMotorFollower.setLoopRampRate(0.5);
-    elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor, true);
+    elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor,
+        true);
     elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS);
     elevatorMotorLeader.configureMotionProfiling(
         ElevatorConstants.tunning_values_elevator.PID.P,
@@ -69,6 +71,8 @@ public class ScorerSubsystem implements IScorer {
         ElevatorConstants.tunning_values_elevator.MAX_ACCELERATION,
         ElevatorConstants.tunning_values_elevator.POSITION_ERROR_ALLOWED);
     elevatorMotorFollower.burnFlash();
+    elevatorMotorLeader.burnFlash();
+    elevatorMotorLeader.setPosition(0);
   }
 
   private void setConfigsPivot() {

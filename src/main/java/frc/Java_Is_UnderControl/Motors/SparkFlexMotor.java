@@ -350,7 +350,7 @@ public class SparkFlexMotor implements IMotor {
       return motor.getExternalEncoder().getPosition();
 
     }
-    return motor.getExternalEncoder().getPosition();
+    return motor.getEncoder().getPosition();
   }
 
   @Override
