@@ -26,6 +26,10 @@ public interface IScorer {
 
   void setElevatorDutyCycle(double dutyCycle);
 
+  void setPivotDutyCycle(double dutyCycle);
+
+  void setEndEffectorDutyCycle(double dutyCycle);
+
   boolean isSecuredToPlaceCoral();
 
   boolean hasPlaced();

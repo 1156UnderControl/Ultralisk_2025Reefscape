@@ -338,16 +338,6 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void setElevatorDutyCycle(double dutyCycle) {
-    if (elevatorMotorLeader.getPosition() > ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT
-        && elevatorMotorLeader.getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT) {
-      elevatorMotorLeader.set(dutyCycle);
-    } else {
-      elevatorMotorLeader.set(0);
-    }
-  }
-
-  @Override
   public void setCoastScorer() {
     elevatorMotorLeader.setMotorBrake(false);
     elevatorMotorFollower.setMotorBrake(false);
@@ -359,5 +349,40 @@ public class ScorerSubsystem implements IScorer {
     elevatorMotorLeader.setMotorBrake(true);
     elevatorMotorFollower.setMotorBrake(true);
     pivotMotor.setMotorBrake(true);
+  }
+
+  @Override
+  public void setElevatorDutyCycle(double dutyCycle) {
+    if (elevatorMotorLeader.getPosition() <= ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT
+        && dutyCycle > 0) {
+      elevatorMotorLeader.set(dutyCycle);
+    } else if (elevatorMotorLeader.getPosition() >= ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT
+        && dutyCycle < 0) {
+      elevatorMotorLeader.set(dutyCycle);
+    } else {
+      elevatorMotorLeader.set(0);
+    }
+  }
+
+  @Override
+  public void setPivotDutyCycle(double dutyCycle) {
+    if (pivotMotor.getPosition() <= PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE
+        && dutyCycle > 0) {
+      pivotMotor.set(dutyCycle);
+    } else if (pivotMotor.getPosition() >= PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE
+        && dutyCycle < 0) {
+      pivotMotor.set(dutyCycle);
+    } else {
+      pivotMotor.set(0);
+    }
+  }
+
+  @Override
+  public void setEndEffectorDutyCycle(double dutyCycle) {
+    if (dutyCycle > 0) {
+      pivotMotor.set(dutyCycle);
+    } else {
+      pivotMotor.set(0);
+    }
   }
 }

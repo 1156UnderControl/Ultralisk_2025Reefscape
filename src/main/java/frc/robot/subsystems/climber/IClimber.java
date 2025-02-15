@@ -19,4 +19,6 @@ public interface IClimber {
   void setCoastClimber();
 
   void setBrakeClimber();
+
+  void setArmDutyCycle(double dutyCicle);
 }
