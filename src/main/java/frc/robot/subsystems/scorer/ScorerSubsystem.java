@@ -16,7 +16,8 @@ import frc.robot.constants.PivotConstants;
 public class ScorerSubsystem implements IScorer {
 
   private static ScorerSubsystem instance;
-  private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor, "ELEVATOR_MASTER");
+  private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor,
+      "ELEVATOR_MASTER");
   private IMotor elevatorMotorFollower = new SparkFlexMotor(ElevatorConstants.ID_elevatorFollowerMotor,
       "ELEVATOR_FOLLOWER");
 
@@ -56,7 +57,8 @@ public class ScorerSubsystem implements IScorer {
     elevatorMotorFollower.setMotorBrake(true);
     elevatorMotorLeader.setLoopRampRate(0.5);
     elevatorMotorFollower.setLoopRampRate(0.5);
-    elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor, true);
+    elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor,
+        true);
     elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS);
     elevatorMotorLeader.configureMotionProfiling(
         ElevatorConstants.tunning_values_elevator.PID.P,
@@ -67,6 +69,8 @@ public class ScorerSubsystem implements IScorer {
         ElevatorConstants.tunning_values_elevator.MAX_ACCELERATION,
         ElevatorConstants.tunning_values_elevator.POSITION_ERROR_ALLOWED);
     elevatorMotorFollower.burnFlash();
+    elevatorMotorLeader.burnFlash();
+    elevatorMotorLeader.setPosition(0);
   }
 
   private void setConfigsPivot() {
@@ -98,8 +102,9 @@ public class ScorerSubsystem implements IScorer {
     // pivotMotor.setPositionReferenceMotionProfiling(limitGoalPivot(goalElevator),
     // PivotConstants.tunning_values_pivot.PID.arbFF);
     elevatorMotorLeader.updateLogs();
-    elevatorMotorFollower.updateLogs();
+    // elevatorMotorFollower.updateLogs();
     // pivotMotor.updateLogs();
+    SmartDashboard.putNumber("Elevator Pose", elevatorMotorLeader.getPosition());
     SmartDashboard.putString("state", state);
   }
 
@@ -302,8 +307,11 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setElevatorDutyCycle(double dutyCycle) {
-    if (elevatorMotorLeader.getPosition() > ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT
-        && elevatorMotorLeader.getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT) {
+    if (elevatorMotorLeader.getPosition() <= ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT
+        && dutyCycle > 0) {
+      elevatorMotorLeader.set(dutyCycle);
+    } else if (elevatorMotorLeader.getPosition() >= ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT
+        && dutyCycle < 0) {
       elevatorMotorLeader.set(dutyCycle);
     } else {
       elevatorMotorLeader.set(0);

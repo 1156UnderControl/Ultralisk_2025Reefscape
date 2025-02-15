@@ -57,11 +57,11 @@ public class RobotContainer {
     // DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(0.1),
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(1),
             () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
 
     driverController.b()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(-0.1),
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(-0.5),
             () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
 
     // driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
