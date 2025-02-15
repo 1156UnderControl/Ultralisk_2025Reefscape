@@ -38,6 +38,8 @@ public class ScorerSubsystem implements IScorer {
   @Logged(name = "Target Reef Face To Remove Algae", importance = Importance.INFO)
   private String reefFaceTarget = "NONE";
 
+  private ReefHeight targetReefHeight = ReefHeight.L4;
+
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
       instance = new ScorerSubsystem();
@@ -152,14 +154,10 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void prepareToPlaceCoralOnBranch(Pose3d branchPose) {
-    ReefHeight selectedLevel = getReefHeightFromPose(branchPose);
-    if (selectedLevel != null) {
-      assignSetpointsForLevel(selectedLevel);
-      state = "PREPARE_TO_PLACE_CORAL";
-      branchHeightTarget = selectedLevel.name();
-    } else {
-    }
+  public void prepareToPlaceCoralOnBranch() {
+    assignSetpointsForLevel(this.targetReefHeight);
+    state = "PREPARE_TO_PLACE_CORAL";
+    branchHeightTarget = this.targetReefHeight.name();
   }
 
   private ReefHeight getReefHeightFromPose(Pose3d pose) {
@@ -315,13 +313,13 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public void setElevatorTestPosition(double testPosition) {
     goalElevator = testPosition;
-    this.state = "ELEVATOR_TEST_POSITION" + testPosition;
+    this.state = "ELEVATOR_TEST_POSITION_" + testPosition;
   }
 
   @Override
   public void setPivotTestPosition(double testPosition) {
     goalPivot = testPosition;
-    this.state = "PIVOT_TEST_POSITION" + testPosition;
+    this.state = "PIVOT_TEST_POSITION_" + testPosition;
   }
 
   private boolean pivotSecureForElevator() {
@@ -331,5 +329,9 @@ public class ScorerSubsystem implements IScorer {
   private boolean elevatorSecureForPivot() {
     return elevatorMotorLeader
         .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
+  }
+
+  public void setTargetReefHeight(ReefHeight targetReefHeight) {
+    this.targetReefHeight = targetReefHeight;
   }
 }

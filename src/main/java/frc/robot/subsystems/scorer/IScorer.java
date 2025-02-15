@@ -10,7 +10,7 @@ public interface IScorer {
 
   void intakeFromHP();
 
-  void prepareToPlaceCoralOnBranch(Pose3d branchPose);
+  void prepareToPlaceCoralOnBranch();
 
   void removeAlgaeFromBranch(Pose3d reefFaceToRemove);
 
