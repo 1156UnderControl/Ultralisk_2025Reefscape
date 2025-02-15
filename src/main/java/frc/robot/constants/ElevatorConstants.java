@@ -1,8 +1,8 @@
 package frc.robot.constants;
 
 public class ElevatorConstants {
-  public static final int ID_elevatorLeaderMotor = 14;
-  public static final int ID_elevatorFollowerMotor = 16;
+  public static final int ID_elevatorLeaderMotor = 6;
+  public static final int ID_elevatorFollowerMotor = 7;
   public static final double POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS = 1;
   public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_METERS_PER_SECOND = 1;
 
