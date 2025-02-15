@@ -52,12 +52,24 @@ public class RobotContainer {
     // DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(1),
-            () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setPivotDutyCycle(0.5),
+            () -> superStructure.scorer.setPivotDutyCycle(0.0), superStructure));
 
     driverController.b()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorDutyCycle(-0.5),
-            () -> superStructure.scorer.setElevatorDutyCycle(0.0), superStructure));
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setEndEffectorDutyCycle(-0.5),
+            () -> superStructure.scorer.setEndEffectorDutyCycle(0.0), superStructure));
+
+    driverController.x()
+        .whileTrue(Commands.runEnd(() -> superStructure.intake.intake(),
+            () -> superStructure.intake.stopIntake(), superStructure));
+
+    driverController.y()
+        .whileTrue(Commands.runEnd(() -> superStructure.climber.intakeCage(),
+            () -> superStructure.climber.stopIntakingCage(), superStructure));
+
+    driverController.resetGyro()
+        .whileTrue(Commands.runEnd(() -> superStructure.climber.setArmDutyCycle(0.5),
+            () -> superStructure.climber.setArmDutyCycle(0), superStructure));
 
     // driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
 

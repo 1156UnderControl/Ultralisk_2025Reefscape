@@ -46,7 +46,6 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void climb() {
-
   }
 
   private void activateRollers(double speed) {
