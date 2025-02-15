@@ -16,8 +16,7 @@ import frc.robot.constants.PivotConstants;
 public class ScorerSubsystem implements IScorer {
 
   private static ScorerSubsystem instance;
-  private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor,
-      "ELEVATOR_MASTER");
+  private IMotor elevatorMotorLeader = new SparkFlexMotor(ElevatorConstants.ID_elevatorLeaderMotor, "ELEVATOR_MASTER");
   private IMotor elevatorMotorFollower = new SparkFlexMotor(ElevatorConstants.ID_elevatorFollowerMotor,
       "ELEVATOR_FOLLOWER");
 
@@ -41,6 +40,8 @@ public class ScorerSubsystem implements IScorer {
 
   private ReefHeight targetReefHeight = ReefHeight.L4;
 
+  private boolean manualControl = true;
+
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
       instance = new ScorerSubsystem();
@@ -50,8 +51,8 @@ public class ScorerSubsystem implements IScorer {
 
   private ScorerSubsystem() {
     setConfigsElevator();
-    // setConfigsPivot();
-    // setConfigsEndEffector();
+    setConfigsPivot();
+    setConfigsEndEffector();
   }
 
   private void setConfigsElevator() {
@@ -59,8 +60,7 @@ public class ScorerSubsystem implements IScorer {
     elevatorMotorFollower.setMotorBrake(true);
     elevatorMotorLeader.setLoopRampRate(0.5);
     elevatorMotorFollower.setLoopRampRate(0.5);
-    elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor,
-        true);
+    elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor, true);
     elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS);
     elevatorMotorLeader.configureMotionProfiling(
         ElevatorConstants.tunning_values_elevator.PID.P,
@@ -71,8 +71,6 @@ public class ScorerSubsystem implements IScorer {
         ElevatorConstants.tunning_values_elevator.MAX_ACCELERATION,
         ElevatorConstants.tunning_values_elevator.POSITION_ERROR_ALLOWED);
     elevatorMotorFollower.burnFlash();
-    elevatorMotorLeader.burnFlash();
-    elevatorMotorLeader.setPosition(0);
   }
 
   private void setConfigsPivot() {
@@ -99,7 +97,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void periodic() {
-    if (state != "HOMING_ELEVATOR") {
+    if (!manualControl) {
       setScorerStructureGoals();
     }
     SmartDashboard.putString("state", state);
@@ -153,7 +151,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void intakeFromHP() {
-
+    runCoralIntakeDetection();
     state = "INTAKING_FROM_HP";
   }
 
@@ -337,5 +335,29 @@ public class ScorerSubsystem implements IScorer {
 
   public void setTargetReefHeight(ReefHeight targetReefHeight) {
     this.targetReefHeight = targetReefHeight;
+  }
+
+  @Override
+  public void setElevatorDutyCycle(double dutyCycle) {
+    if (elevatorMotorLeader.getPosition() > ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT
+        && elevatorMotorLeader.getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT) {
+      elevatorMotorLeader.set(dutyCycle);
+    } else {
+      elevatorMotorLeader.set(0);
+    }
+  }
+
+  @Override
+  public void setCoastScorer() {
+    elevatorMotorLeader.setMotorBrake(false);
+    elevatorMotorFollower.setMotorBrake(false);
+    pivotMotor.setMotorBrake(false);
+  }
+
+  @Override
+  public void setBrakeScorer() {
+    elevatorMotorLeader.setMotorBrake(true);
+    elevatorMotorFollower.setMotorBrake(true);
+    pivotMotor.setMotorBrake(true);
   }
 }

@@ -30,4 +30,7 @@ public interface IScorer {
 
   boolean hasPlaced();
 
+  void setCoastScorer();
+
+  void setBrakeScorer();
 }

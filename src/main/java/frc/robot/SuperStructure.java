@@ -51,12 +51,13 @@ public class SuperStructure extends SubsystemBase {
   // }
 
   public void setCoastToRobot() {
-    // this.scorer.setCoastScorer();
-    // this.intake.setCoastScorer();
-    // this.climber.setCoastScorer();
+    this.scorer.setCoastScorer();
+    this.climber.setCoastClimber();
   }
 
   public void setBrakeToRobot() {
+    this.scorer.setBrakeScorer();
+    this.climber.setBrakeClimber();
   }
 
   public boolean isRobotAbleToScore() {

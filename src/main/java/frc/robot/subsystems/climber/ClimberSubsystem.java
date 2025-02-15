@@ -90,4 +90,16 @@ public class ClimberSubsystem implements IClimber {
   public void stopIntakingCage() {
     cageIntakeMotor.set(0);
   }
+
+  @Override
+  public void setCoastClimber() {
+    cageIntakeMotor.setMotorBrake(false);
+    climberArmMotor.setMotorBrake(false);
+  }
+
+  @Override
+  public void setBrakeClimber() {
+    cageIntakeMotor.setMotorBrake(true);
+    climberArmMotor.setMotorBrake(true);
+  }
 }
