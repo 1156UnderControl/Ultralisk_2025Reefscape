@@ -30,6 +30,7 @@ public class IntakeSubsystem implements IIntake {
 
   private IntakeSubsystem() {
     intakeMotor.setMotorBrake(false);
+    intakeMotor.setInverted(true);
     intakeMotor.burnFlash();
     this.beamBreakSensor = new InfraRed(IntakeConstants.port_IR, false);
   }
