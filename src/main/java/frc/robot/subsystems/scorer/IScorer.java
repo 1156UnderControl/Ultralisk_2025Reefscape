@@ -26,6 +26,8 @@ public interface IScorer {
 
   void setElevatorDutyCycle(double dutyCycle);
 
+  void setElevatorVoltage(double voltage);
+
   void setPivotDutyCycle(double dutyCycle);
 
   void setEndEffectorDutyCycle(double dutyCycle);

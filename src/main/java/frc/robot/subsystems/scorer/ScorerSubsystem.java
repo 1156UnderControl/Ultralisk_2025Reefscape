@@ -1,5 +1,7 @@
 package frc.robot.subsystems.scorer;
 
+import static edu.wpi.first.units.Units.Volts;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -59,30 +61,29 @@ public class ScorerSubsystem implements IScorer {
   private void setConfigsElevator() {
     elevatorMotorLeader.setMotorBrake(true);
     elevatorMotorFollower.setMotorBrake(true);
-    elevatorMotorLeader.setLoopRampRate(0.5);
-    elevatorMotorFollower.setLoopRampRate(0.5);
     elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor, true);
     elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS);
-    elevatorMotorLeader.configureMotionProfiling(
+    elevatorMotorLeader.setVelocityFactor(ElevatorConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_METERS_PER_SECOND);
+    elevatorMotorLeader.configurePIDF(
         ElevatorConstants.tunning_values_elevator.PID.P,
         ElevatorConstants.tunning_values_elevator.PID.I,
         ElevatorConstants.tunning_values_elevator.PID.D,
-        ElevatorConstants.tunning_values_elevator.PID.arbFF,
-        ElevatorConstants.tunning_values_elevator.MAX_VELOCITY,
-        ElevatorConstants.tunning_values_elevator.MAX_ACCELERATION,
-        ElevatorConstants.tunning_values_elevator.POSITION_ERROR_ALLOWED);
+        0,
+        ElevatorConstants.tunning_values_elevator.PID.IZone);
     elevatorMotorFollower.burnFlash();
+    elevatorMotorLeader.burnFlash();
+    elevatorMotorLeader.setPosition(ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND);
   }
 
   private void setConfigsPivot() {
-    pivotMotor.setMotorBrake(true);
+    pivotMotor.setMotorBrake(false);
     pivotMotor.setLoopRampRate(0.2);
     pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_DEGREES);
     pivotMotor.configureMotionProfiling(
         PivotConstants.tunning_values_pivot.PID.P,
         PivotConstants.tunning_values_pivot.PID.I,
         PivotConstants.tunning_values_pivot.PID.D,
-        PivotConstants.tunning_values_pivot.PID.arbFF,
+        0,
         PivotConstants.tunning_values_pivot.MAX_VELOCITY,
         PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
         PivotConstants.tunning_values_pivot.POSITION_ERROR_ALLOWED);
@@ -91,6 +92,7 @@ public class ScorerSubsystem implements IScorer {
 
   private void setConfigsEndEffector() {
     endEffectorMotor.setMotorBrake(true);
+    endEffectorMotor.setInverted(true);
     endEffectorMotor.setLoopRampRate(0.1);
     endEffectorMotor.setVelocityFactor(EndEffectorConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_RPM);
     endEffectorMotor.burnFlash();
@@ -103,8 +105,11 @@ public class ScorerSubsystem implements IScorer {
     }
     SmartDashboard.putNumber("Pivot Position", pivotMotor.getPosition());
     SmartDashboard.putNumber("Elevator Position", elevatorMotorLeader.getPosition());
+    SmartDashboard.putNumber("Elevator Velocity", elevatorMotorLeader.getVelocity());
     SmartDashboard.putNumber("EndEffector Velocity", endEffectorMotor.getVelocity());
     SmartDashboard.putString("state", state);
+    elevatorMotorLeader.updateLogs();
+    elevatorMotorFollower.updateLogs();
   }
 
   private void setScorerStructureGoals() {
@@ -318,13 +323,15 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setElevatorTestPosition(double testPosition) {
-    goalElevator = testPosition;
+    elevatorMotorLeader.setPositionReference(limitGoalElevator(testPosition),
+        ElevatorConstants.tunning_values_elevator.PID.arbFF);
     this.state = "ELEVATOR_TEST_POSITION_" + testPosition;
   }
 
   @Override
   public void setPivotTestPosition(double testPosition) {
-    goalPivot = testPosition;
+    pivotMotor.setPositionReferenceMotionProfiling(limitGoalElevator(testPosition),
+        PivotConstants.tunning_values_pivot.PID.arbFF);
     this.state = "PIVOT_TEST_POSITION_" + testPosition;
   }
 
@@ -345,18 +352,22 @@ public class ScorerSubsystem implements IScorer {
   public void setCoastScorer() {
     elevatorMotorLeader.setMotorBrake(false);
     elevatorMotorFollower.setMotorBrake(false);
-    pivotMotor.setMotorBrake(false);
+    elevatorMotorLeader.burnFlash();
+    elevatorMotorFollower.burnFlash();
   }
 
   @Override
   public void setBrakeScorer() {
     elevatorMotorLeader.setMotorBrake(true);
     elevatorMotorFollower.setMotorBrake(true);
-    pivotMotor.setMotorBrake(true);
+    elevatorMotorLeader.burnFlash();
+    elevatorMotorFollower.burnFlash();
+    pivotMotor.burnFlash();
   }
 
   @Override
   public void setElevatorDutyCycle(double dutyCycle) {
+    state = "MANUAL_DUTY_CYCLE_ELEVATOR";
     if (elevatorMotorLeader.getPosition() <= ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT
         && dutyCycle > 0) {
       elevatorMotorLeader.set(dutyCycle);
@@ -370,10 +381,11 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setPivotDutyCycle(double dutyCycle) {
-    if (pivotMotor.getPosition() <= PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE
+    state = "MANUAL_DUTY_CYCLE_PIVOT";
+    if (pivotMotor.getPosition() >= PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE
         && dutyCycle > 0) {
       pivotMotor.set(dutyCycle);
-    } else if (pivotMotor.getPosition() >= PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE
+    } else if (pivotMotor.getPosition() <= PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE
         && dutyCycle < 0) {
       pivotMotor.set(dutyCycle);
     } else {
@@ -383,11 +395,8 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setEndEffectorDutyCycle(double dutyCycle) {
-    if (dutyCycle > 0) {
-      pivotMotor.set(dutyCycle);
-    } else {
-      pivotMotor.set(0);
-    }
+    manualControl = true;
+    endEffectorMotor.set(dutyCycle);
   }
 
   @Override
@@ -402,5 +411,10 @@ public class ScorerSubsystem implements IScorer {
     return Util.atSetpoint(elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.01)
         && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE, 0.01);
+  }
+
+  @Override
+  public void setElevatorVoltage(double voltage) {
+    elevatorMotorLeader.set(Volts.of(voltage));
   }
 }
