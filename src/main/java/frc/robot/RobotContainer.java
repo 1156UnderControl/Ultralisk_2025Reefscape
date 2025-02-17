@@ -8,12 +8,11 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -38,38 +37,52 @@ public class RobotContainer {
   public final SuperStructure superStructure = new SuperStructure();
 
   public RobotContainer() {
+    // superStructure.setDefaultCommand(Commands.run(() ->
+    // superStructure.scorer.setElevatorDutyCycle(0), superStructure));
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
   }
 
   private void configureBindings() {
-    new Trigger(() -> DriverStation.isDisabled() && driverController.y().getAsBoolean())
-        .whileTrue(Commands.runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot()));
-
     // drivetrain.setDefaultCommand(
     // Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() ->
     // DriverStation.isTeleopEnabled()));
 
-    driverController.a()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setPivotDutyCycle(0.5),
-            () -> superStructure.scorer.setPivotDutyCycle(0.0), superStructure));
+    // driverController.a()
+    // .whileTrue(Commands.runEnd(() ->
+    // superStructure.scorer.setPivotDutyCycle(0.5),
+    // () -> superStructure.scorer.setPivotDutyCycle(0.0), superStructure));
 
     driverController.b()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setEndEffectorDutyCycle(-0.5),
-            () -> superStructure.scorer.setEndEffectorDutyCycle(0.0), superStructure));
+        .whileTrue(Commands.runEnd(() -> {
+          superStructure.scorer.setEndEffectorDutyCycle(1);
+          superStructure.intake.intake();
+        },
+            () -> {
+              superStructure.scorer.setEndEffectorDutyCycle(0.0);
+              superStructure.intake.stopIntake();
+            }, superStructure));
+
+    driverController.a()
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setElevatorTestPosition(1.0),
+            () -> superStructure.scorer.setElevatorDutyCycle(0), superStructure));
+    driverController.y()
+        .whileTrue(Commands.runEnd(
+            () -> superStructure.scorer.setElevatorTestPosition(ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND),
+            () -> superStructure.scorer.setElevatorDutyCycle(0), superStructure));
 
     driverController.x()
-        .whileTrue(Commands.runEnd(() -> superStructure.intake.intake(),
-            () -> superStructure.intake.stopIntake(), superStructure));
+        .whileTrue(Commands.runEnd(
+            () -> superStructure.scorer.setElevatorTestPosition(1.8),
+            () -> superStructure.scorer.setElevatorDutyCycle(0), superStructure));
+    // driverController.y()
+    // .whileTrue(Commands.runEnd(() -> superStructure.climber.intakeCage(),
+    /// () -> superStructure.climber.stopIntakingCage(), superStructure));
 
-    driverController.y()
-        .whileTrue(Commands.runEnd(() -> superStructure.climber.intakeCage(),
-            () -> superStructure.climber.stopIntakingCage(), superStructure));
-
-    driverController.resetGyro()
-        .whileTrue(Commands.runEnd(() -> superStructure.climber.setArmDutyCycle(0.5),
-            () -> superStructure.climber.setArmDutyCycle(0), superStructure));
+    // driverController.resetGyro()
+    // .whileTrue(Commands.runEnd(() -> superStructure.climber.setArmDutyCycle(0.5),
+    // () -> superStructure.climber.setArmDutyCycle(0), superStructure));
 
     // driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
 
