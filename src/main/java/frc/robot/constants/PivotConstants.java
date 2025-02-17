@@ -37,6 +37,7 @@ public class PivotConstants {
       public static final double SECURE_FOR_ELEVATOR_UP = 45;
 
       public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 45;
+      public static final double COLLECT_ANGLE = 0;
     }
   }
 }
