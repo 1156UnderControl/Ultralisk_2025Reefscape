@@ -30,6 +30,10 @@ public interface IScorer {
 
   void setEndEffectorDutyCycle(double dutyCycle);
 
+  boolean isAtCollectPosition();
+
+  boolean isAtDefaultPosition();
+
   boolean isSecuredToPlaceCoral();
 
   boolean hasPlaced();

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
+import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.FieldConstants;
@@ -387,5 +388,19 @@ public class ScorerSubsystem implements IScorer {
     } else {
       pivotMotor.set(0);
     }
+  }
+
+  @Override
+  public boolean isAtCollectPosition() {
+    return Util.atSetpoint(elevatorMotorLeader.getPosition(),
+        ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.01)
+        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE, 0.01);
+  }
+
+  @Override
+  public boolean isAtDefaultPosition() {
+    return Util.atSetpoint(elevatorMotorLeader.getPosition(),
+        ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.01)
+        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE, 0.01);
   }
 }
