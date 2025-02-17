@@ -233,7 +233,8 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public void set(double percentOutput) {
     if (percentOutput != this.targetPercentage) {
-      this.motor.set(percentOutput);
+      this.motor.getClosedLoopController().setReference(percentOutput, ControlType.kDutyCycle, ClosedLoopSlot.kSlot0,
+          0);
     }
     this.targetPercentage = percentOutput;
     this.targetPosition = Double.NaN;
@@ -263,9 +264,10 @@ public class SparkMAXMotor implements IMotor {
     this.updateLogs();
   }
 
-  public void setPositionReferenceArbFF(double position, ClosedLoopSlot feedforward) {
+  public void setPositionReference(double position, double arbFF) {
     if (this.getPosition() != position) {
-      motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, feedforward);
+      motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0,
+          arbFF);
     }
     this.targetPercentage = Double.NaN;
     this.targetVelocity = Double.NaN;
@@ -287,7 +289,6 @@ public class SparkMAXMotor implements IMotor {
         .p(P, ClosedLoopSlot.kSlot0)
         .i(I, ClosedLoopSlot.kSlot0)
         .d(D, ClosedLoopSlot.kSlot0)
-        .velocityFF(ff, ClosedLoopSlot.kSlot0)
         .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
   }
 

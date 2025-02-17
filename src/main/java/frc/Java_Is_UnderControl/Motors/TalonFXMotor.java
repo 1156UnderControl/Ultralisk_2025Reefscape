@@ -315,6 +315,11 @@ public class TalonFXMotor implements IMotor {
     setPositionReferenceArbFF(position, 0);
   }
 
+  @Override
+  public void setPositionReference(double position, double arbff) {
+    setPositionReferenceArbFF(position, 0);
+  }
+
   public void setPositionReferenceArbFF(double position, double feedforward) {
     double positionInRotations = Units.degreesToRotations(position);
     targetPosition = position;

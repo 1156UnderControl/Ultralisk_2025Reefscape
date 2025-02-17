@@ -36,6 +36,8 @@ public interface IMotor {
 
   void setPositionReference(double position);
 
+  void setPositionReference(double position, double arbFF);
+
   /**
    * Uses motion magic for TalonFXs and MAXMotion for SparkBases
    *

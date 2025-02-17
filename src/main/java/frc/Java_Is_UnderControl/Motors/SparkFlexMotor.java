@@ -263,9 +263,12 @@ public class SparkFlexMotor implements IMotor {
     this.updateLogs();
   }
 
-  public void setPositionReferenceArbFF(double position, ClosedLoopSlot feedforward) {
+  @Override
+  public void setPositionReference(double position, double ArbFF) {
     if (this.getPosition() != position) {
-      motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, feedforward);
+      motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0,
+          ArbFF);
+      System.out.println("POSITION REFERENCE");
     }
     this.targetPercentage = Double.NaN;
     this.targetVelocity = Double.NaN;
@@ -287,7 +290,6 @@ public class SparkFlexMotor implements IMotor {
         .p(P, ClosedLoopSlot.kSlot0)
         .i(I, ClosedLoopSlot.kSlot0)
         .d(D, ClosedLoopSlot.kSlot0)
-        .velocityFF(ff, ClosedLoopSlot.kSlot0)
         .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
   }
 
@@ -295,18 +297,6 @@ public class SparkFlexMotor implements IMotor {
   public void configureMotionProfiling(double P, double I, double D, double kS, double kV, double kA,
       double maxVelocity, double maxAcceleration, double jerk) {
     configureMotionProfiling(P, I, D, 0, maxVelocity, maxAcceleration, 0.05);
-  }
-
-  public void configureMaxMagic(double P, double I, double D, double S, double V, double A, double maxVelocity,
-      double maxAcceleration, double positionErrorAllowed) {
-    this.feedforward = new SimpleMotorFeedforward(S, V, A);
-    double ff = feedforward.calculate(this.velocityFF);
-    config.closedLoop.maxMotion
-        .maxVelocity(maxVelocity)
-        .maxAcceleration(maxAcceleration)
-        .allowedClosedLoopError(positionErrorAllowed);
-    config.closedLoop
-        .pidf(P, I, D, ff);
   }
 
   public void setVelocityReference(double velocity, double feedforward) {
@@ -322,6 +312,10 @@ public class SparkFlexMotor implements IMotor {
   public void setPositionReferenceMotionProfiling(double position, double arbFF) {
     motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl,
         ClosedLoopSlot.kSlot0, arbFF);
+    this.targetPercentage = Double.NaN;
+    this.targetVelocity = Double.NaN;
+    this.targetPosition = position;
+    this.updateLogs();
   }
 
   @Override
