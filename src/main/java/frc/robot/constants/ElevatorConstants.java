@@ -35,7 +35,7 @@ public class ElevatorConstants {
       public static final double FACE3_ALGAE_REMOVAL = 1.0;
       public static final double FACE4_ALGAE_REMOVAL = 1.2;
       public static final double FACE5_ALGAE_REMOVAL = 1.4;
-      public static final double SECURE_FOR_PIVOT_ROTATION = 1.5;
+      public static final double SECURE_FOR_PIVOT_ROTATION = 0.60;
       public static final double COLLECT_HEIGHT = MIN_HEIGHT;
     }
   }
