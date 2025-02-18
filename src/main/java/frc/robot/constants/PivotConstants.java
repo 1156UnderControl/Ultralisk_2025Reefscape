@@ -13,15 +13,15 @@ public class PivotConstants {
     public static final double POSITION_ERROR_ALLOWED = 0;
 
     public class PID {
-      public static final double P = 0;
-      public static final double I = 0;
-      public static final double D = 0;
+      public static final double P = 0.025;
+      public static final double I = 0.001;
+      public static final double D = 0.5;
       public static final double arbFF = 0;
-      public static final double IZone = 0;
+      public static final double IZone = 20;
     }
 
     public class setpoints {
-      public static final double MAX_ANGLE = 2.5;
+      public static final double MAX_ANGLE = 220;
       public static final double MIN_ANGLE = 0;
       public static final double DEFAULT_ANGLE = 0;
       public static final double L1_ANGLE = 10;
