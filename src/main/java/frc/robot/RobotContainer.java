@@ -38,6 +38,7 @@ public class RobotContainer {
   public RobotContainer() {
     // superStructure.setDefaultCommand(Commands.run(() ->
     // superStructure.scorer.setElevatorDutyCycle(0), superStructure));
+    // superStructure.setDefaultCommand(new DefaultPosition(superStructure));
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
@@ -47,7 +48,6 @@ public class RobotContainer {
     // drivetrain.setDefaultCommand(
     // Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() ->
     // DriverStation.isTeleopEnabled()));
-
     driverController.b()
         .whileTrue(Commands.runEnd(() -> {
           superStructure.scorer.setEndEffectorDutyCycle(1);
