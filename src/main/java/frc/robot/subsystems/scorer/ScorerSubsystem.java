@@ -118,19 +118,23 @@ public class ScorerSubsystem implements IScorer {
   private void setScorerStructureGoals() {
     if (goalElevator > elevatorMotorLeader.getPosition()) {
       if (pivotSecureForElevator()) {
-        elevatorMotorLeader.setPositionReference(goalPivot, ElevatorConstants.tunning_values_elevator.PID.arbFF);
-        pivotMotor.setPositionReference(goalPivot, PivotConstants.tunning_values_pivot.PID.arbFF);
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        pivotMotor.setPositionReference(limitGoalPivot(goalPivot), PivotConstants.tunning_values_pivot.PID.arbFF);
       } else {
-        elevatorMotorLeader.setPositionReference(goalPivot, ElevatorConstants.tunning_values_elevator.PID.arbFF);
-        pivotMotor.setPositionReference(goalPivot, PivotConstants.tunning_values_pivot.PID.arbFF);
+        elevatorMotorLeader.setPositionReference(elevatorMotorLeader.getPosition(),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        pivotMotor.setPositionReference(limitGoalPivot(goalPivot), PivotConstants.tunning_values_pivot.PID.arbFF);
       }
     } else {
       if (!elevatorSecureForPivot()
           && goalPivot > PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP) {
-        elevatorMotorLeader.setPositionReference(goalPivot, ElevatorConstants.tunning_values_elevator.PID.arbFF);
-        pivotMotor.setPositionReference(goalPivot, PivotConstants.tunning_values_pivot.PID.arbFF);
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        pivotMotor.setPositionReference(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.PID.arbFF);
       } else {
-        elevatorMotorLeader.setPositionReference(goalPivot, ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+            ElevatorConstants.tunning_values_elevator.PID.arbFF);
         pivotMotor.setPositionReference(goalPivot, PivotConstants.tunning_values_pivot.PID.arbFF);
       }
     }
@@ -140,7 +144,7 @@ public class ScorerSubsystem implements IScorer {
     return false;
   }
 
-  public void runCoralIntakeDetection() {
+  private void runCoralIntakeDetection() {
     if (this.endEffectorMotor.getVelocity() >= 3000) {
       this.endEffectorAccelerated = true;
     }
@@ -159,6 +163,13 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void intakeFromHP() {
+    if (!hasCoral) {
+      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+    } else {
+      endEffectorMotor.set(0);
+    }
+    goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
+    goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
     runCoralIntakeDetection();
     state = "INTAKING_FROM_HP";
   }
@@ -168,17 +179,6 @@ public class ScorerSubsystem implements IScorer {
     assignSetpointsForLevel(this.targetReefHeight);
     state = "PREPARE_TO_PLACE_CORAL";
     branchHeightTarget = this.targetReefHeight.name();
-  }
-
-  private ReefHeight getReefHeightFromPose(Pose3d pose) {
-    double targetHeight = pose.getZ();
-    final double tolerance = 0.001;
-    for (ReefHeight level : ReefHeight.values()) {
-      if (Math.abs(targetHeight - level.height) < tolerance) {
-        return level;
-      }
-    }
-    return null;
   }
 
   private void assignSetpointsForLevel(ReefHeight level) {
@@ -265,6 +265,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void moveScorerToDefaultPosition() {
+    endEffectorMotor.set(0);
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
     goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
     state = "DEFAULT";
@@ -285,6 +286,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
+    endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
     hasCoral = false;
     elevatorHasHomed = false;
     this.state = "PLACING_CORAL";
@@ -292,7 +294,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isSecuredToPlaceCoral() {
-    return false;
+    return isPivotAndElevatorAtSetpoint();
   }
 
   @Override
@@ -400,19 +402,29 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public boolean isAtCollectPosition() {
     return Util.atSetpoint(elevatorMotorLeader.getPosition(),
-        ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.01)
-        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE, 0.01);
+        ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.05)
+        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE, 0.05);
   }
 
   @Override
   public boolean isAtDefaultPosition() {
     return Util.atSetpoint(elevatorMotorLeader.getPosition(),
-        ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.01)
-        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE, 0.01);
+        ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.05)
+        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE, 0.05);
+  }
+
+  private boolean isPivotAndElevatorAtSetpoint() {
+    return Util.atSetpoint(elevatorMotorLeader.getPosition(), goalElevator, 0.05)
+        && Util.atSetpoint(pivotMotor.getPosition(), goalPivot, 0.05);
   }
 
   @Override
   public void setElevatorVoltage(double voltage) {
     elevatorMotorLeader.set(Volts.of(voltage));
+  }
+
+  @Override
+  public void setTargetBranch(ReefHeight reefHeight) {
+    targetReefHeight = reefHeight;
   }
 }

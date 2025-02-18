@@ -31,7 +31,7 @@ public class DriverController implements IDriverController {
 
   @Override
   public double getXtranslation() {
-    if (turboActivate()) {
+    if (turboActivate().getAsBoolean()) {
       return -MathUtil.applyDeadband(performAllianceSpeedDirectionCorrection(driverController.getLeftX()),
           JoystickConstants.DEADBAND);
     }
@@ -41,7 +41,7 @@ public class DriverController implements IDriverController {
 
   @Override
   public double getYtranslation() {
-    if (turboActivate()) {
+    if (turboActivate().getAsBoolean()) {
       return -MathUtil.applyDeadband(performAllianceSpeedDirectionCorrection(driverController.getLeftY()),
           JoystickConstants.DEADBAND);
     }
@@ -60,8 +60,8 @@ public class DriverController implements IDriverController {
   }
 
   @Override
-  public boolean turboActivate() {
-    return 0.2 < driverController.getRightTriggerAxis();
+  public Trigger turboActivate() {
+    return driverController.rightTrigger(0.2);
   }
 
   @Override
@@ -104,8 +104,8 @@ public class DriverController implements IDriverController {
   }
 
   @Override
-  public boolean isForcingDriverControl() {
-    return 0.2 < driverController.getLeftTriggerAxis();
+  public Trigger isForcingDriverControl() {
+    return driverController.leftTrigger(0.2);
   }
 
   @Override

@@ -1,6 +1,7 @@
 package frc.robot.subsystems.scorer;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import frc.robot.constants.FieldConstants.ReefHeight;
 
 public interface IScorer {
 
@@ -37,6 +38,8 @@ public interface IScorer {
   boolean isAtDefaultPosition();
 
   boolean isSecuredToPlaceCoral();
+
+  void setTargetBranch(ReefHeight reefHeight);
 
   boolean hasPlaced();
 
