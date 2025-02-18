@@ -76,24 +76,23 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void setConfigsPivot() {
+    pivotMotor.setInverted(false);
+    pivotMotor.setInvertedEncoder(true);
     pivotMotor.setMotorBrake(false);
-    pivotMotor.setLoopRampRate(0.2);
     pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_DEGREES);
-    pivotMotor.configureMotionProfiling(
+    pivotMotor.configurePIDF(
         PivotConstants.tunning_values_pivot.PID.P,
         PivotConstants.tunning_values_pivot.PID.I,
         PivotConstants.tunning_values_pivot.PID.D,
         0,
-        PivotConstants.tunning_values_pivot.MAX_VELOCITY,
-        PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
-        PivotConstants.tunning_values_pivot.POSITION_ERROR_ALLOWED);
+        ElevatorConstants.tunning_values_elevator.PID.IZone);
     pivotMotor.burnFlash();
+    pivotMotor.setPosition(0);
   }
 
   private void setConfigsEndEffector() {
     endEffectorMotor.setMotorBrake(true);
     endEffectorMotor.setInverted(true);
-    endEffectorMotor.setLoopRampRate(0.1);
     endEffectorMotor.setVelocityFactor(EndEffectorConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_RPM);
     endEffectorMotor.burnFlash();
   }
@@ -110,6 +109,7 @@ public class ScorerSubsystem implements IScorer {
     SmartDashboard.putString("state", state);
     elevatorMotorLeader.updateLogs();
     elevatorMotorFollower.updateLogs();
+    pivotMotor.updateLogs();
   }
 
   private void setScorerStructureGoals() {
@@ -312,9 +312,9 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private double limitGoalPivot(double goal) {
-    if (goal > PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE) {
+    if (goal >= PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE) {
       return PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE;
-    } else if (goal < PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE) {
+    } else if (goal <= PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE) {
       return PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE;
     } else {
       return goal;
@@ -330,8 +330,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setPivotTestPosition(double testPosition) {
-    pivotMotor.setPositionReferenceMotionProfiling(limitGoalElevator(testPosition),
-        PivotConstants.tunning_values_pivot.PID.arbFF);
+    pivotMotor.setPositionReference(limitGoalPivot(testPosition));
     this.state = "PIVOT_TEST_POSITION_" + testPosition;
   }
 
