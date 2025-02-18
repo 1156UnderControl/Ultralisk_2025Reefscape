@@ -11,6 +11,8 @@ public interface IScorer {
 
   void intakeFromHP();
 
+  void stopIntakeFromHP();
+
   void prepareToPlaceCoralOnBranch();
 
   void removeAlgaeFromBranch(Pose3d reefFaceToRemove);

@@ -12,7 +12,8 @@ public class CollectCoralFromHP extends Command {
 
   @Override
   public void initialize() {
-    superStructure.intake.intake();
+    if (superStructure.scorer.hasCoral())
+      superStructure.intake.intake();
     superStructure.scorer.intakeFromHP();
   }
 

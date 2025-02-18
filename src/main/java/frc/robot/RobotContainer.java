@@ -45,47 +45,27 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    // drivetrain.setDefaultCommand(
-    // Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() ->
-    // DriverStation.isTeleopEnabled()));
-    driverController.b()
+    driverController.b().and(() -> !superStructure.scorer.hasCoral())
         .whileTrue(Commands.runEnd(() -> {
-          superStructure.scorer.setEndEffectorDutyCycle(1);
+          superStructure.scorer.intakeFromHP();
           superStructure.intake.intake();
         },
             () -> {
-              superStructure.scorer.setEndEffectorDutyCycle(0.0);
+              superStructure.scorer.stopIntakeFromHP();
               superStructure.intake.stopIntake();
             }, superStructure));
 
-    driverController.a()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setPivotTestPosition(12),
-            () -> superStructure.scorer.setPivotDutyCycle(0), superStructure));
+    driverController.a().and(() -> !superStructure.scorer.hasCoral())
+        .onTrue(
+            Commands.runEnd(
+                () -> superStructure.scorer.setPivotTestPosition(12),
+                () -> superStructure.scorer.setPivotDutyCycle(0)))
+        .and(
+            () -> superStructure.scorer.isAtCollectPosition());
     driverController.y()
         .whileTrue(Commands.runEnd(
             () -> superStructure.scorer.setPivotTestPosition(205),
             () -> superStructure.scorer.setPivotDutyCycle(0), superStructure));
-
-    // driverController.x()
-    // .whileTrue(Commands.runEnd(
-    // () -> superStructure.scorer.setElevatorTestPosition(1.8),
-    // () -> superStructure.scorer.setElevatorDutyCycle(0), superStructure));
-    // driverController.y()
-    // .whileTrue(Commands.runEnd(() -> superStructure.climber.intakeCage(),
-    /// () -> superStructure.climber.stopIntakingCage(), superStructure));
-
-    // driverController.resetGyro()
-    // .whileTrue(Commands.runEnd(() -> superStructure.climber.setArmDutyCycle(0.5),
-    // () -> superStructure.climber.setArmDutyCycle(0), superStructure));
-
-    // driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
-
-    // operatorPanel.goToReefB()
-    // .onTrue(
-    // drivetrain.goToPoseWithPathfind(posebranch1Score));
-    // operatorPanel.goToReefG()
-    // .onTrue(
-    // drivetrain.goToPoseWithPathfind(posebranch7Score));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

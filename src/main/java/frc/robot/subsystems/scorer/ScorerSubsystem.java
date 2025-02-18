@@ -6,6 +6,7 @@ import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -40,6 +41,9 @@ public class ScorerSubsystem implements IScorer {
 
   @Logged(name = "Target Reef Face To Remove Algae", importance = Importance.INFO)
   private String reefFaceTarget = "NONE";
+
+  CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
+  CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
 
   private ReefHeight targetReefHeight = ReefHeight.L4;
 
@@ -113,6 +117,8 @@ public class ScorerSubsystem implements IScorer {
     elevatorMotorFollower.updateLogs();
     pivotMotor.updateLogs();
     endEffectorMotor.updateLogs();
+    hasCoralLog.append(this.hasCoral);
+    hasAcceleratedLog.append(this.endEffectorAccelerated);
   }
 
   private void setScorerStructureGoals() {
@@ -163,6 +169,8 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void intakeFromHP() {
+    this.setPivotTestPosition(12);
+    runCoralIntakeDetection();
     if (!hasCoral) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
     } else {
@@ -170,8 +178,14 @@ public class ScorerSubsystem implements IScorer {
     }
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
     goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
-    runCoralIntakeDetection();
     state = "INTAKING_FROM_HP";
+  }
+
+  @Override
+  public void stopIntakeFromHP() {
+    endEffectorMotor.set(0);
+    state = "START";
+    this.endEffectorAccelerated = false;
   }
 
   @Override
