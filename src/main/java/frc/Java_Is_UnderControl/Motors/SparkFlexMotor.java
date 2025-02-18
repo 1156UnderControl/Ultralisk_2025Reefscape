@@ -268,7 +268,6 @@ public class SparkFlexMotor implements IMotor {
     if (this.getPosition() != position) {
       motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0,
           ArbFF);
-      System.out.println("POSITION REFERENCE");
     }
     this.targetPercentage = Double.NaN;
     this.targetVelocity = Double.NaN;
