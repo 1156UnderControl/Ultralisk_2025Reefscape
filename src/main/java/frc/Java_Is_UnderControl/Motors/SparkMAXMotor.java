@@ -217,7 +217,7 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void setInvertedEncoder(boolean inverted) {
-    config.encoder.inverted(inverted);
+    config.alternateEncoder.inverted(inverted);
   }
 
   @Override

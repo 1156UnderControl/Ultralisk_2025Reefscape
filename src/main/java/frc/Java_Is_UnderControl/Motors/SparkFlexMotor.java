@@ -222,7 +222,7 @@ public class SparkFlexMotor implements IMotor {
 
   @Override
   public void setInvertedEncoder(boolean inverted) {
-    config.encoder.inverted(inverted);
+    config.externalEncoder.inverted(inverted);
   }
 
   @Override
