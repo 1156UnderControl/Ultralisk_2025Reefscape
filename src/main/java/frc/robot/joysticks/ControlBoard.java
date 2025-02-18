@@ -42,7 +42,7 @@ public class ControlBoard implements IDriverController, IOperatorController {
   }
 
   @Override
-  public boolean turboActivate() {
+  public Trigger turboActivate() {
     return mDriverController.turboActivate();
   }
 
@@ -87,7 +87,7 @@ public class ControlBoard implements IDriverController, IOperatorController {
   }
 
   @Override
-  public boolean isForcingDriverControl() {
+  public Trigger isForcingDriverControl() {
     return mDriverController.isForcingDriverControl();
   }
 
