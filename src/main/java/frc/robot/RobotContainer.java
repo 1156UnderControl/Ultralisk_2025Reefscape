@@ -59,7 +59,7 @@ public class RobotContainer {
             }, superStructure));
 
     driverController.a()
-        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setPivotTestPosition(90),
+        .whileTrue(Commands.runEnd(() -> superStructure.scorer.setPivotTestPosition(12),
             () -> superStructure.scorer.setPivotDutyCycle(0), superStructure));
     driverController.y()
         .whileTrue(Commands.runEnd(

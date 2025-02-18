@@ -23,7 +23,7 @@ public class PivotConstants {
     public class setpoints {
       public static final double MAX_ANGLE = 220;
       public static final double MIN_ANGLE = 0;
-      public static final double DEFAULT_ANGLE = 0;
+      public static final double DEFAULT_ANGLE = 90;
       public static final double L1_ANGLE = 10;
       public static final double L2_ANGLE = 30;
       public static final double L3_ANGLE = 50;
@@ -34,10 +34,10 @@ public class PivotConstants {
       public static final double FACE3_ALGAE_REMOVAL = 45;
       public static final double FACE4_ALGAE_REMOVAL = 55;
       public static final double FACE5_ALGAE_REMOVAL = 65;
-      public static final double SECURE_FOR_ELEVATOR_UP = 45;
+      public static final double SECURE_FOR_ELEVATOR_UP = 85;
 
-      public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 45;
-      public static final double COLLECT_ANGLE = 0;
+      public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 160;
+      public static final double COLLECT_ANGLE = 12;
     }
   }
 }
