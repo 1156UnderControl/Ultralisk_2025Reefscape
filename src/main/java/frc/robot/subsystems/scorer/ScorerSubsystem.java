@@ -29,7 +29,6 @@ public class ScorerSubsystem implements IScorer {
   private final IMotor endEffectorMotor = new SparkMAXMotor(EndEffectorConstants.ID_endEffectorMotor, "END_EFFECTOR");
 
   private boolean hasCoral = false;
-  private double previousVelocity = 0;
   private boolean elevatorHasHomed = false;
   private double goalElevator = ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND;
   private double goalPivot = 0;
@@ -221,7 +220,8 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void removeAlgaeFromBranch(Pose3d reefFaceToRemove) {
+  public void removeAlgaeFromBranch() {
+    endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
     assignAlgaeRemovalSetpointsForFace();
     state = "REMOVING_ALGAE_FROM_REEF";
   }
@@ -282,8 +282,8 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public void placeCoral() {
     endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
-    hasCoral = false;
-    elevatorHasHomed = false;
+    this.hasCoral = false;
+    this.elevatorHasHomed = false;
     this.state = "PLACING_CORAL";
   }
 
@@ -294,7 +294,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean hasPlaced() {
-    return false;
+    return !hasCoral;
   }
 
   private double limitGoalElevator(double goal) {
@@ -331,11 +331,11 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private boolean pivotSecureForElevator() {
-    return pivotMotor.getPosition() > PivotConstants.tunning_values_pivot.setpoints.SECURE_FOR_ELEVATOR_UP;
+    return this.pivotMotor.getPosition() > PivotConstants.tunning_values_pivot.setpoints.SECURE_FOR_ELEVATOR_UP;
   }
 
   private boolean elevatorSecureForPivot() {
-    return elevatorMotorLeader
+    return this.elevatorMotorLeader
         .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
   }
 
@@ -345,22 +345,22 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setCoastScorer() {
-    elevatorMotorLeader.setMotorBrake(false);
-    elevatorMotorFollower.setMotorBrake(false);
-    pivotMotor.setMotorBrake(false);
+    this.elevatorMotorLeader.setMotorBrake(false);
+    this.elevatorMotorFollower.setMotorBrake(false);
+    this.pivotMotor.setMotorBrake(false);
   }
 
   @Override
   public void setBrakeScorer() {
-    elevatorMotorLeader.setMotorBrake(true);
-    elevatorMotorFollower.setMotorBrake(true);
-    pivotMotor.setMotorBrake(true);
+    this.elevatorMotorLeader.setMotorBrake(true);
+    this.elevatorMotorFollower.setMotorBrake(true);
+    this.pivotMotor.setMotorBrake(true);
   }
 
   @Override
   public void setElevatorDutyCycle(double dutyCycle) {
     state = "MANUAL_DUTY_CYCLE_ELEVATOR";
-    if (elevatorMotorLeader.getPosition() <= ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT
+    if (this.elevatorMotorLeader.getPosition() <= ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT
         && dutyCycle > 0) {
       elevatorMotorLeader.set(dutyCycle);
     } else if (elevatorMotorLeader.getPosition() >= ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT
@@ -393,30 +393,42 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isAtCollectPosition() {
-    return Util.atSetpoint(elevatorMotorLeader.getPosition(),
+    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.05)
-        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE, 2);
+        && Util.atSetpoint(this.pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE,
+            2);
   }
 
   @Override
   public boolean isAtDefaultPosition() {
-    return Util.atSetpoint(elevatorMotorLeader.getPosition(),
+    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.05)
-        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE, 2);
+        && Util.atSetpoint(this.pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE,
+            2);
+  }
+
+  @Override
+  public boolean isAtRemovePosition() {
+    return isPivotAndElevatorAtSetpoint();
   }
 
   private boolean isPivotAndElevatorAtSetpoint() {
-    return Util.atSetpoint(elevatorMotorLeader.getPosition(), goalElevator, 0.05)
-        && Util.atSetpoint(pivotMotor.getPosition(), goalPivot, 2);
+    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
+        && Util.atSetpoint(this.pivotMotor.getPosition(), this.goalPivot, 2);
   }
 
   @Override
   public void setElevatorVoltage(double voltage) {
-    elevatorMotorLeader.set(Volts.of(voltage));
+    this.elevatorMotorLeader.set(Volts.of(voltage));
   }
 
   @Override
-  public void setTargetBranch(ReefHeight reefHeight) {
-    targetReefHeight = reefHeight;
+  public void setTargetBranchLevel(ReefHeight reefHeight) {
+    this.targetReefHeight = reefHeight;
+  }
+
+  @Override
+  public void setTargetAlgaeHeight(AlgaeHeight algaeHeight) {
+    this.targetAlgaeHeight = algaeHeight;
   }
 }
