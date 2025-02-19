@@ -59,11 +59,14 @@ public class RobotContainer {
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .onTrue(Commands.run(() -> this.superStructure.climber.intakeCage()));
+        .whileTrue(Commands.runEnd(() -> this.superStructure.climber.intakeCage(),
+            () -> this.superStructure.climber.stopIntakingCage(), superStructure));
     driverController.b()
-        .onTrue(Commands.run(() -> this.superStructure.climber.setArmDutyCycle(1)));
+        .onTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(1),
+            () -> this.superStructure.climber.setArmDutyCycle(0), superStructure));
     driverController.x()
-        .onTrue(Commands.run(() -> this.superStructure.climber.setArmDutyCycle(-1)));
+        .onTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(-1),
+            () -> this.superStructure.climber.setArmDutyCycle(0), superStructure));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
