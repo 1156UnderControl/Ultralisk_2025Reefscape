@@ -45,21 +45,17 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void climb() {
-  }
 
-  private void activateRollers(double speed) {
-    cageIntakeMotor.set(speed);
-  }
-
-  private void moveArmsToPosition(double position) {
-    climberArmMotor.set(position);
   }
 
   public void periodic() {
   }
 
   @Override
-  public void isAtSetPoint() {
+  public boolean isAtSetPoint() {
+    // return Util.atSetpoint(this.climberArmMotor.getPosition(), ,
+    // previousVelocity);
+    return false;
   }
 
   @Override
