@@ -90,6 +90,8 @@ public class SparkMAXMotor implements IMotor {
 
   private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
 
+  private IdleMode lastTargetIdleMode = null;
+
   public SparkMAXMotor(int motorID, String motorName) {
     this(motorID, false, motorName);
   }
@@ -215,7 +217,13 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void setMotorBrake(boolean isBrakeMode) {
-    config.idleMode(isBrakeMode ? IdleMode.kBrake : IdleMode.kCoast);
+    IdleMode targetIdleMode = isBrakeMode ? IdleMode.kBrake : IdleMode.kCoast;
+    if (lastTargetIdleMode == targetIdleMode) {
+      return;
+    }
+    config.idleMode(targetIdleMode);
+    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    this.lastTargetIdleMode = targetIdleMode;
   }
 
   @Override
