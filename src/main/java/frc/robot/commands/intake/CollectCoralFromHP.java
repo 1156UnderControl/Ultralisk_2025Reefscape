@@ -8,12 +8,12 @@ public class CollectCoralFromHP extends Command {
 
   public CollectCoralFromHP(SuperStructure superStructure) {
     this.superStructure = superStructure;
+    addRequirements(this.superStructure);
   }
 
   @Override
   public void initialize() {
-    if (superStructure.scorer.hasCoral())
-      superStructure.intake.intake();
+    superStructure.intake.intake();
     superStructure.scorer.intakeFromHP();
   }
 

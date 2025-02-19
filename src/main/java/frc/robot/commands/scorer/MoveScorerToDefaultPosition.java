@@ -8,6 +8,7 @@ public class MoveScorerToDefaultPosition extends Command {
 
   public MoveScorerToDefaultPosition(SuperStructure superStructure) {
     this.superStructure = superStructure;
+    addRequirements(this.superStructure);
   }
 
   @Override

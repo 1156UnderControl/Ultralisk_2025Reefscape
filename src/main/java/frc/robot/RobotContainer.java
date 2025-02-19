@@ -8,10 +8,19 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
+import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
+import frc.robot.commands.states.CollectPosition;
+import frc.robot.commands.states.DefaultPosition;
+import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -36,36 +45,29 @@ public class RobotContainer {
   public final SuperStructure superStructure = new SuperStructure();
 
   public RobotContainer() {
-    // superStructure.setDefaultCommand(Commands.run(() ->
-    // superStructure.scorer.setElevatorDutyCycle(0), superStructure));
-    // superStructure.setDefaultCommand(new DefaultPosition(superStructure));
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
+    superStructure.setDefaultCommand(new DefaultPosition(superStructure));
   }
 
   private void configureBindings() {
-    driverController.b().and(() -> !superStructure.scorer.hasCoral())
-        .whileTrue(Commands.runEnd(() -> {
-          superStructure.scorer.intakeFromHP();
-          superStructure.intake.intake();
-        },
-            () -> {
-              superStructure.scorer.stopIntakeFromHP();
-              superStructure.intake.stopIntake();
-            }, superStructure));
+    Pose3d posebranch1Score = CoordinatesTransform
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefHeight.L2)), 1.0);
+    Pose3d posebranch7Score = CoordinatesTransform
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(7).get(ReefHeight.L2)), 1.0);
 
-    driverController.a().and(() -> !superStructure.scorer.hasCoral())
-        .onTrue(
-            Commands.runEnd(
-                () -> superStructure.scorer.setPivotTestPosition(12),
-                () -> superStructure.scorer.setPivotDutyCycle(0)))
-        .and(
-            () -> superStructure.scorer.isAtCollectPosition());
+    drivetrain.setDefaultCommand(
+        Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
+
+    driverController.a()
+        .onTrue(new CollectPosition(superStructure, drivetrain));
+
     driverController.y()
-        .whileTrue(Commands.runEnd(
-            () -> superStructure.scorer.setPivotTestPosition(205),
-            () -> superStructure.scorer.setPivotDutyCycle(0), superStructure));
+        .onTrue(new DefaultPosition(superStructure));
+
+    driverController.b()
+        .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

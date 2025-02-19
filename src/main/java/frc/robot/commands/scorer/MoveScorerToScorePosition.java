@@ -8,10 +8,12 @@ public class MoveScorerToScorePosition extends Command {
 
   public MoveScorerToScorePosition(SuperStructure superStructure) {
     this.superStructure = superStructure;
+    addRequirements(this.superStructure);
   }
 
   @Override
   public void initialize() {
+    superStructure.intake.stopIntake();
     superStructure.scorer.prepareToPlaceCoralOnBranch();
   }
 

@@ -8,6 +8,7 @@ public class MoveScorerToCollectPosition extends Command {
 
   public MoveScorerToCollectPosition(SuperStructure superStructure) {
     this.superStructure = superStructure;
+    addRequirements(this.superStructure);
   }
 
   @Override
