@@ -22,6 +22,7 @@ import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.joysticks.DriverController;
 
@@ -76,7 +77,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   public Command goToPoseWithPathfind(Pose3d pose) {
-
     return driveToPoseWithPathfinding(pose.toPose2d());
   }
 
@@ -94,8 +94,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void driveAimingToNearestHP() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'driveAimingToNearestHP'");
+  public void driveToNearestHP() {
+    Pose2d nearestCoralStation;
+
+    if (getPose().getY() <= 4.0259) {
+      nearestCoralStation = FieldConstants.CoralStation.leftCenterFace;
+    } else {
+      nearestCoralStation = FieldConstants.CoralStation.rightCenterFace;
+    }
+    this.goToPoseWithPathfind(nearestCoralStation);
   }
 }

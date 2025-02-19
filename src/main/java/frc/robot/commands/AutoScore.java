@@ -12,5 +12,4 @@ public class AutoScore extends SequentialCommandGroup {
     this.swerve = swerve;
     this.superStructure = superStructure;
   }
-
 }
