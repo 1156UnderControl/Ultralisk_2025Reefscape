@@ -82,4 +82,32 @@ public class OperatorController implements IOperatorController {
   public Trigger reefL4() {
     return keyboard.get4Trigger();
   }
+
+  public Trigger alignToClimb() {
+    return keyboard.get8Trigger();
+  }
+
+  public Trigger climb() {
+    return keyboard.get9Trigger();
+  }
+
+  public Trigger prepareToScoreCoral() {
+    return keyboard.get0Trigger();
+  }
+
+  public Trigger scoreCoral() {
+    return keyboard.getPTrigger();
+  }
+
+  public Trigger collectCoral() {
+    return keyboard.getZTrigger();
+  }
+
+  public Trigger cancelAction() {
+    return keyboard.getXTrigger();
+  }
+
+  public Trigger removeAlgaeFromBranch() {
+    return keyboard.getVTrigger();
+  }
 }
