@@ -14,11 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
-import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
-import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.ControlBoard;
@@ -61,13 +60,16 @@ public class RobotContainer {
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .onTrue(new CollectPosition(superStructure, drivetrain));
+        .onTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
     driverController.y()
-        .onTrue(new DefaultPosition(superStructure));
+        .onTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
     driverController.b()
-        .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+        .onTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
+
+    driverController.x()
+        .onTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
