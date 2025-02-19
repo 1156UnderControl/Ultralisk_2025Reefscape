@@ -7,18 +7,18 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
+import frc.robot.commands.states.CollectPosition;
+import frc.robot.commands.states.DefaultPosition;
+import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.ControlBoard;
@@ -48,6 +48,7 @@ public class RobotContainer {
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
+    superStructure.setDefaultCommand(new DefaultPosition(superStructure));
   }
 
   private void configureBindings() {
@@ -60,21 +61,13 @@ public class RobotContainer {
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .whileTrue(drivetrain.goToPoseWithPathfind(new Pose2d()));
-    NamedCommands.registerCommand("score/collect", Commands.waitSeconds(1));
+        .onTrue(new CollectPosition(superStructure, drivetrain));
 
-    driverController.b().whileTrue(drivetrain.wheelRadiusCharacterization());
-    new Trigger(() -> DriverStation.isTeleopEnabled())
-        .whileTrue(Commands.run(
-            () -> superStructure.scorer.prepareToPlaceCoralOnBranch(Reef.branchPositions.get(0).get(ReefHeight.L2)),
-            superStructure));
+    driverController.y()
+        .onTrue(new DefaultPosition(superStructure));
 
-    operatorPanel.goToReefB()
-        .onTrue(
-            drivetrain.goToPoseWithPathfind(posebranch1Score));
-    operatorPanel.goToReefG()
-        .onTrue(
-            drivetrain.goToPoseWithPathfind(posebranch7Score));
+    driverController.b()
+        .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

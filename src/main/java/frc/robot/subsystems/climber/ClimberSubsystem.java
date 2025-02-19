@@ -10,7 +10,8 @@ import frc.robot.constants.ClimberConstants;
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
   private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
-  private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor, GravityTypeValue.Arm_Cosine,
+  private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor,
+      GravityTypeValue.Arm_Cosine,
       "CLIMBER_ARM");
 
   private double previousVelocity = 0;
@@ -30,21 +31,20 @@ public class ClimberSubsystem implements IClimber {
   private void configureClimberMotor() {
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.configureMotionProfiling(
-        ClimberConstants.tunning_values_climber.PID.P,
-        ClimberConstants.tunning_values_climber.PID.I,
-        ClimberConstants.tunning_values_climber.PID.D,
-        ClimberConstants.tunning_values_climber.KS,
-        ClimberConstants.tunning_values_climber.KV,
-        ClimberConstants.tunning_values_climber.KA,
-        ClimberConstants.tunning_values_climber.MAX_VELOCITY,
-        ClimberConstants.tunning_values_climber.MAX_ACCELERATION,
-        ClimberConstants.tunning_values_climber.JERK);
+        ClimberConstants.tunning_values_arm.PID.P,
+        ClimberConstants.tunning_values_arm.PID.I,
+        ClimberConstants.tunning_values_arm.PID.D,
+        ClimberConstants.tunning_values_arm.KS,
+        ClimberConstants.tunning_values_arm.KV,
+        ClimberConstants.tunning_values_arm.KA,
+        ClimberConstants.tunning_values_arm.MAX_VELOCITY,
+        ClimberConstants.tunning_values_arm.MAX_ACCELERATION,
+        ClimberConstants.tunning_values_arm.JERK);
     cageIntakeMotor.burnFlash();
   }
 
   @Override
   public void climb() {
-
   }
 
   private void activateRollers(double speed) {
@@ -70,12 +70,12 @@ public class ClimberSubsystem implements IClimber {
   @Override
   public void intakeCage() {
     runCageIntakeDetection();
-    cageIntakeMotor.set(ClimberConstants.setpoints.DUTY_CYCLE_INTAKE);
+    cageIntakeMotor.set(ClimberConstants.tunning_values_intake.setpoints.DUTY_CYCLE_INTAKE);
   }
 
   public void runCageIntakeDetection() {
     if (cageIntakeMotor.getVelocity() < previousVelocity
-        - ClimberConstants.tunning_values_climber.VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION) {
+        - ClimberConstants.tunning_values_intake.VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION) {
       isCageCollected = true;
     }
     previousVelocity = cageIntakeMotor.getVelocity();
@@ -89,5 +89,30 @@ public class ClimberSubsystem implements IClimber {
   @Override
   public void stopIntakingCage() {
     cageIntakeMotor.set(0);
+  }
+
+  @Override
+  public void setCoastClimber() {
+    cageIntakeMotor.setMotorBrake(false);
+    climberArmMotor.setMotorBrake(false);
+  }
+
+  @Override
+  public void setBrakeClimber() {
+    cageIntakeMotor.setMotorBrake(true);
+    climberArmMotor.setMotorBrake(true);
+  }
+
+  @Override
+  public void setArmDutyCycle(double dutyCycle) {
+    if (climberArmMotor.getPosition() <= ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE
+        && dutyCycle > 0) {
+      climberArmMotor.set(dutyCycle);
+    } else if (climberArmMotor.getPosition() >= ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE
+        && dutyCycle < 0) {
+      climberArmMotor.set(dutyCycle);
+    } else {
+      climberArmMotor.set(0);
+    }
   }
 }

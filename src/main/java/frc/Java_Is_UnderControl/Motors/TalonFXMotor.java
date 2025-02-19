@@ -19,6 +19,8 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutDistance;
@@ -92,6 +94,12 @@ public class TalonFXMotor implements IMotor {
   public Time timeoutSysID = null;
 
   private SysIdRoutine sysIdRoutine;
+
+  private TrapezoidProfile motionProfile;
+
+  private TrapezoidProfile.State currentSetpoint = new TrapezoidProfile.State();
+
+  private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
 
   public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName) {
     this.gravityType = gravityType;
@@ -315,6 +323,11 @@ public class TalonFXMotor implements IMotor {
     setPositionReferenceArbFF(position, 0);
   }
 
+  @Override
+  public void setPositionReference(double position, double arbff) {
+    setPositionReferenceArbFF(position, 0);
+  }
+
   public void setPositionReferenceArbFF(double position, double feedforward) {
     double positionInRotations = Units.degreesToRotations(position);
     targetPosition = position;
@@ -349,6 +362,25 @@ public class TalonFXMotor implements IMotor {
 
   public void setPositionReferenceMotionProfiling(double position, double arbFF) {
     motor.setControl(magicVoltage.withPosition(position));
+  }
+
+  @Override
+  public void configureTrapezoid(double maxAcceleration, double maxVelocity) {
+    this.motionProfile = new TrapezoidProfile(new Constraints(maxVelocity, maxAcceleration));
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal, double arbFF) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position, arbFF);
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position);
   }
 
   public void setVelocityReference(double velocity, double feedforward) {

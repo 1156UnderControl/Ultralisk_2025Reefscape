@@ -14,7 +14,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
@@ -26,7 +25,7 @@ import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.joysticks.DriverController;
 
-public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements Subsystem {
+public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements ISwerve {
 
   private DriverController controller = DriverController.getInstance();
 
@@ -62,7 +61,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
     this.state = "DRIVE_ALIGN_ANGLE_JOY";
     this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, controller.getCOS_Joystick(),
         controller.getSIN_Joystick());
-    System.out.println("RODANDO");
   }
 
   public void driveRotatingButton() {
@@ -93,5 +91,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements S
   @Override
   protected void updateLogs() {
 
+  }
+
+  @Override
+  public void driveAimingToNearestHP() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'driveAimingToNearestHP'");
   }
 }

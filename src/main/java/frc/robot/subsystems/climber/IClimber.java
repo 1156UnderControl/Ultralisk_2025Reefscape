@@ -15,4 +15,10 @@ public interface IClimber {
   boolean isCageCollected();
 
   void periodic();
+
+  void setCoastClimber();
+
+  void setBrakeClimber();
+
+  void setArmDutyCycle(double dutyCicle);
 }

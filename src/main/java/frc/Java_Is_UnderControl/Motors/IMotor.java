@@ -36,6 +36,8 @@ public interface IMotor {
 
   void setPositionReference(double position);
 
+  void setPositionReference(double position, double arbFF);
+
   /**
    * Uses motion magic for TalonFXs and MAXMotion for SparkBases
    *
@@ -88,6 +90,12 @@ public interface IMotor {
       double maxAcceleration, double jerk);
 
   void setPositionReferenceMotionProfiling(double position, double arbFF);
+
+  void configureTrapezoid(double maxAcceleration, double maxVelocity);
+
+  void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal);
+
+  void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal, double arbFF);
 
   double getVoltage();
 

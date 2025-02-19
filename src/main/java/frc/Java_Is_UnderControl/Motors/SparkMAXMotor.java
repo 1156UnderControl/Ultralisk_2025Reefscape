@@ -21,6 +21,8 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
@@ -81,6 +83,12 @@ public class SparkMAXMotor implements IMotor {
 
   private SysIdRoutine sysIdRoutine;
   private SparkMax motor;
+
+  private TrapezoidProfile motionProfile;
+
+  private TrapezoidProfile.State currentSetpoint = new TrapezoidProfile.State();
+
+  private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
 
   public SparkMAXMotor(int motorID, String motorName) {
     this(motorID, false, motorName);
@@ -217,7 +225,7 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void setInvertedEncoder(boolean inverted) {
-    config.encoder.inverted(inverted);
+    config.alternateEncoder.inverted(inverted);
   }
 
   @Override
@@ -233,7 +241,8 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public void set(double percentOutput) {
     if (percentOutput != this.targetPercentage) {
-      this.motor.set(percentOutput);
+      this.motor.getClosedLoopController().setReference(percentOutput, ControlType.kDutyCycle, ClosedLoopSlot.kSlot0,
+          0);
     }
     this.targetPercentage = percentOutput;
     this.targetPosition = Double.NaN;
@@ -263,9 +272,10 @@ public class SparkMAXMotor implements IMotor {
     this.updateLogs();
   }
 
-  public void setPositionReferenceArbFF(double position, ClosedLoopSlot feedforward) {
+  public void setPositionReference(double position, double arbFF) {
     if (this.getPosition() != position) {
-      motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, feedforward);
+      motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0,
+          arbFF);
     }
     this.targetPercentage = Double.NaN;
     this.targetVelocity = Double.NaN;
@@ -287,7 +297,6 @@ public class SparkMAXMotor implements IMotor {
         .p(P, ClosedLoopSlot.kSlot0)
         .i(I, ClosedLoopSlot.kSlot0)
         .d(D, ClosedLoopSlot.kSlot0)
-        .velocityFF(ff, ClosedLoopSlot.kSlot0)
         .outputRange(-1, 1, ClosedLoopSlot.kSlot0);
   }
 
@@ -301,6 +310,25 @@ public class SparkMAXMotor implements IMotor {
   public void setPositionReferenceMotionProfiling(double position, double arbFF) {
     motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl,
         ClosedLoopSlot.kSlot0, arbFF);
+  }
+
+  @Override
+  public void configureTrapezoid(double maxAcceleration, double maxVelocity) {
+    this.motionProfile = new TrapezoidProfile(new Constraints(maxVelocity, maxAcceleration));
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal, double arbFF) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position, arbFF);
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position);
   }
 
   public void setVelocityReference(double velocity, double arbFF) {
@@ -351,12 +379,20 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void setPositionFactor(double factor) {
-    config.encoder.positionConversionFactor(factor);
+    if (usingAlternateEncoder) {
+      config.alternateEncoder.positionConversionFactor(factor);
+    } else {
+      config.encoder.positionConversionFactor(factor);
+    }
   }
 
   @Override
   public void setVelocityFactor(double factor) {
-    config.encoder.velocityConversionFactor(factor);
+    if (usingAlternateEncoder) {
+      config.alternateEncoder.positionConversionFactor(factor);
+    } else {
+      config.encoder.positionConversionFactor(factor);
+    }
   }
 
   @Override

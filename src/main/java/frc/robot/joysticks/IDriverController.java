@@ -11,7 +11,7 @@ public interface IDriverController {
 
   double getSIN_Joystick();
 
-  boolean turboActivate();
+  Trigger turboActivate();
 
   boolean notUsingJoystick();
 
@@ -29,5 +29,5 @@ public interface IDriverController {
 
   Trigger resetGyro();
 
-  boolean isForcingDriverControl();
+  Trigger isForcingDriverControl();
 }
