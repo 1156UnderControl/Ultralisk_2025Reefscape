@@ -21,7 +21,7 @@ public class Util {
   }
 
   public static Boolean atSetpoint(double processVariable, double setpoint, double deadband) {
-    return processVariable > setpoint - deadband && processVariable < setpoint + deadband;
+    return (processVariable > setpoint - deadband) && (processVariable < setpoint + deadband);
   }
 
   public static Pose2d medianPose2Dlist(List<Pose2d> list) {
