@@ -6,6 +6,7 @@ import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
 import frc.robot.constants.ClimberConstants;
+import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
@@ -52,8 +53,19 @@ public class ClimberSubsystem implements IClimber {
     cageIntakeMotor.set(speed);
   }
 
-  private void moveArmsToPosition(double position) {
-    climberArmMotor.set(position);
+  public void moveArmsToPosition(double position, double arbFF) {
+    double goal = limitGoalArm(position);
+    climberArmMotor.setPositionReferenceMotionProfiling(goal, arbFF);
+  }
+
+  private double limitGoalArm(double goal) {
+    if (goal >= PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE) {
+      return PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE;
+    } else if (goal <= PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE) {
+      return PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE;
+    } else {
+      return goal;
+    }
   }
 
   public void periodic() {
