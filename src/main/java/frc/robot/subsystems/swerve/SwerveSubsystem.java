@@ -61,7 +61,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.state = "DRIVE_ALIGN_ANGLE_JOY";
     this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, controller.getCOS_Joystick(),
         controller.getSIN_Joystick());
-    System.out.println("RODANDO");
   }
 
   public void driveRotatingButton() {
