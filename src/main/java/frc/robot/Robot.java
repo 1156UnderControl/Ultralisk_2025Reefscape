@@ -46,7 +46,6 @@ public class Robot extends TimedRobot {
         new Rotation3d(Rotation2d.k180deg));
     logPosesred.appendRadians(pose);
     CommandScheduler.getInstance().run();
-
   }
 
   @Override

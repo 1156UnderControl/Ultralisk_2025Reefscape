@@ -8,7 +8,7 @@ public class KeyboardController {
   NetworkTable table;
 
   public KeyboardController() {
-    this.table = NetworkTableInstance.getDefault().getTable("OperatorController");
+    this.table = NetworkTableInstance.getDefault().getTable("/OperatorController");
   }
 
   private Trigger createTrigger(String key) {
