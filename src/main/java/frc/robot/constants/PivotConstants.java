@@ -13,9 +13,9 @@ public class PivotConstants {
     public static final double POSITION_ERROR_ALLOWED = 0;
 
     public class PID {
-      public static final double P = 0.025;
+      public static final double P = 0.02;
       public static final double I = 0.001;
-      public static final double D = 0.5;
+      public static final double D = 0.1;
       public static final double arbFF = 0;
       public static final double IZone = 20;
     }
@@ -24,18 +24,13 @@ public class PivotConstants {
       public static final double MAX_ANGLE = 220;
       public static final double MIN_ANGLE = 0;
       public static final double DEFAULT_ANGLE = 90;
-      public static final double L1_ANGLE = 10;
-      public static final double L2_ANGLE = 30;
-      public static final double L3_ANGLE = 50;
+      public static final double L1_ANGLE = 129;
+      public static final double L2_ANGLE = 193;
+      public static final double L3_ANGLE = 207;
       public static final double L4_ANGLE = 211;
-      public static final double FACE0_ALGAE_REMOVAL = 15;
-      public static final double FACE1_ALGAE_REMOVAL = 25;
-      public static final double FACE2_ALGAE_REMOVAL = 35;
-      public static final double FACE3_ALGAE_REMOVAL = 45;
-      public static final double FACE4_ALGAE_REMOVAL = 55;
-      public static final double FACE5_ALGAE_REMOVAL = 65;
+      public static final double ALGAE_MID_REMOVAL = 173;
+      public static final double ALGAE_LOW_REMOVAL = 173;
       public static final double SECURE_FOR_ELEVATOR_UP = 85;
-
       public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 160;
       public static final double COLLECT_ANGLE = 12;
     }
