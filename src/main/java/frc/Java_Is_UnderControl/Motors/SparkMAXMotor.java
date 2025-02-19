@@ -21,6 +21,8 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
@@ -81,6 +83,12 @@ public class SparkMAXMotor implements IMotor {
 
   private SysIdRoutine sysIdRoutine;
   private SparkMax motor;
+
+  private TrapezoidProfile motionProfile;
+
+  private TrapezoidProfile.State currentSetpoint = new TrapezoidProfile.State();
+
+  private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
 
   public SparkMAXMotor(int motorID, String motorName) {
     this(motorID, false, motorName);
@@ -302,6 +310,25 @@ public class SparkMAXMotor implements IMotor {
   public void setPositionReferenceMotionProfiling(double position, double arbFF) {
     motor.getClosedLoopController().setReference(position, SparkBase.ControlType.kMAXMotionPositionControl,
         ClosedLoopSlot.kSlot0, arbFF);
+  }
+
+  @Override
+  public void configureTrapezoid(double maxAcceleration, double maxVelocity) {
+    this.motionProfile = new TrapezoidProfile(new Constraints(maxVelocity, maxAcceleration));
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal, double arbFF) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position, arbFF);
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position);
   }
 
   public void setVelocityReference(double velocity, double arbFF) {

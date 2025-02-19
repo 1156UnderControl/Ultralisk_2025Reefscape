@@ -22,6 +22,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
@@ -89,6 +90,12 @@ public class SparkFlexMotor implements IMotor {
 
   private SysIdRoutine sysIdRoutine;
 
+  private TrapezoidProfile motionProfile;
+
+  private TrapezoidProfile.State currentSetpoint = new TrapezoidProfile.State();
+
+  private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
+
   public SparkFlexMotor(int motorID, String motorName) {
     this(motorID, false, motorName);
   }
@@ -102,8 +109,9 @@ public class SparkFlexMotor implements IMotor {
     this.setAlternateEncoder(usingAlternateEncoder);
     this.setupLogs(motorID, usingAlternateEncoder);
     this.updateLogs();
-
   }
+
+  private TrapezoidProfile.State pivotCurrentSetpoint = new TrapezoidProfile.State();
 
   private void setAlternateEncoder(boolean usingAlternateEncoder) {
     if (usingAlternateEncoder) {
@@ -315,6 +323,25 @@ public class SparkFlexMotor implements IMotor {
     this.targetVelocity = Double.NaN;
     this.targetPosition = position;
     this.updateLogs();
+  }
+
+  @Override
+  public void configureTrapezoid(double maxAcceleration, double maxVelocity) {
+    this.motionProfile = new TrapezoidProfile(new Constraints(maxVelocity, maxAcceleration));
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal, double arbFF) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position, arbFF);
+  }
+
+  @Override
+  public void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal) {
+    this.trapezoidGoal = new TrapezoidProfile.State(positionGoal, velocityGoal);
+    this.currentSetpoint = motionProfile.calculate(kDt, this.currentSetpoint, this.trapezoidGoal);
+    setPositionReference(this.currentSetpoint.position);
   }
 
   @Override

@@ -91,6 +91,12 @@ public interface IMotor {
 
   void setPositionReferenceMotionProfiling(double position, double arbFF);
 
+  void configureTrapezoid(double maxAcceleration, double maxVelocity);
+
+  void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal);
+
+  void setPositionReferenceTrapezoid(double kDt, double positionGoal, double velocityGoal, double arbFF);
+
   double getVoltage();
 
   double getDutyCycleSetpoint();
