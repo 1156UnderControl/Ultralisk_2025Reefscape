@@ -11,7 +11,7 @@ public class IntakeCommands {
   public IntakeCommands() {
   }
 
-  public static Command intake(SuperStructure superStructure, SwerveSubsystem swerve) {
+  public Command intake(SuperStructure superStructure, SwerveSubsystem swerve) {
     return Commands.parallel(Commands.run(() -> superStructure.intake.intake(), superStructure),
         Commands.run(() -> superStructure.scorer.intakeFromHP(), superStructure),
         new SwerveAlignWithCoralStation(swerve)).until(() -> superStructure.scorer.hasCoral())

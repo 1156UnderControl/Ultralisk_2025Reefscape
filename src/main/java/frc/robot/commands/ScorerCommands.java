@@ -11,7 +11,7 @@ public class ScorerCommands {
   public ScorerCommands() {
   }
 
-  public static Command score(SuperStructure superStructure, SwerveSubsystem swerve, ReefHeight reefHeight) {
+  public Command score(SuperStructure superStructure, SwerveSubsystem swerve, ReefHeight reefHeight) {
     return Commands.parallel(Commands.run(() -> superStructure.scorer.setTargetBranch(reefHeight), superStructure),
         Commands.run(() -> superStructure.scorer.setElevatorDutyCycle(-1), superStructure))
         .until(() -> !superStructure.scorer.hasCoral())

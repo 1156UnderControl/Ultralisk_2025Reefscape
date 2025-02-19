@@ -9,10 +9,9 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class DriveCommands {
 
   public DriveCommands() {
-
   }
 
-  public static Command drive(SuperStructure superStructure, SwerveSubsystem swerve, Pose3d branchPosition) {
+  public Command drive(SuperStructure superStructure, SwerveSubsystem swerve, Pose3d branchPosition) {
     return Commands.run(() -> swerve.goToPoseWithPathfind(branchPosition), swerve);
   }
 }
