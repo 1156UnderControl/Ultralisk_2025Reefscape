@@ -11,8 +11,8 @@ public class IntakeCommands {
   }
 
   public static Command intake(SuperStructure superStructure, SwerveSubsystem swerve) {
-    return Commands.parallel(Commands.parallel(Commands.run(() -> superStructure.intake.intake(), superStructure)
-        .andThen(Commands.run(() -> superStructure.scorer.intakeFromHP(), superStructure))),
+    return Commands.parallel(Commands.run(() -> superStructure.intake.intake(), superStructure),
+        Commands.run(() -> superStructure.scorer.intakeFromHP(), superStructure),
         Commands.run(() -> swerve.driveAimingToNearestHP(), swerve)).until(() -> superStructure.scorer.hasCoral())
         .finallyDo(() -> superStructure.intake.stopIntake()).finallyDo(() -> superStructure.scorer.stopIntakeFromHP());
   }
