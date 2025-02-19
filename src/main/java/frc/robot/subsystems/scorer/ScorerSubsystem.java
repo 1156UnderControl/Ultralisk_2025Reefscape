@@ -14,6 +14,7 @@ import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.FieldConstants;
+import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.constants.PivotConstants;
 
@@ -33,7 +34,7 @@ public class ScorerSubsystem implements IScorer {
   private double goalElevator = ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND;
   private double goalPivot = 0;
 
-  @Logged(name = "State", importance = Importance.INFO)
+  @Logged(name = "State", importance = Importance.CRITICAL)
   private String state = "START";
 
   @Logged(name = "Target Branch Height", importance = Importance.INFO)
@@ -46,6 +47,8 @@ public class ScorerSubsystem implements IScorer {
   CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
 
   private ReefHeight targetReefHeight = ReefHeight.L4;
+
+  private AlgaeHeight targetAlgaeHeight = AlgaeHeight.LOW;
 
   private boolean manualControl = false;
 
@@ -84,7 +87,7 @@ public class ScorerSubsystem implements IScorer {
   private void setConfigsPivot() {
     pivotMotor.setInverted(false);
     pivotMotor.setInvertedEncoder(true);
-    pivotMotor.setMotorBrake(false);
+    pivotMotor.setMotorBrake(true);
     pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_DEGREES);
     pivotMotor.configurePIDF(
         PivotConstants.tunning_values_pivot.PID.P,
@@ -219,14 +222,8 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void removeAlgaeFromBranch(Pose3d reefFaceToRemove) {
-    int faceIndex = getReefFaceIndexFromPose(reefFaceToRemove);
-    if (faceIndex >= 0) {
-      assignAlgaeRemovalSetpointsForFace(faceIndex);
-      state = "REMOVING_ALGAE_FROM_REEF";
-      reefFaceTarget = "/Starting facing the driver station in clockwise order: " + Integer.toString(faceIndex);
-    } else {
-      reefFaceTarget = "NO_MATCHING_REEF_FACE" + reefFaceToRemove;
-    }
+    assignAlgaeRemovalSetpointsForFace();
+    state = "REMOVING_ALGAE_FROM_REEF";
   }
 
   private int getReefFaceIndexFromPose(Pose3d pose) {
@@ -245,31 +242,15 @@ public class ScorerSubsystem implements IScorer {
     return bestIndex;
   }
 
-  private void assignAlgaeRemovalSetpointsForFace(int faceIndex) {
-    switch (faceIndex) {
-      case 0:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE0_ALGAE_REMOVAL;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE0_ALGAE_REMOVAL;
+  private void assignAlgaeRemovalSetpointsForFace() {
+    switch (targetAlgaeHeight) {
+      case LOW:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.ALGAE_REMOVAL_LOW;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_LOW_REMOVAL;
         break;
-      case 1:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE1_ALGAE_REMOVAL;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE1_ALGAE_REMOVAL;
-        break;
-      case 2:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE2_ALGAE_REMOVAL;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE2_ALGAE_REMOVAL;
-        break;
-      case 3:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE3_ALGAE_REMOVAL;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE3_ALGAE_REMOVAL;
-        break;
-      case 4:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE4_ALGAE_REMOVAL;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE4_ALGAE_REMOVAL;
-        break;
-      case 5:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.FACE5_ALGAE_REMOVAL;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.FACE5_ALGAE_REMOVAL;
+      case MID:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.ALGAE_REMOVAL_MID;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_MID_REMOVAL;
         break;
       default:
         break;
@@ -366,17 +347,14 @@ public class ScorerSubsystem implements IScorer {
   public void setCoastScorer() {
     elevatorMotorLeader.setMotorBrake(false);
     elevatorMotorFollower.setMotorBrake(false);
-    elevatorMotorLeader.burnFlash();
-    elevatorMotorFollower.burnFlash();
+    pivotMotor.setMotorBrake(false);
   }
 
   @Override
   public void setBrakeScorer() {
     elevatorMotorLeader.setMotorBrake(true);
     elevatorMotorFollower.setMotorBrake(true);
-    elevatorMotorLeader.burnFlash();
-    elevatorMotorFollower.burnFlash();
-    pivotMotor.burnFlash();
+    pivotMotor.setMotorBrake(true);
   }
 
   @Override
