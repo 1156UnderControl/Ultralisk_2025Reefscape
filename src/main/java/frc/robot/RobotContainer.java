@@ -16,9 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
-import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
-import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.ControlBoard;
@@ -61,13 +59,11 @@ public class RobotContainer {
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .onTrue(new CollectPosition(superStructure, drivetrain));
-
-    driverController.y()
-        .onTrue(new DefaultPosition(superStructure));
-
+        .onTrue(Commands.run(() -> this.superStructure.climber.intakeCage()));
     driverController.b()
-        .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+        .onTrue(Commands.run(() -> this.superStructure.climber.setArmDutyCycle(1)));
+    driverController.x()
+        .onTrue(Commands.run(() -> this.superStructure.climber.setArmDutyCycle(-1)));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
