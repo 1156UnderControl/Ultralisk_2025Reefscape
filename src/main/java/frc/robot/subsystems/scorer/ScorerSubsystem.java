@@ -65,8 +65,8 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void setConfigsElevator() {
-    elevatorMotorLeader.setMotorBrake(false);
-    elevatorMotorFollower.setMotorBrake(false);
+    elevatorMotorLeader.setMotorBrake(true);
+    elevatorMotorFollower.setMotorBrake(true);
     elevatorMotorFollower.setFollower(ElevatorConstants.ID_elevatorLeaderMotor, true);
     elevatorMotorLeader.setPositionFactor(ElevatorConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS);
     elevatorMotorLeader.setVelocityFactor(ElevatorConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_METERS_PER_SECOND);
@@ -134,7 +134,7 @@ public class ScorerSubsystem implements IScorer {
       }
     } else {
       if (!elevatorSecureForPivot()
-          && goalPivot > PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP) {
+          && goalPivot < PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP) {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         pivotMotor.setPositionReference(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.PID.arbFF);
@@ -169,7 +169,6 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void intakeFromHP() {
-    this.setPivotTestPosition(12);
     runCoralIntakeDetection();
     if (!hasCoral) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
@@ -280,6 +279,7 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public void moveScorerToDefaultPosition() {
     endEffectorMotor.set(0);
+    endEffectorAccelerated = false;
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
     goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
     state = "DEFAULT";
@@ -417,19 +417,19 @@ public class ScorerSubsystem implements IScorer {
   public boolean isAtCollectPosition() {
     return Util.atSetpoint(elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.05)
-        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE, 0.05);
+        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE, 2);
   }
 
   @Override
   public boolean isAtDefaultPosition() {
     return Util.atSetpoint(elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.05)
-        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE, 0.05);
+        && Util.atSetpoint(pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE, 2);
   }
 
   private boolean isPivotAndElevatorAtSetpoint() {
     return Util.atSetpoint(elevatorMotorLeader.getPosition(), goalElevator, 0.05)
-        && Util.atSetpoint(pivotMotor.getPosition(), goalPivot, 0.05);
+        && Util.atSetpoint(pivotMotor.getPosition(), goalPivot, 2);
   }
 
   @Override
