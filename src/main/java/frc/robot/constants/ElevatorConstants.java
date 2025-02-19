@@ -28,7 +28,7 @@ public class ElevatorConstants {
       public static final double L1_HEIGHT = 0.5;
       public static final double L2_HEIGHT = 1.0;
       public static final double L3_HEIGHT = 1.5;
-      public static final double L4_HEIGHT = 2.0;
+      public static final double L4_HEIGHT = 2.13;
       public static final double FACE0_ALGAE_REMOVAL = 0.4;
       public static final double FACE1_ALGAE_REMOVAL = 0.6;
       public static final double FACE2_ALGAE_REMOVAL = 0.8;
