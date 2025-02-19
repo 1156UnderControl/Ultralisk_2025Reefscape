@@ -67,6 +67,9 @@ public class RobotContainer {
     driverController.x()
         .onTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(-1),
             () -> this.superStructure.climber.setArmDutyCycle(0), superStructure));
+    driverController.y()
+        .whileTrue(Commands.runEnd(() -> this.superStructure.climber.setBrakeClimber(),
+            () -> this.superStructure.climber.setCoastClimber(), superStructure));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
