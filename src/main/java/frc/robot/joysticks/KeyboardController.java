@@ -8,15 +8,11 @@ public class KeyboardController {
   NetworkTable table;
 
   public KeyboardController() {
-    this.table = NetworkTableInstance.getDefault().getTable("SmartDashBoard/keyboard");
+    this.table = NetworkTableInstance.getDefault().getTable("OperatorController");
   }
 
   private Trigger createTrigger(String key) {
-    if (this.table.containsKey(key)) {
-      return new Trigger(() -> true);
-    } else {
-      return new Trigger(() -> false);
-    }
+    return new Trigger(() -> this.table.getEntry(key).getBoolean(false));
   }
 
   public Trigger getATrigger() {
