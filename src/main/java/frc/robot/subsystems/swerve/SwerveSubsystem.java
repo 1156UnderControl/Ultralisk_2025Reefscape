@@ -25,9 +25,7 @@ import frc.Java_Is_UnderControl.Util.GeomUtil;
 import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
-import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.joysticks.DriverController;
 
@@ -91,8 +89,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void periodic() {
     super.periodic();
-    posetraj.appendRadians(
-        getDriveTarget(getPose(), FieldConstants.Reef.branchPositions2d.get(0).get(ReefLevel.L1), false));
+    Pose2d currentPose = SwerveConstants.TargetBranch.A.getTargetPoseToScore();
+    posetraj.appendRadians(currentPose);
     LimelightHelpers.SetRobotOrientation("limelight-reef",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
@@ -128,6 +126,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     return goal.transformBy(
         GeomUtil.toTransform2d(
             -shiftXT * 1.2,
-            Math.copySign(shiftYT * 1.2 * 0.8, offset.getY())));
+            Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())));
   }
 }
