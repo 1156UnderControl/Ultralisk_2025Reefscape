@@ -38,7 +38,7 @@ public class SwerveConstants {
       Pose2d transformedPose = CoordinatesTransform.applyRotationToPoseAngle(
           CoordinatesTransform
               .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(branchIndex).get(ReefLevel.L4)), 4.0),
-          new Rotation3d(Rotation2d.k180deg)).toPose2d();=
+          new Rotation3d(Rotation2d.k180deg)).toPose2d();
       System.out.println("TargetBranch " + this.name() + " -> Pose atualizada: " + transformedPose);
       return transformedPose;
     }
