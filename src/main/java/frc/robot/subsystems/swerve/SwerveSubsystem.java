@@ -5,6 +5,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -15,13 +16,18 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
+import frc.Java_Is_UnderControl.Util.GeomUtil;
 import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
+import frc.robot.constants.FieldConstants;
+import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.joysticks.DriverController;
 
@@ -32,6 +38,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private Matrix<N3, N1> defaultVisionStandardDeviation;
 
   private Matrix<N3, N1> defaultOdometryStandardDeviation;
+
+  CustomPose2dLogger posetraj = new CustomPose2dLogger("Testpose");
 
   private String state = "NULL";
 
@@ -83,6 +91,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void periodic() {
     super.periodic();
+    posetraj.appendRadians(
+        getDriveTarget(getPose(), FieldConstants.Reef.branchPositions2d.get(0).get(ReefLevel.L1), false));
     LimelightHelpers.SetRobotOrientation("limelight-reef",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
@@ -97,5 +107,27 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   public void driveAimingToNearestHP() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'driveAimingToNearestHP'");
+  }
+
+  /** Get drive target. */
+  private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack) {
+    // If superstructure isn't ready move back away from reef
+    if (moveBack) {
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.5, 0.0));
+    }
+
+    // Final line up
+    var offset = robot.relativeTo(goal);
+    double yDistance = Math.abs(offset.getY());
+    double xDistance = Math.abs(offset.getX());
+    double shiftXT = MathUtil.clamp(
+        (yDistance / (Reef.faceLength * 2)) + ((xDistance - 0.3) / (Reef.faceLength * 3)),
+        0.0,
+        1.0);
+    double shiftYT = MathUtil.clamp(offset.getX() / Reef.faceLength, 0.0, 1.0);
+    return goal.transformBy(
+        GeomUtil.toTransform2d(
+            -shiftXT * 1.2,
+            Math.copySign(shiftYT * 1.2 * 0.8, offset.getY())));
   }
 }

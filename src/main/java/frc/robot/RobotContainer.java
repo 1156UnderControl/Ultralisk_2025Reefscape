@@ -20,7 +20,7 @@ import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.Reef;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -53,9 +53,9 @@ public class RobotContainer {
 
   private void configureBindings() {
     Pose3d posebranch1Score = CoordinatesTransform
-        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefHeight.L2)), 1.0);
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefLevel.L2)), 1.0);
     Pose3d posebranch7Score = CoordinatesTransform
-        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(7).get(ReefHeight.L2)), 1.0);
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(7).get(ReefLevel.L2)), 1.0);
 
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));

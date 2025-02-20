@@ -16,7 +16,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose3dLogger;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.constants.FieldConstants.Reef;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.joysticks.OperatorController;
 
 public class Robot extends TimedRobot {
@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     Pose3d pose = CoordinatesTransform.applyRotationToPoseAngle(CoordinatesTransform
-        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefHeight.L2)), 1.0),
+        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefLevel.L2)), 1.0),
         new Rotation3d(Rotation2d.k180deg));
     logPosesred.appendRadians(pose);
     CommandScheduler.getInstance().run();

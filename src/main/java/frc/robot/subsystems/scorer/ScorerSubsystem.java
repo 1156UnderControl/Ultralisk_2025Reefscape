@@ -14,7 +14,7 @@ import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.FieldConstants;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.PivotConstants;
 
 public class ScorerSubsystem implements IScorer {
@@ -45,7 +45,7 @@ public class ScorerSubsystem implements IScorer {
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
   CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
 
-  private ReefHeight targetReefHeight = ReefHeight.L4;
+  private ReefLevel targetReefHeight = ReefLevel.L4;
 
   private boolean manualControl = false;
 
@@ -194,7 +194,7 @@ public class ScorerSubsystem implements IScorer {
     branchHeightTarget = this.targetReefHeight.name();
   }
 
-  private void assignSetpointsForLevel(ReefHeight level) {
+  private void assignSetpointsForLevel(ReefLevel level) {
     switch (level) {
       case L1:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.L1_HEIGHT;
@@ -358,7 +358,7 @@ public class ScorerSubsystem implements IScorer {
         .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
   }
 
-  public void setTargetReefHeight(ReefHeight targetReefHeight) {
+  public void setTargetReefHeight(ReefLevel targetReefHeight) {
     this.targetReefHeight = targetReefHeight;
   }
 
@@ -438,7 +438,7 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void setTargetBranch(ReefHeight reefHeight) {
+  public void setTargetBranch(ReefLevel reefHeight) {
     targetReefHeight = reefHeight;
   }
 }
