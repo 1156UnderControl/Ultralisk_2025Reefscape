@@ -14,13 +14,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.commands.states.DefaultPosition;
+import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
-import frc.robot.joysticks.ControlBoard;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -29,8 +30,7 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
-  private ControlBoard driverController = ControlBoard.getInstance();
-  private OperatorController operatorPanel = OperatorController.getInstance();
+  private OperatorController keyBoard = OperatorController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
@@ -59,21 +59,31 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    driverController.a()
-        .whileTrue(Commands.runEnd(() -> this.superStructure.climber.intakeCage(),
-            () -> this.superStructure.climber.stopIntakingCage(), superStructure));
-    driverController.b()
-        .onTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(1),
-            () -> this.superStructure.climber.setArmDutyCycle(0), superStructure));
-    driverController.x()
-        .onTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(-1),
-            () -> this.superStructure.climber.setArmDutyCycle(0), superStructure));
-    driverController.y()
-        .whileTrue(Commands.runEnd(() -> this.superStructure.climber.setBrakeClimber(),
-            () -> this.superStructure.climber.setCoastClimber(), superStructure));
-    new Trigger(() -> driverController.rotateRight())
-        .whileTrue(Commands.runEnd(() -> this.superStructure.scorer.setBrakeScorer(),
-            () -> this.superStructure.scorer.setCoastScorer(), superStructure));
+    keyBoard.reefL1()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L1);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
+        }));
+
+    keyBoard.reefL2()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L2);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
+        }));
+
+    keyBoard.reefL3()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L3)));
+
+    keyBoard.reefL4()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L4)));
+
+    keyBoard.prepareToScoreCoral()
+        .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+
+    keyBoard.removeAlgaeFromBranch()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.removeAlgaeFromBranch()));
+
+    keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
