@@ -2,10 +2,13 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
+import edu.wpi.first.epilogue.Logged;
+import edu.wpi.first.epilogue.Logged.Importance;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
 import frc.robot.constants.ClimberConstants;
+import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
@@ -17,6 +20,11 @@ public class ClimberSubsystem implements IClimber {
 
   private double previousVelocity = 0;
   private boolean isCageCollected = false;
+
+  boolean cageIntakeAccelerated = false;
+
+  @Logged(name = "State", importance = Importance.CRITICAL)
+  private String state = "START";
 
   public static ClimberSubsystem getInstance() {
     if (instance == null) {
@@ -83,15 +91,24 @@ public class ClimberSubsystem implements IClimber {
   @Override
   public void intakeCage() {
     runCageIntakeDetection();
-    cageIntakeMotor.set(ClimberConstants.tunning_values_intake.setpoints.DUTY_CYCLE_INTAKE);
+    if (!isCageCollected) {
+      cageIntakeMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+    } else {
+      cageIntakeMotor.set(0);
+    }
+    state = "INTAKING_CAGE";
   }
 
   public void runCageIntakeDetection() {
-    if (cageIntakeMotor.getVelocity() < previousVelocity
-        - ClimberConstants.tunning_values_intake.VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION) {
-      isCageCollected = true;
+    if (this.cageIntakeMotor.getVelocity() >= 3000) {
+      this.cageIntakeAccelerated = true;
     }
-    previousVelocity = cageIntakeMotor.getVelocity();
+    if (cageIntakeMotor
+        .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
+        && cageIntakeAccelerated) {
+      isCageCollected = true;
+      cageIntakeAccelerated = false;
+    }
   }
 
   @Override
