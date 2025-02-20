@@ -38,8 +38,8 @@ public class ClimberSubsystem implements IClimber {
   }
 
   private void configureClimberMotor() {
-    climberArmMotor.setMotorBrake(false);
-    climberArmMotor.setPosition(0);
+    climberArmMotor.setMotorBrake(true);
+    climberArmMotor.setPositionFactor(200);
     climberArmMotor.configureMotionProfiling(
         ClimberConstants.tunning_values_arm.PID.P,
         ClimberConstants.tunning_values_arm.PID.I,
@@ -51,6 +51,7 @@ public class ClimberSubsystem implements IClimber {
         ClimberConstants.tunning_values_arm.MAX_ACCELERATION,
         ClimberConstants.tunning_values_arm.JERK);
     cageIntakeMotor.burnFlash();
+    climberArmMotor.setPosition(0);
   }
 
   @Override
@@ -77,6 +78,7 @@ public class ClimberSubsystem implements IClimber {
   }
 
   public void periodic() {
+    climberArmMotor.updateLogs();
   }
 
   @Override
@@ -135,12 +137,15 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void setArmDutyCycle(double dutyCycle) {
-    if (climberArmMotor.getPosition() <= ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE
-        && dutyCycle > 0) {
-      climberArmMotor.set(dutyCycle);
-    } else if (climberArmMotor.getPosition() >= ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE
+    System.out.println(dutyCycle);
+    if (climberArmMotor.getPosition() >= ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE
         && dutyCycle < 0) {
       climberArmMotor.set(dutyCycle);
+      System.out.println("Indo para Baixo");
+    } else if (climberArmMotor.getPosition() <= ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE
+        && dutyCycle > 0) {
+      climberArmMotor.set(dutyCycle);
+      System.out.println("Indo para Cima");
     } else {
       climberArmMotor.set(0);
     }

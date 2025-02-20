@@ -14,8 +14,8 @@ public class PivotConstants {
 
     public class PID {
       public static final double P = 0.02;
-      public static final double I = 0.001;
-      public static final double D = 0.1;
+      public static final double I = 0;
+      public static final double D = 0;
       public static final double arbFF = 0;
       public static final double IZone = 20;
     }

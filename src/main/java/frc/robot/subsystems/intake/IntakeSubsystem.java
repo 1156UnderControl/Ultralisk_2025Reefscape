@@ -3,7 +3,7 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import frc.Java_Is_UnderControl.Motors.IMotor;
-import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
+import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Sensors.DigitalInput;
 import frc.Java_Is_UnderControl.Sensors.InfraRed;
 import frc.robot.constants.IntakeConstants;
@@ -11,7 +11,7 @@ import frc.robot.constants.IntakeConstants;
 public class IntakeSubsystem implements IIntake {
   private static IntakeSubsystem instance;
 
-  private IMotor intakeMotor = new SparkMAXMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;
+  private IMotor intakeMotor = new SparkFlexMotor(IntakeConstants.ID_intakeMotor, "INTAKE");;
 
   private DigitalInput beamBreakSensor;
 

@@ -2,7 +2,7 @@ package frc.robot.constants;
 
 public class ClimberConstants {
   public static final int ID_cageIntakeMotor = 2;
-  public static final int ID_climberArmMotor = 1;
+  public static final int ID_climberArmMotor = 10;
 
   public class tunning_values_intake {
     public static final double VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION = 100;
@@ -39,8 +39,8 @@ public class ClimberConstants {
     public static final double JERK = 0;
 
     public class setpoints {
-      public static final double MAX_ANGLE = 0;
-      public static final double MIN_ANGLE = 0;
+      public static final double MAX_ANGLE = 0.65;
+      public static final double MIN_ANGLE = 0.088134;
     }
 
     public class PID {

@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.commands.states.DefaultPosition;
@@ -63,17 +62,19 @@ public class RobotContainer {
         .whileTrue(Commands.runEnd(() -> this.superStructure.climber.intakeCage(),
             () -> this.superStructure.climber.stopIntakingCage(), superStructure));
     driverController.b()
-        .onTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(1),
+        .whileTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(1),
             () -> this.superStructure.climber.setArmDutyCycle(0), superStructure));
     driverController.x()
-        .onTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(-1),
+        .whileTrue(Commands.runEnd(() -> this.superStructure.climber.setArmDutyCycle(-1),
             () -> this.superStructure.climber.setArmDutyCycle(0), superStructure));
-    driverController.y()
-        .whileTrue(Commands.runEnd(() -> this.superStructure.climber.setBrakeClimber(),
-            () -> this.superStructure.climber.setCoastClimber(), superStructure));
-    new Trigger(() -> driverController.rotateRight())
-        .whileTrue(Commands.runEnd(() -> this.superStructure.scorer.setBrakeScorer(),
-            () -> this.superStructure.scorer.setCoastScorer(), superStructure));
+    // driverController.y()
+    // .whileTrue(Commands.runEnd(() ->
+    // this.superStructure.climber.setCoastClimber(),
+    // () -> this.superStructure.climber.setBrakeClimber(),
+    // superStructure).ignoringDisable(true));
+    // new Trigger(() -> driverController.rotateRight())
+    // .whileTrue(Commands.runEnd(() -> this.superStructure.scorer.setBrakeScorer(),
+    // () -> this.superStructure.scorer.setCoastScorer(), superStructure));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

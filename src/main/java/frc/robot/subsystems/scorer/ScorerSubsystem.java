@@ -87,7 +87,7 @@ public class ScorerSubsystem implements IScorer {
   private void setConfigsPivot() {
     pivotMotor.setInverted(false);
     pivotMotor.setInvertedEncoder(true);
-    pivotMotor.setMotorBrake(true);
+    pivotMotor.setMotorBrake(false);
     pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_DEGREES);
     pivotMotor.configurePIDF(
         PivotConstants.tunning_values_pivot.PID.P,
@@ -95,8 +95,8 @@ public class ScorerSubsystem implements IScorer {
         PivotConstants.tunning_values_pivot.PID.D,
         0,
         ElevatorConstants.tunning_values_elevator.PID.IZone);
-    pivotMotor.burnFlash();
     pivotMotor.setPosition(0);
+    pivotMotor.burnFlash();
   }
 
   private void setConfigsEndEffector() {

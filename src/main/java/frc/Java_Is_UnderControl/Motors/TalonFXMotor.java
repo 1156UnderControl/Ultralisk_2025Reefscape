@@ -101,15 +101,16 @@ public class TalonFXMotor implements IMotor {
 
   private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
 
+  private boolean isBrakeMode;
+
   public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName) {
     this.gravityType = gravityType;
-    motor = new TalonFX(id);
+    motor = new TalonFX(id, "rio");
     this.factoryDefault();
     this.clearStickyFaults();
     this.setCurrentLimit(80);
     this.setupLogs(id);
     this.updateLogs();
-    this.factoryDefault();
     this.clearStickyFaults();
     this.motorName = motorName;
   }
@@ -122,7 +123,6 @@ public class TalonFXMotor implements IMotor {
     this.setCurrentLimit(80);
     this.setupLogs(id);
     this.updateLogs();
-    this.factoryDefault();
     this.clearStickyFaults();
     this.motorName = motorName;
   }
@@ -156,7 +156,7 @@ public class TalonFXMotor implements IMotor {
   public void updateLogs() {
     this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
     this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
-    this.positionLog.append(Units.rotationsToDegrees(this.motor.getPosition().getValueAsDouble()));
+    this.positionLog.append(this.getPosition());
     this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
     this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
     this.faultsLog.append(this.motor.getFaultField().getValue());
@@ -172,7 +172,6 @@ public class TalonFXMotor implements IMotor {
   @Override
   public void factoryDefault() {
     if (!factoryDefaultOcurred) {
-      configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
       Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(configuration, 100));
       m_angleVoltageSetter.UpdateFreqHz = 0;
       m_velocityVoltageSetter.UpdateFreqHz = 0;
@@ -276,7 +275,16 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void setMotorBrake(boolean isBrakeMode) {
-    motor.setNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    cfg = motor.getConfigurator();
+    if (isBrakeMode != this.isBrakeMode) {
+      NeutralModeValue targetNeutralMode = isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+      // .refresh(configuration.MotorOutput.withNeutralMode(targetNeutralMode));
+      // configuration.MotorOutput.NeutralMode = targetNeutralMode;
+      // cfg.apply(configuration.MotorOutput);
+      System.out.println(motor.setNeutralMode(targetNeutralMode).isOK());
+      System.out.println("SETTING" + configuration.MotorOutput.NeutralMode.name());
+    }
+    this.isBrakeMode = isBrakeMode;
   }
 
   @Override
@@ -294,7 +302,7 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void burnFlash() {
-    // do nothing
+
   }
 
   @Override
@@ -416,15 +424,16 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public double getPosition() {
-    return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble());
+    return motor.getPosition().getValueAsDouble();
   }
 
   @Override
   public void setPositionFactor(double factor) {
     this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(factor));
-    cfg.apply(configuration);
+    cfg.refresh(configuration.Feedback);
+    configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withSensorToMechanismRatio(factor);
+    cfg.apply(configuration.Feedback);
   }
 
   @Override
@@ -437,7 +446,7 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void setPosition(double position) {
-    motor.setPosition(position);
+    motor.setPosition(0);
   }
 
   @Override
