@@ -9,12 +9,17 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
+import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
+import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.DriverController;
@@ -58,16 +63,16 @@ public class RobotContainer {
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
 
     driverController.y()
-        .whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     driverController.b()
-        .whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
 
     driverController.x()
-        .whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
 
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
