@@ -27,6 +27,7 @@ import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.SwerveConstants;
+import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
 
 public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements ISwerve {
@@ -36,6 +37,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private Matrix<N3, N1> defaultVisionStandardDeviation;
 
   private Matrix<N3, N1> defaultOdometryStandardDeviation;
+
+  private TargetBranch targetBranch = TargetBranch.A;
 
   CustomPose2dLogger posetraj = new CustomPose2dLogger("Testpose");
 
@@ -84,6 +87,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   public Command goToPoseWithPathfind(Pose3d pose) {
 
     return driveToPoseWithPathfinding(pose.toPose2d());
+  }
+
+  public void setTargetBranch(TargetBranch targetBranch) {
+    this.targetBranch = targetBranch;
   }
 
   @Override
