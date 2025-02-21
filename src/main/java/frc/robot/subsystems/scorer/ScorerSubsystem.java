@@ -10,6 +10,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
+import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
@@ -32,6 +33,10 @@ public class ScorerSubsystem implements IScorer {
   private boolean elevatorHasHomed = false;
   private double goalElevator = ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND;
   private double goalPivot = 0;
+
+  StabilizeChecker motorNotMoving = new StabilizeChecker(1);
+
+  CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/Correcting Pivot");
 
   @Logged(name = "State", importance = Importance.CRITICAL)
   private String state = "START";
@@ -118,7 +123,7 @@ public class ScorerSubsystem implements IScorer {
     if (!manualControl) {
       setScorerStructureGoals();
     }
-
+    correctPivotPosition();
     SmartDashboard.putNumber("Pivot Position ext", pivotMotor.getPositionExternalEncoder());
     SmartDashboard.putNumber("Pivot Position ", pivotMotor.getPosition());
     SmartDashboard.putNumber("Elevator Position", elevatorMotorLeader.getPosition());
@@ -158,12 +163,16 @@ public class ScorerSubsystem implements IScorer {
     }
   }
 
-  void setPivotTargetPosition(double goal) {
-    if (lastGoalPivot != goal) {
+  void correctPivotPosition() {
+    if (motorNotMoving.isStableInCondition(() -> Util.inRange(pivotMotor.getAppliedOutput(), -0.05, 0.05))
+        && Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalEncoder()) > 5) {
+      correctingPivot.append(true);
       resetPivotEncoder();
-      lastGoalPivot = goalPivot;
     }
+    correctingPivot.append(false);
+  }
 
+  void setPivotTargetPosition(double goal) {
     pivotMotor.setPositionReferenceTrapezoid(0.02, limitGoalPivot(goalPivot), 0,
         PivotConstants.tunning_values_pivot.PID.arbFF);
   }
