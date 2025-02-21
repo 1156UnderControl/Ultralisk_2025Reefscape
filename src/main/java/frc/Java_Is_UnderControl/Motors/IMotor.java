@@ -111,11 +111,15 @@ public interface IMotor {
 
   double getPositionExternalEncoder();
 
+  double getVelocityExternalEncoder();
+
   void setPositionFactor(double factor);
 
   void setPositionFactorExternalEncoder(double factor);
 
   void setVelocityFactor(double factor);
+
+  void setVelocityFactorExternalEncoder(double factor);
 
   void setPosition(double position);
 

@@ -507,6 +507,11 @@ public class SparkFlexMotor implements IMotor {
   }
 
   @Override
+  public void setVelocityFactorExternalEncoder(double factor) {
+    this.config.externalEncoder.positionConversionFactor(factor);
+  }
+
+  @Override
   public void setPositionExternalEncoder(double position) {
     this.motor.getExternalEncoder().setPosition(position);
   }
@@ -514,5 +519,10 @@ public class SparkFlexMotor implements IMotor {
   @Override
   public void configExternalEncoder() {
     this.config.externalEncoder.countsPerRevolution(8192);
+  }
+
+  @Override
+  public double getVelocityExternalEncoder() {
+    return this.motor.getExternalEncoder().getVelocity();
   }
 }

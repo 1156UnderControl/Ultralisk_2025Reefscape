@@ -97,7 +97,7 @@ public class ScorerSubsystem implements IScorer {
     pivotMotor.setMotorBrake(true);
     pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_ROTOR_ROTATION_TO_MECHANISM_DEGREES);
     pivotMotor.setPositionFactorExternalEncoder(PivotConstants.POSITION_FACTOR_MECHANISM_ROTATION_TO_MECHANISM_DEGREES);
-    pivotMotor.setVelocityFactor(PivotConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_DEG_PER_SECOND);
+    pivotMotor.setVelocityFactorExternalEncoder(PivotConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_DEG_PER_SECOND);
     pivotMotor.configureTrapezoid(PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
         PivotConstants.tunning_values_pivot.MAX_VELOCITY);
     pivotMotor.configurePIDF(
@@ -164,7 +164,7 @@ public class ScorerSubsystem implements IScorer {
   }
 
   void correctPivotPosition() {
-    if (motorNotMoving.isStableInCondition(() -> Util.inRange(pivotMotor.getAppliedOutput(), -0.05, 0.05))
+    if (motorNotMoving.isStableInCondition(() -> Util.inRange(pivotMotor.getVelocityExternalEncoder(), -3, 3))
         && Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalEncoder()) > 5) {
       correctingPivot.append(true);
       resetPivotEncoder();
