@@ -89,8 +89,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void periodic() {
     super.periodic();
-    Pose2d currentPose = SwerveConstants.TargetBranch.A.getTargetPoseToScore();
-    posetraj.appendRadians(currentPose);
+    Pose2d currentPose = SwerveConstants.TargetBranch.B.getTargetPoseToScore();
+    posetraj.appendRadians(getDriveTarget(getPose(), currentPose, false));
     LimelightHelpers.SetRobotOrientation("limelight-reef",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
