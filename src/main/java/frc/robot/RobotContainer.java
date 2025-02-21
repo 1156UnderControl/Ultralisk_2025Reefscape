@@ -17,11 +17,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
+import frc.robot.commands.intake.CollectCoralFromHP;
+import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
+import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -31,6 +35,8 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   private OperatorController keyBoard = OperatorController.getInstance();
+
+  private DriverController driverController = DriverController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
@@ -59,6 +65,17 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
+    driverController.a()
+        .onTrue(new CollectCoralFromHP(superStructure));
+
+    driverController.y().onTrue(new DefaultPosition(superStructure));
+
+    driverController.b().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+
+    driverController.x().whileTrue(
+        Commands.runEnd(() -> superStructure.scorer.setCoastScorer(), () -> superStructure.scorer.setBrakeScorer())
+            .ignoringDisable(true));
+
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L1);
@@ -80,8 +97,10 @@ public class RobotContainer {
     keyBoard.prepareToScoreCoral()
         .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
 
+    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+
     keyBoard.removeAlgaeFromBranch()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.removeAlgaeFromBranch()));
+        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
 
     keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 

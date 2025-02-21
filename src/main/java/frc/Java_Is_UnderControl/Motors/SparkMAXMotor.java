@@ -397,9 +397,9 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public void setVelocityFactor(double factor) {
     if (usingAlternateEncoder) {
-      config.alternateEncoder.positionConversionFactor(factor);
+      config.alternateEncoder.velocityConversionFactor(factor);
     } else {
-      config.encoder.positionConversionFactor(factor);
+      config.encoder.velocityConversionFactor(factor);
     }
   }
 
@@ -492,5 +492,25 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return this.sysIdRoutine.dynamic(direction);
+  }
+
+  @Override
+  public double getPositionExternalEncoder() {
+    return motor.getAlternateEncoder().getPosition();
+  }
+
+  @Override
+  public void setPositionFactorExternalEncoder(double factor) {
+    this.config.alternateEncoder.positionConversionFactor(factor);
+  }
+
+  @Override
+  public void setPositionExternalEncoder(double position) {
+    this.motor.getAlternateEncoder().setPosition(position);
+  }
+
+  @Override
+  public void configExternalEncoder() {
+    this.config.alternateEncoder.countsPerRevolution(8192);
   }
 }
