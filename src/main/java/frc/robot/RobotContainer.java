@@ -60,16 +60,16 @@ public class RobotContainer {
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     driverController.a()
-        .onTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        .whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
 
     driverController.y()
-        .onTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        .whileTrue(drivetrain.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
 
     driverController.b()
-        .onTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        .whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kForward));
 
     driverController.x()
-        .onTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        .whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
