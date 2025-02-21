@@ -30,7 +30,7 @@ public class ClimberSubsystem implements IClimber {
   }
 
   private void configureClimberMotor() {
-    climberArmMotor.setMotorBrake(false);
+    climberArmMotor.setMotorBrake(true);
     climberArmMotor.setPosition(0);
     climberArmMotor.configureMotionProfiling(
         ClimberConstants.tunning_values_arm.PID.P,
