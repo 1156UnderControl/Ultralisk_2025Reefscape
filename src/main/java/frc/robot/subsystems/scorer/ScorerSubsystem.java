@@ -164,7 +164,10 @@ public class ScorerSubsystem implements IScorer {
   }
 
   void correctPivotPosition() {
-    if (motorNotMoving.isStableInCondition(() -> Util.inRange(pivotMotor.getVelocityExternalEncoder(), -3, 3))
+    if (motorNotMoving
+        .isStableInCondition(() -> Util.inRange(pivotMotor.getVelocityExternalEncoder(),
+            PivotConstants.tunning_values_pivot.MIN_DEAD_BAND_FOR_MOTOR_STOP,
+            PivotConstants.tunning_values_pivot.MAX_DEAD_BAND_FOR_MOTOR_STOP))
         && Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalEncoder()) > 5) {
       correctingPivot.append(true);
       resetPivotEncoder();
