@@ -9,18 +9,15 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefHeight;
-import frc.robot.joysticks.ControlBoard;
+import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -29,8 +26,9 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
-  private ControlBoard driverController = ControlBoard.getInstance();
-  private OperatorController operatorPanel = OperatorController.getInstance();
+  private OperatorController keyBoard = OperatorController.getInstance();
+
+  private DriverController driverController = DriverController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
@@ -70,6 +68,13 @@ public class RobotContainer {
 
     driverController.x()
         .whileTrue(drivetrain.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+
+    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+
+    keyBoard.removeAlgaeFromBranch()
+        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
+
+    keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

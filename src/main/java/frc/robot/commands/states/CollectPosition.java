@@ -12,6 +12,7 @@ public class CollectPosition extends SequentialCommandGroup {
 
   public CollectPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(new MoveScorerToCollectPosition(superStructure),
-        Commands.race(new CollectCoralFromHP(superStructure), new SwerveAlignWithCoralStation(swerve)));
+        Commands.race(new CollectCoralFromHP(superStructure), new SwerveAlignWithCoralStation(swerve)),
+        Commands.waitSeconds(0.2));
   }
 }
