@@ -105,6 +105,7 @@ public class TalonFXMotor implements IMotor {
   public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName) {
     this.gravityType = gravityType;
     motor = new TalonFX(id);
+    talonConfigurator = motor.getConfigurator();
     this.factoryDefault();
     this.clearStickyFaults();
     this.setCurrentLimit(80);
@@ -113,12 +114,12 @@ public class TalonFXMotor implements IMotor {
     this.factoryDefault();
     this.clearStickyFaults();
     this.motorName = motorName;
-    talonConfigurator = motor.getConfigurator();
   }
 
   public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName, String canivoreBus) {
     this.gravityType = gravityType;
     motor = new TalonFX(id, canivoreBus);
+    talonConfigurator = motor.getConfigurator();
     this.factoryDefault();
     this.clearStickyFaults();
     this.setCurrentLimit(80);
@@ -127,7 +128,6 @@ public class TalonFXMotor implements IMotor {
     this.factoryDefault();
     this.clearStickyFaults();
     this.motorName = motorName;
-
   }
 
   public TalonFXMotor(int id, String motorName, String canivoreBus) {
