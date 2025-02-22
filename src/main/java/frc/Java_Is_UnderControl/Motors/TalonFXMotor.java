@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
@@ -49,7 +50,7 @@ public class TalonFXMotor implements IMotor {
 
   private final VelocityVoltage m_velocityVoltageSetter = new VelocityVoltage(0);
 
-  private TalonFXConfiguration configuration = new TalonFXConfiguration();
+  private TalonFXConfiguration talonConfiguration = new TalonFXConfiguration();
 
   private double targetPosition = Double.NaN;
 
@@ -81,7 +82,7 @@ public class TalonFXMotor implements IMotor {
 
   private MotorOutputConfigs configs = new MotorOutputConfigs();
 
-  private TalonFXConfigurator cfg;
+  private TalonFXConfigurator talonConfigurator;
 
   private String motorName;
 
@@ -112,6 +113,7 @@ public class TalonFXMotor implements IMotor {
     this.factoryDefault();
     this.clearStickyFaults();
     this.motorName = motorName;
+    talonConfigurator = motor.getConfigurator();
   }
 
   public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName, String canivoreBus) {
@@ -125,6 +127,7 @@ public class TalonFXMotor implements IMotor {
     this.factoryDefault();
     this.clearStickyFaults();
     this.motorName = motorName;
+
   }
 
   public TalonFXMotor(int id, String motorName, String canivoreBus) {
@@ -172,8 +175,8 @@ public class TalonFXMotor implements IMotor {
   @Override
   public void factoryDefault() {
     if (!factoryDefaultOcurred) {
-      configuration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(configuration, 100));
+      talonConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+      Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(talonConfiguration.Slot0, 100));
       m_angleVoltageSetter.UpdateFreqHz = 0;
       m_velocityVoltageSetter.UpdateFreqHz = 0;
     }
@@ -252,39 +255,36 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void configurePIDF(double P, double I, double D, double F) {
-    this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.Slot0);
-    cfg.apply(
-        configuration.Slot0.withKP(P).withKI(I).withKD(D).withKS(F).withGravityType(gravityType));
+    talonConfigurator.refresh(talonConfiguration.Slot0);
+    talonConfigurator.apply(
+        talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withKS(F).withGravityType(gravityType));
   }
 
   @Override
   public void configureFeedForward(double Kg, double Ks, double Kv) {
-    this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.Slot0);
-    cfg.apply(
-        configuration.Slot0.withKG(Kg).withKS(Ks).withKV(Kv));
+    talonConfigurator.refresh(talonConfiguration.Slot0);
+    talonConfigurator.apply(
+        talonConfiguration.Slot0.withKG(Kg).withKS(Ks).withKV(Kv));
   }
 
   @Override
   public void configurePIDWrapping(double minInput, double maxInput) {
-    this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.ClosedLoopGeneral);
-    configuration.ClosedLoopGeneral.ContinuousWrap = true;
-    cfg.apply(configuration.ClosedLoopGeneral);
+    talonConfigurator.refresh(talonConfiguration.Slot0);
+    talonConfiguration.ClosedLoopGeneral.ContinuousWrap = true;
+    talonConfigurator.apply(talonConfiguration.ClosedLoopGeneral);
   }
 
   @Override
   public void setMotorBrake(boolean isBrakeMode) {
-    motor.setNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+    talonConfiguration.MotorOutput.NeutralMode = isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
   }
 
   @Override
   public void setInverted(boolean isInverted) {
-    cfg.refresh(configuration.MotorOutput);
-    configuration.MotorOutput.withInverted(
+    talonConfiguration.MotorOutput.withInverted(
         isInverted ? InvertedValue.CounterClockwise_Positive : InvertedValue.Clockwise_Positive);
-    cfg.apply(configuration.MotorOutput);
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
   }
 
   @Override
@@ -339,25 +339,25 @@ public class TalonFXMotor implements IMotor {
   @Override
   public void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity,
       double maxAcceleration, double positionErrorAllowed) {
-    cfg.refresh(configuration.Slot0);
-    configuration.Slot0.withKP(P).withKI(I).withKD(D);
-    var motionMagicConfigs = configuration.MotionMagic;
+    talonConfigurator.refresh(talonConfiguration.Slot0);
+    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D);
+    MotionMagicConfigs motionMagicConfigs = talonConfiguration.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
     motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
-    cfg.apply(configuration);
+    talonConfigurator.apply(talonConfiguration.Slot0);
   }
 
   @Override
   public void configureMotionProfiling(double P, double I, double D, double kS, double kV, double kA,
       double maxVelocity,
       double maxAcceleration, double jerk) {
-    cfg.refresh(configuration.Slot0);
-    configuration.Slot0.withKP(P).withKI(I).withKD(D).withKS(kS).withKV(kV).withKA(kA);
-    var motionMagicConfigs = configuration.MotionMagic;
+    talonConfigurator.refresh(talonConfiguration.Slot0);
+    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withKS(kS).withKV(kV).withKA(kA);
+    var motionMagicConfigs = talonConfiguration.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
     motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
     motionMagicConfigs.MotionMagicJerk = jerk;
-    cfg.apply(configuration);
+    talonConfigurator.apply(talonConfiguration.Slot0);
   }
 
   public void setPositionReferenceMotionProfiling(double position, double arbFF) {
@@ -421,18 +421,18 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void setPositionFactor(double factor) {
-    this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(factor));
-    cfg.apply(configuration);
+    talonConfigurator
+        .refresh(talonConfiguration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+            .withSensorToMechanismRatio(factor));
+    talonConfigurator.apply(talonConfiguration);
   }
 
   @Override
   public void setVelocityFactor(double factor) {
-    this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-        .withSensorToMechanismRatio(factor));
-    cfg.apply(configuration);
+    talonConfigurator
+        .refresh(talonConfiguration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+            .withSensorToMechanismRatio(factor));
+    talonConfigurator.apply(talonConfiguration);
   }
 
   @Override
@@ -447,18 +447,16 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void setCurrentLimit(int currentLimit) {
-    this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.CurrentLimits);
-    cfg.apply(
-        configuration.CurrentLimits.withStatorCurrentLimit(currentLimit)
+    talonConfigurator.refresh(talonConfiguration.CurrentLimits);
+    talonConfigurator.apply(
+        talonConfiguration.CurrentLimits.withStatorCurrentLimit(currentLimit)
             .withStatorCurrentLimitEnable(true));
   }
 
   @Override
   public void setLoopRampRate(double rampRate) {
-    this.cfg = motor.getConfigurator();
-    cfg.refresh(configuration.ClosedLoopRamps);
-    cfg.apply(configuration.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(rampRate));
+    talonConfigurator.refresh(talonConfiguration.ClosedLoopRamps);
+    talonConfigurator.apply(talonConfiguration.ClosedLoopRamps.withVoltageClosedLoopRampPeriod(rampRate));
   }
 
   private boolean isInverted() {
