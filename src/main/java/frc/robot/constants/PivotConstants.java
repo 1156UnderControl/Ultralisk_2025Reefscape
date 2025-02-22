@@ -14,8 +14,8 @@ public class PivotConstants {
     public static final double MAX_VELOCITY = 900;
     public static final double MAX_ACCELERATION = 10000;
     public static final double POSITION_ERROR_ALLOWED = 0;
-    public static final double MIN_DEAD_BAND_FOR_MOTOR_STOP = -1;
-    public static final double MAX_DEAD_BAND_FOR_MOTOR_STOP = 1;
+    public static final double MIN_DEAD_BAND_FOR_MOTOR_STOP = -5;
+    public static final double MAX_DEAD_BAND_FOR_MOTOR_STOP = 5;
 
     public class PID {
       public static final double P = 0.02;
