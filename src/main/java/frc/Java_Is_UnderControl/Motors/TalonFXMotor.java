@@ -535,4 +535,39 @@ public class TalonFXMotor implements IMotor {
     return this.sysIdRoutine.dynamic(direction);
   }
 
+  @Override
+  public double getPositionExternalEncoder() {
+    throw new UnsupportedOperationException("Unimplemented method 'getPositionExternalEncoder'");
+  }
+
+  @Override
+  public void setPositionFactorExternalEncoder(double factor) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setPositionFactorExternalEncoder'");
+  }
+
+  @Override
+  public void setPositionExternalEncoder(double position) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setPositionExternalEncoder'");
+  }
+
+  @Override
+  public void configExternalEncoder() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'configExternalEncoder'");
+  }
+
+  @Override
+  public double getVelocityExternalEncoder() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getVelocityExternalEncoder'");
+  }
+
+  @Override
+  public void setVelocityFactorExternalEncoder(double factor) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setVelocityFactorExternalEncoder'");
+  }
+
 }

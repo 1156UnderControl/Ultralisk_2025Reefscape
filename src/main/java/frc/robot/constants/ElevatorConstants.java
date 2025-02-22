@@ -25,16 +25,12 @@ public class ElevatorConstants {
     public class setpoints {
       public static final double MAX_HEIGHT = 2.35;
       public static final double MIN_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
-      public static final double L1_HEIGHT = 0.5;
-      public static final double L2_HEIGHT = 1.0;
-      public static final double L3_HEIGHT = 1.5;
-      public static final double L4_HEIGHT = 2.13;
-      public static final double FACE0_ALGAE_REMOVAL = 0.4;
-      public static final double FACE1_ALGAE_REMOVAL = 0.6;
-      public static final double FACE2_ALGAE_REMOVAL = 0.8;
-      public static final double FACE3_ALGAE_REMOVAL = 1.0;
-      public static final double FACE4_ALGAE_REMOVAL = 1.2;
-      public static final double FACE5_ALGAE_REMOVAL = 1.4;
+      public static final double L1_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
+      public static final double L2_HEIGHT = 0.8;
+      public static final double L3_HEIGHT = 1.19;
+      public static final double L4_HEIGHT = 2.1;
+      public static final double ALGAE_REMOVAL_MID = 1.14;
+      public static final double ALGAE_REMOVAL_LOW = 0.75;
       public static final double SECURE_FOR_PIVOT_ROTATION = 0.60;
       public static final double COLLECT_HEIGHT = MIN_HEIGHT;
     }
