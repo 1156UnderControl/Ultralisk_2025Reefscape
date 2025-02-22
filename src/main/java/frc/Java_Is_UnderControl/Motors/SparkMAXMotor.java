@@ -90,6 +90,8 @@ public class SparkMAXMotor implements IMotor {
 
   private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
 
+  private IdleMode lastTargetIdleMode = null;
+
   public SparkMAXMotor(int motorID, String motorName) {
     this(motorID, false, motorName);
   }
@@ -215,7 +217,13 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void setMotorBrake(boolean isBrakeMode) {
-    config.idleMode(isBrakeMode ? IdleMode.kBrake : IdleMode.kCoast);
+    IdleMode targetIdleMode = isBrakeMode ? IdleMode.kBrake : IdleMode.kCoast;
+    if (lastTargetIdleMode == targetIdleMode) {
+      return;
+    }
+    config.idleMode(targetIdleMode);
+    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    this.lastTargetIdleMode = targetIdleMode;
   }
 
   @Override
@@ -389,9 +397,9 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public void setVelocityFactor(double factor) {
     if (usingAlternateEncoder) {
-      config.alternateEncoder.positionConversionFactor(factor);
+      config.alternateEncoder.velocityConversionFactor(factor);
     } else {
-      config.encoder.positionConversionFactor(factor);
+      config.encoder.velocityConversionFactor(factor);
     }
   }
 
@@ -484,5 +492,35 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return this.sysIdRoutine.dynamic(direction);
+  }
+
+  @Override
+  public double getPositionExternalEncoder() {
+    return motor.getAlternateEncoder().getPosition();
+  }
+
+  @Override
+  public void setPositionFactorExternalEncoder(double factor) {
+    this.config.alternateEncoder.positionConversionFactor(factor);
+  }
+
+  @Override
+  public void setPositionExternalEncoder(double position) {
+    this.motor.getAlternateEncoder().setPosition(position);
+  }
+
+  @Override
+  public void configExternalEncoder() {
+    this.config.alternateEncoder.countsPerRevolution(8192);
+  }
+
+  @Override
+  public double getVelocityExternalEncoder() {
+    return motor.getAlternateEncoder().getVelocity();
+  }
+
+  @Override
+  public void setVelocityFactorExternalEncoder(double factor) {
+    this.config.alternateEncoder.velocityConversionFactor(factor);
   }
 }

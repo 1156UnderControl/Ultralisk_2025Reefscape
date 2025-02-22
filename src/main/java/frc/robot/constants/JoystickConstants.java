@@ -6,5 +6,5 @@ public class JoystickConstants {
   public static final int oprControllerPort = 1;
 
   // Deadband do controle
-  public static final double DEADBAND = 0.2;
+  public static final double DEADBAND = 0.05;
 }

@@ -6,15 +6,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToScorePosition;
-import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class ScoreCoralPosition extends SequentialCommandGroup {
-  ControlBoard controlBoard = ControlBoard.getInstance();
 
   public ScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(new MoveScorerToScorePosition(superStructure),
-        Commands.waitUntil(controlBoard.isForcingDriverControl()),
         Commands.run(() -> superStructure.scorer.placeCoral(), superStructure).withTimeout(Seconds.of(1)),
         Commands.idle(superStructure));
   }
