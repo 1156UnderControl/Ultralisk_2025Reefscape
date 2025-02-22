@@ -176,7 +176,7 @@ public class TalonFXMotor implements IMotor {
   public void factoryDefault() {
     if (!factoryDefaultOcurred) {
       talonConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(talonConfiguration.Slot0, 100));
+      Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(talonConfiguration, 100));
       m_angleVoltageSetter.UpdateFreqHz = 0;
       m_velocityVoltageSetter.UpdateFreqHz = 0;
     }
