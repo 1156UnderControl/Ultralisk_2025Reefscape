@@ -80,7 +80,12 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
 
   public Optional<PoseEstimation> getEstimatedPose(Pose2d referencePose) {
     this.photonPoseEstimator.setReferencePose(referencePose);
-    Optional<EstimatedRobotPose> photonPoseEstimation = this.photonPoseEstimator.update(camera.getAllUnreadResults());
+    var results = camera.getAllUnreadResults();
+    if (results.isEmpty()) {
+      return Optional.empty();
+    }
+    Optional<EstimatedRobotPose> photonPoseEstimation = this.photonPoseEstimator
+        .update(results.get(results.size() - 1));
     if (!photonPoseEstimation.isPresent()) {
       isDetectingLogger.append(false);
       stateOfPoseUpdate.append("NO_TARGETS");
