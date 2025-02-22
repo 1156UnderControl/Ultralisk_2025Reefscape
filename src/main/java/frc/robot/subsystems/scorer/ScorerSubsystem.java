@@ -48,7 +48,14 @@ public class ScorerSubsystem implements IScorer {
   private String reefFaceTarget = "NONE";
 
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
+
   CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
+
+  CustomBooleanLogger elevatorStoppedByPivotLimit = new CustomBooleanLogger(
+      "/ScorerSubsystem/elevatorStoppedByPivotLimit");
+
+  CustomBooleanLogger pivotStoppedByElevatorLimit = new CustomBooleanLogger(
+      "/ScorerSubsystem/pivotStoppedByElevatorLimit");
 
   private ReefHeight targetReefHeight = ReefHeight.L1;
 
@@ -144,7 +151,12 @@ public class ScorerSubsystem implements IScorer {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(goalPivot);
+        pivotStoppedByElevatorLimit.append(false);
+        elevatorStoppedByPivotLimit.append(false);
       } else {
+        pivotStoppedByElevatorLimit.append(false);
+        ;
+        elevatorStoppedByPivotLimit.append(true);
         elevatorMotorLeader.setPositionReference(elevatorMotorLeader.getPosition(),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(goalPivot);
@@ -156,10 +168,14 @@ public class ScorerSubsystem implements IScorer {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(pivotMotor.getPosition());
+        elevatorStoppedByPivotLimit.append(false);
+        pivotStoppedByElevatorLimit.append(true);
       } else {
+        elevatorStoppedByPivotLimit.append(false);
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(goalPivot);
+        pivotStoppedByElevatorLimit.append(false);
       }
     }
   }
