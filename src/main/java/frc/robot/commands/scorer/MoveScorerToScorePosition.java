@@ -2,9 +2,11 @@ package frc.robot.commands.scorer;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.SuperStructure;
+import frc.robot.joysticks.OperatorController;
 
 public class MoveScorerToScorePosition extends Command {
   SuperStructure superStructure;
+  OperatorController operatorController = OperatorController.getInstance();
 
   public MoveScorerToScorePosition(SuperStructure superStructure) {
     this.superStructure = superStructure;
@@ -24,6 +26,6 @@ public class MoveScorerToScorePosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return superStructure.scorer.isSecuredToPlaceCoral();
+    return operatorController.scoreCoral().getAsBoolean() && superStructure.scorer.isSecuredToPlaceCoral();
   }
 }
