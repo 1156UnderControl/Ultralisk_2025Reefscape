@@ -11,8 +11,8 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
-import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers;
-import frc.Java_Is_UnderControl.Vision.Cameras.LimelightHelpers.PoseEstimate;
+import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
+import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers.PoseEstimate;
 
 public class LimelightPoseEstimator implements PoseEstimator {
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
