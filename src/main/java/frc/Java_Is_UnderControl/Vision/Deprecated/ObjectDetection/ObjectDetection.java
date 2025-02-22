@@ -1,4 +1,4 @@
-package frc.Java_Is_UnderControl.Vision.ObjectDetection;
+package frc.Java_Is_UnderControl.Vision.Deprecated.ObjectDetection;
 
 public class ObjectDetection {
   public final double ty;
