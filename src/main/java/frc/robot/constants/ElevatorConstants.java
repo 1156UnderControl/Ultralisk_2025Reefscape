@@ -28,7 +28,7 @@ public class ElevatorConstants {
       public static final double L1_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
       public static final double L2_HEIGHT = 0.8;
       public static final double L3_HEIGHT = 1.19;
-      public static final double L4_HEIGHT = 2.13;
+      public static final double L4_HEIGHT = 2.08;
       public static final double ALGAE_REMOVAL_MID = 1.14;
       public static final double ALGAE_REMOVAL_LOW = 0.75;
       public static final double SECURE_FOR_PIVOT_ROTATION = 0.60;
