@@ -34,7 +34,7 @@ public class ScorerSubsystem implements IScorer {
   private double goalElevator = ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND;
   private double goalPivot = 0;
 
-  StabilizeChecker motorNotMoving = new StabilizeChecker(1);
+  StabilizeChecker motorNotMoving = new StabilizeChecker(0.4);
 
   CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/Correcting Pivot");
 
@@ -48,7 +48,14 @@ public class ScorerSubsystem implements IScorer {
   private String reefFaceTarget = "NONE";
 
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
+
   CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
+
+  CustomBooleanLogger elevatorStoppedByPivotLimit = new CustomBooleanLogger(
+      "/ScorerSubsystem/elevatorStoppedByPivotLimit");
+
+  CustomBooleanLogger pivotStoppedByElevatorLimit = new CustomBooleanLogger(
+      "/ScorerSubsystem/pivotStoppedByElevatorLimit");
 
   private ReefHeight targetReefHeight = ReefHeight.L1;
 
@@ -97,7 +104,7 @@ public class ScorerSubsystem implements IScorer {
     pivotMotor.setMotorBrake(true);
     pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_ROTOR_ROTATION_TO_MECHANISM_DEGREES);
     pivotMotor.setPositionFactorExternalEncoder(PivotConstants.POSITION_FACTOR_MECHANISM_ROTATION_TO_MECHANISM_DEGREES);
-    pivotMotor.setVelocityFactor(PivotConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_DEG_PER_SECOND);
+    pivotMotor.setVelocityFactorExternalEncoder(PivotConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_DEG_PER_SECOND);
     pivotMotor.configureTrapezoid(PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
         PivotConstants.tunning_values_pivot.MAX_VELOCITY);
     pivotMotor.configurePIDF(
@@ -140,36 +147,53 @@ public class ScorerSubsystem implements IScorer {
 
   private void setScorerStructureGoals() {
     if (goalElevator > elevatorMotorLeader.getPosition()) {
-      if (pivotSecureForElevator()) {
+      if (pivotSecureForElevator() && !isPivotInternalEncoderLost()) {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(goalPivot);
+        pivotStoppedByElevatorLimit.append(false);
+        elevatorStoppedByPivotLimit.append(false);
       } else {
+        pivotStoppedByElevatorLimit.append(false);
+        ;
+        elevatorStoppedByPivotLimit.append(true);
         elevatorMotorLeader.setPositionReference(elevatorMotorLeader.getPosition(),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(goalPivot);
       }
     } else {
       if (!elevatorSecureForPivot()
-          && goalPivot < PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP) {
+          && goalPivot < PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP
+          && isPivotInternalEncoderLost()) {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(pivotMotor.getPosition());
+        elevatorStoppedByPivotLimit.append(false);
+        pivotStoppedByElevatorLimit.append(true);
       } else {
+        elevatorStoppedByPivotLimit.append(false);
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition(goalPivot);
+        pivotStoppedByElevatorLimit.append(false);
       }
     }
   }
 
   void correctPivotPosition() {
-    if (motorNotMoving.isStableInCondition(() -> Util.inRange(pivotMotor.getAppliedOutput(), -0.05, 0.05))
-        && Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalEncoder()) > 5) {
+    if (motorNotMoving
+        .isStableInCondition(() -> Util.inRange(pivotMotor.getVelocityExternalEncoder(),
+            PivotConstants.tunning_values_pivot.MIN_DEAD_BAND_FOR_MOTOR_STOP,
+            PivotConstants.tunning_values_pivot.MAX_DEAD_BAND_FOR_MOTOR_STOP))
+        && isPivotInternalEncoderLost()) {
       correctingPivot.append(true);
       resetPivotEncoder();
     }
     correctingPivot.append(false);
+  }
+
+  private boolean isPivotInternalEncoderLost() {
+    return Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalEncoder()) > 5;
   }
 
   void setPivotTargetPosition(double goal) {
@@ -310,7 +334,11 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
-    endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
+    if (targetReefHeight == ReefHeight.L1) {
+      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
+    } else {
+      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
+    }
     this.hasCoral = false;
     this.elevatorHasHomed = false;
     this.state = "PLACING_CORAL";

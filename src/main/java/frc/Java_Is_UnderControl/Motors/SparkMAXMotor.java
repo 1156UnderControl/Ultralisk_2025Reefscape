@@ -513,4 +513,14 @@ public class SparkMAXMotor implements IMotor {
   public void configExternalEncoder() {
     this.config.alternateEncoder.countsPerRevolution(8192);
   }
+
+  @Override
+  public double getVelocityExternalEncoder() {
+    return motor.getAlternateEncoder().getVelocity();
+  }
+
+  @Override
+  public void setVelocityFactorExternalEncoder(double factor) {
+    this.config.alternateEncoder.velocityConversionFactor(factor);
+  }
 }

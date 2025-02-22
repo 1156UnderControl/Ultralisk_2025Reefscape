@@ -558,4 +558,16 @@ public class TalonFXMotor implements IMotor {
     throw new UnsupportedOperationException("Unimplemented method 'configExternalEncoder'");
   }
 
+  @Override
+  public double getVelocityExternalEncoder() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getVelocityExternalEncoder'");
+  }
+
+  @Override
+  public void setVelocityFactorExternalEncoder(double factor) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setVelocityFactorExternalEncoder'");
+  }
+
 }
