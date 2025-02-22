@@ -5,11 +5,12 @@ public class EndEffectorConstants {
   public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_RPM = 1;
 
   public class tunning_values_endeffector {
-    public static final double VELOCITY_FALL_FOR_INTAKE_DETECTION = 1000;
+    public static final double VELOCITY_FALL_FOR_INTAKE_DETECTION = 700;
 
     public class setpoints {
       public static final double DUTY_CYCLE_INTAKE = 1.0;
       public static final double DUTY_CYCLE_EXPELL = -1.0;
+      public static final double DUTY_CYCLE_EXPELL_L1 = -0.35;
     }
   }
 }
