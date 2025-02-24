@@ -30,7 +30,6 @@ public class ClimberSubsystem implements IClimber {
   }
 
   private void configureClimberMotor() {
-    climberArmMotor.setMotorBrake(true);
     climberArmMotor.setPosition(0);
     climberArmMotor.configureMotionProfiling(
         ClimberConstants.tunning_values_arm.PID.P,
@@ -43,6 +42,7 @@ public class ClimberSubsystem implements IClimber {
         ClimberConstants.tunning_values_arm.MAX_ACCELERATION,
         ClimberConstants.tunning_values_arm.JERK);
     cageIntakeMotor.burnFlash();
+    climberArmMotor.setMotorBrake(true);
   }
 
   @Override
