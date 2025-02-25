@@ -25,10 +25,8 @@ public class CustomPose2dLogger extends Pose2dLogEntry {
     this.publisher = NetworkTableInstance.getDefault()
         .getStructTopic(name, Pose2d.struct).publish();
     CustomPose2dLogger.isFmsMatch = DriverStation.getMatchNumber() > 0;
-    this.loggedValue = new Pose2d(new Translation2d(100, 100), new Rotation2d()); // Set to something different than //
-                                                                                  // default for initial logging
-    this.publisher = NetworkTableInstance.getDefault()
-        .getStructTopic(name, Pose2d.struct).publish();
+    this.loggedValue = new Pose2d(new Translation2d(100, 100), new Rotation2d()); // Set to something different than
+    // default for initial logging
     this.appendRadians(new Pose2d());
   }
 
@@ -38,7 +36,7 @@ public class CustomPose2dLogger extends Pose2dLogEntry {
       this.loggedValue = pose;
       super.appendRadians(pose);
       if (!CustomPose2dLogger.isFmsMatch) {
-        this.publisher.set(pose);
+        publisher.set(pose);
       }
     }
   }
@@ -47,10 +45,9 @@ public class CustomPose2dLogger extends Pose2dLogEntry {
   public void appendDegrees(Pose2d pose) {
     super.appendDegrees(pose);
     if (CustomPose2dLogger.isFmsMatch) {
-    }
-
-    if (!CustomPose2dLogger.isFmsMatch) {
       publisher.set(pose);
     }
   }
 }
+
+ 

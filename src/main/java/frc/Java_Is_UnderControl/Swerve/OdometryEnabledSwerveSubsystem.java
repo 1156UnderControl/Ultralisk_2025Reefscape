@@ -36,7 +36,11 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private PoseEstimator autonomousPoseEstimator;
 
+  private PoseEstimator defaultAutonomousPoseEstimator;
+
   private PoseEstimator teleopPoseEstimator;
+
+  private PoseEstimator defaultTeleopPoseEstimator;
 
   private ProfiledPIDController moveToPoseXAxisPid;
 
@@ -71,7 +75,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getProfiledPIDX();
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
+    this.defaultAutonomousPoseEstimator = config.teleoperatedPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
+    this.defaultTeleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();
     this.targetAimPose = new Pose2d();
     this.poseVision = new Pose2d();
@@ -87,7 +93,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getProfiledPIDX();
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
+    this.defaultAutonomousPoseEstimator = config.teleoperatedPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
+    this.defaultTeleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();
     this.targetAimPose = new Pose2d();
     this.poseVision = new Pose2d();
@@ -109,6 +117,22 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
       this.poseVision = estimatedPose.estimatedPose.toPose2d();
       super.addVisionMeasurement(this.poseVision, estimatedPose.timestampSeconds);
     }
+  }
+
+  protected void overrideTeleOpPoseEstimator(PoseEstimator poseEstimator) {
+    if (poseEstimator == null) {
+      this.teleopPoseEstimator = this.defaultTeleopPoseEstimator;
+      return;
+    }
+    this.teleopPoseEstimator = poseEstimator;
+  }
+
+  protected void overrideAutonomousPoseEstimator(PoseEstimator poseEstimator) {
+    if (poseEstimator == null) {
+      this.autonomousPoseEstimator = this.defaultAutonomousPoseEstimator;
+      return;
+    }
+    this.autonomousPoseEstimator = poseEstimator;
   }
 
   protected double getDistanceToPosition(Translation2d targetPosition) {
