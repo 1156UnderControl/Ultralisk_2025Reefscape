@@ -17,9 +17,9 @@ import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers.PoseE
 public class LimelightPoseEstimator implements PoseEstimator {
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
 
-  double fieldLength = Units.inchesToMeters(651.223);
+  double fieldLength = Units.inchesToMeters(690.876);
 
-  double fieldWidth = Units.inchesToMeters(323.277);
+  double fieldWidth = Units.inchesToMeters(317);
 
   double limitAngVelForUpdating;
 
