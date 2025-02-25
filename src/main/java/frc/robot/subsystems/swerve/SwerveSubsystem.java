@@ -1,5 +1,10 @@
 package frc.robot.subsystems.swerve;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.photonvision.PhotonCamera;
+
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.PIDConstants;
@@ -9,6 +14,9 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -20,8 +28,10 @@ import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
-import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
+import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
+import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
+import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.joysticks.DriverController;
 
@@ -47,12 +57,36 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
         new NoPoseEstimator(),
-        new LimelightPoseEstimator("limelight-reef"),
+        SwerveSubsystem.configureMulticameraPoseEstimation(),
         new PIDConfig(7.1, 0, 0.06),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_X_PID, SwerveConstants.MOVE_TO_POSE_X_CONSTRAINTS,
             SwerveConstants.MOVE_TO_POSE_Y_PID, SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
         drivetrainConstants,
         modules);
+  }
+
+  private static PoseEstimator configureMulticameraPoseEstimation() {
+    Transform3d robotToCamArducamLeft = new Transform3d(new Translation3d(-0.2613, 0.210, 0.1966),
+        new Rotation3d(0, Units.degreesToRadians(-18.125), Units.degreesToRadians(30)));
+    Transform3d robotToCamArducamRight = new Transform3d(new Translation3d(0.2613, 0.210, 0.1966),
+        new Rotation3d(0, Units.degreesToRadians(-18.125), Units.degreesToRadians(-30)));
+    List<PoseEstimator> listOfEstimators = new ArrayList<>();
+    // List<PoseEstimator> listOfEstimatorsForAuto = new ArrayList<>();
+    // PoseEstimator limelight3G_Two_TagsOnly = new
+    // LimelightPoseEstimator("limelight-back", false,
+    // false, 2);
+    // PoseEstimator limelight3G = new LimelightPoseEstimator("limelight-back",
+    // false);
+    PoseEstimator arducamRight = new PhotonVisionPoseEstimator(new PhotonCamera("Arducam-right"),
+        robotToCamArducamRight, false);
+    PoseEstimator arducamLeft = new PhotonVisionPoseEstimator(new PhotonCamera("Arducam-left"), robotToCamArducamLeft,
+        false);
+    // listOfEstimatorsForAuto.add(limelight3G_Two_TagsOnly);
+    // listOfEstimators.add(limelight3G);
+    listOfEstimators.add(arducamRight);
+    listOfEstimators.add(arducamLeft);
+    PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators);
+    return estimatorMultiCamera;
   }
 
   public void driveAlignAngleJoy() {
