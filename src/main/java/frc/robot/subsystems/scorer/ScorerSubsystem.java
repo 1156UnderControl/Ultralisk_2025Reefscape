@@ -334,7 +334,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
-    if (targetReefHeight == ReefHeight.L1) {
+    if (targetReefHeight == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
