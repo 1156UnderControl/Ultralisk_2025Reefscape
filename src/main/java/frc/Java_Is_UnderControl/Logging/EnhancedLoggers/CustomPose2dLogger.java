@@ -17,12 +17,13 @@ public class CustomPose2dLogger extends Pose2dLogEntry {
 
   private Pose2d loggedValue;
 
-  private StructPublisher<Pose2d> publisher = NetworkTableInstance.getDefault()
-  .getStructTopic(name, Pose2d.struct).publish();
+  private StructPublisher<Pose2d> publisher;
 
   public CustomPose2dLogger(String name) {
     super(DataLogManager.getLog(), name);
     this.name = name;
+    this.publisher = NetworkTableInstance.getDefault()
+  .getStructTopic(name, Pose2d.struct).publish();
     CustomPose2dLogger.isFmsMatch = DriverStation.getMatchNumber() > 0;
     this.loggedValue = new Pose2d(new Translation2d(100, 100), new Rotation2d()); // Set to something different than
                                                                                 // default for initial logging

@@ -16,12 +16,13 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
 
   private Pose3d loggedValue;
 
-  private StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault()
-  .getStructTopic(name, Pose3d.struct).publish();
+  private StructPublisher<Pose3d> publisher;
 
   public CustomPose3dLogger(String name) {
     super(DataLogManager.getLog(), name);
     this.name = name;
+    this.publisher = NetworkTableInstance.getDefault()
+  .getStructTopic(name, Pose3d.struct).publish();
     CustomPose3dLogger.isFmsMatch = DriverStation.getMatchNumber() > 0;
     this.loggedValue = new Pose3d(100, 100, 0, new Rotation3d()); // Set to something different than default for initial
     // // logging
