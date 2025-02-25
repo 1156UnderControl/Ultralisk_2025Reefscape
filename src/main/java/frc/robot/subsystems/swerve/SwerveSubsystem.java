@@ -27,7 +27,6 @@ import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
-import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
@@ -117,9 +116,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void periodic() {
     super.periodic();
-    LimelightHelpers.SetRobotOrientation("limelight-reef",
-        OdometryEnabledSwerveSubsystem.robotOrientation,
-        OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
+    // LimelightHelpers.SetRobotOrientation("limelight-reef",
+    // OdometryEnabledSwerveSubsystem.robotOrientation,
+    // OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
   }
 
   @Override
