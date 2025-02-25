@@ -22,7 +22,7 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
     super(DataLogManager.getLog(), name);
     this.name = name;
     this.publisher = NetworkTableInstance.getDefault()
-  .getStructTopic(name, Pose3d.struct).publish();
+        .getStructTopic(name, Pose3d.struct).publish();
     CustomPose3dLogger.isFmsMatch = DriverStation.getMatchNumber() > 0;
     this.loggedValue = new Pose3d(100, 100, 0, new Rotation3d()); // Set to something different than default for initial
     // // logging
@@ -45,9 +45,11 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
   @Override
   public void appendDegrees(Pose3d pose) {
     super.appendDegrees(pose);
-    if (CustomPose3dLogger.isFmsMatch) {}
- 
+    if (CustomPose3dLogger.isFmsMatch) {
+    }
+
     if (!CustomPose3dLogger.isFmsMatch) {
       this.publisher.set(pose);
     }
+  }
 }
