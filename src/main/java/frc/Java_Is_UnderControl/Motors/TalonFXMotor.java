@@ -106,13 +106,11 @@ public class TalonFXMotor implements IMotor {
     this.gravityType = gravityType;
     motor = new TalonFX(id);
     talonConfigurator = motor.getConfigurator();
-    this.factoryDefault();
     this.clearStickyFaults();
+    this.factoryDefault();
     this.setCurrentLimit(80);
     this.setupLogs(id);
     this.updateLogs();
-    this.factoryDefault();
-    this.clearStickyFaults();
     this.motorName = motorName;
   }
 
@@ -120,13 +118,11 @@ public class TalonFXMotor implements IMotor {
     this.gravityType = gravityType;
     motor = new TalonFX(id, canivoreBus);
     talonConfigurator = motor.getConfigurator();
-    this.factoryDefault();
     this.clearStickyFaults();
+    this.factoryDefault();
     this.setCurrentLimit(80);
     this.setupLogs(id);
     this.updateLogs();
-    this.factoryDefault();
-    this.clearStickyFaults();
     this.motorName = motorName;
   }
 
@@ -176,7 +172,7 @@ public class TalonFXMotor implements IMotor {
   public void factoryDefault() {
     if (!factoryDefaultOcurred) {
       talonConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-      Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(talonConfiguration, 100));
+      Phoenix6Util.checkErrorAndRetry(() -> motor.getConfigurator().apply(talonConfiguration));
       m_angleVoltageSetter.UpdateFreqHz = 0;
       m_velocityVoltageSetter.UpdateFreqHz = 0;
     }
