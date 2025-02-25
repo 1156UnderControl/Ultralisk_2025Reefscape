@@ -27,6 +27,7 @@ import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
+import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
@@ -56,7 +57,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
         new NoPoseEstimator(),
-        SwerveSubsystem.configureMulticameraPoseEstimation(),
+        configureMulticameraPoseEstimation(),
         new PIDConfig(7.1, 0, 0.06),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_X_PID, SwerveConstants.MOVE_TO_POSE_X_CONSTRAINTS,
             SwerveConstants.MOVE_TO_POSE_Y_PID, SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
@@ -70,18 +71,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     Transform3d robotToCamArducamRight = new Transform3d(new Translation3d(0.2613, 0.210, 0.1966),
         new Rotation3d(0, Units.degreesToRadians(-18.125), Units.degreesToRadians(-30)));
     List<PoseEstimator> listOfEstimators = new ArrayList<>();
-    // List<PoseEstimator> listOfEstimatorsForAuto = new ArrayList<>();
-    // PoseEstimator limelight3G_Two_TagsOnly = new
-    // LimelightPoseEstimator("limelight-back", false,
-    // false, 2);
-    // PoseEstimator limelight3G = new LimelightPoseEstimator("limelight-back",
-    // false);
     PoseEstimator arducamRight = new PhotonVisionPoseEstimator(new PhotonCamera("Arducam-right"),
         robotToCamArducamRight, false);
     PoseEstimator arducamLeft = new PhotonVisionPoseEstimator(new PhotonCamera("Arducam-left"), robotToCamArducamLeft,
         false);
-    // listOfEstimatorsForAuto.add(limelight3G_Two_TagsOnly);
-    // listOfEstimators.add(limelight3G);
     listOfEstimators.add(arducamRight);
     listOfEstimators.add(arducamLeft);
     PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators);
@@ -116,9 +109,12 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void periodic() {
     super.periodic();
-    // LimelightHelpers.SetRobotOrientation("limelight-reef",
-    // OdometryEnabledSwerveSubsystem.robotOrientation,
-    // OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation("limelight-reef",
+        OdometryEnabledSwerveSubsystem.robotOrientation,
+        OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation("limelight-source",
+        OdometryEnabledSwerveSubsystem.robotOrientation,
+        OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
   }
 
   @Override
