@@ -16,6 +16,9 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
 
   private Pose3d loggedValue;
 
+  private StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault()
+  .getStructTopic(name, Pose3d.struct).publish();
+
   public CustomPose3dLogger(String name) {
     super(DataLogManager.getLog(), name);
     this.name = name;
@@ -31,8 +34,6 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
       this.loggedValue = pose;
       super.appendRadians(pose);
       if (!CustomPose3dLogger.isFmsMatch) {
-        StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault()
-            .getStructTopic(name, Pose3d.struct).publish();
         publisher.set(pose);
       }
     }
@@ -42,8 +43,6 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
   public void appendDegrees(Pose3d pose) {
     super.appendDegrees(pose);
     if (CustomPose3dLogger.isFmsMatch) {
-      StructPublisher<Pose3d> publisher = NetworkTableInstance.getDefault()
-          .getStructTopic(name, Pose3d.struct).publish();
       publisher.set(pose);
     }
   }
