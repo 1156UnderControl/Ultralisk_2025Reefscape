@@ -168,7 +168,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
           this));
 
   /* The SysId routine to test */
-  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
+  private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
   protected BaseSwerveSubsystem(BaseSwerveConfig config,
       SwerveDrivetrainConstants drivetrainConstants, double odometryUpdateFrequency,

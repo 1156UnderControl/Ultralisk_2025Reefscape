@@ -8,23 +8,15 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
-import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
-import frc.robot.commands.intake.CollectCoralFromHP;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
-import frc.robot.commands.states.ScoreCoralPosition;
-import frc.robot.constants.FieldConstants.AlgaeHeight;
-import frc.robot.constants.FieldConstants.Reef;
-import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -57,45 +49,23 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    Pose3d posebranch1Score = CoordinatesTransform
-        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefHeight.L2)), 1.0);
-    Pose3d posebranch7Score = CoordinatesTransform
-        .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(7).get(ReefHeight.L2)), 1.0);
 
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
+    driverController.rightBumper().whileTrue(drivetrain.wheelRadiusCharacterization());
+
     driverController.a()
-        .onTrue(new CollectCoralFromHP(superStructure));
+        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
 
-    driverController.y().onTrue(new DefaultPosition(superStructure));
+    driverController.y()
+        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    driverController.b().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    driverController.b()
+        .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
 
-    driverController.x().whileTrue(
-        Commands.runEnd(() -> superStructure.scorer.setCoastScorer(), () -> superStructure.scorer.setBrakeScorer())
-            .ignoringDisable(true));
-
-    keyBoard.reefL1()
-        .onTrue(new InstantCommand(() -> {
-          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L1);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
-        }));
-
-    keyBoard.reefL2()
-        .onTrue(new InstantCommand(() -> {
-          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L2);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
-        }));
-
-    keyBoard.reefL3()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L3)));
-
-    keyBoard.reefL4()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L4)));
-
-    keyBoard.prepareToScoreCoral()
-        .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    driverController.x()
+        .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
 
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 

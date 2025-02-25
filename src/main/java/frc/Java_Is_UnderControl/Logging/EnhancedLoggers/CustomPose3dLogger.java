@@ -26,6 +26,8 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
     CustomPose3dLogger.isFmsMatch = DriverStation.getMatchNumber() > 0;
     this.loggedValue = new Pose3d(100, 100, 0, new Rotation3d()); // Set to something different than default for initial
     // // logging
+    this.publisher = NetworkTableInstance.getDefault()
+        .getStructTopic(name, Pose3d.struct).publish();
     this.appendRadians(new Pose3d());
   }
 
@@ -35,7 +37,7 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
       this.loggedValue = pose;
       super.appendRadians(pose);
       if (!CustomPose3dLogger.isFmsMatch) {
-        publisher.set(pose);
+        this.publisher.set(pose);
       }
     }
   }
@@ -43,9 +45,9 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
   @Override
   public void appendDegrees(Pose3d pose) {
     super.appendDegrees(pose);
-    if (CustomPose3dLogger.isFmsMatch) {
-      publisher.set(pose);
+    if (CustomPose3dLogger.isFmsMatch) {}
+ 
+    if (!CustomPose3dLogger.isFmsMatch) {
+      this.publisher.set(pose);
     }
-  }
-
 }

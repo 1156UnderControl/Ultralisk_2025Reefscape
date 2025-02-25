@@ -2,10 +2,8 @@ package frc.robot.constants;
 
 public class PivotConstants {
   public static final int ID_pivotMotor = 3;
-  public static final double CONVERSION_FOR_MATCH_EXTERNAL_ENCODER = 1;// 0.724500; // feito com regra de tres
   public static final double POSITION_FACTOR_MECHANISM_ROTATION_TO_MECHANISM_DEGREES = 360;
-  public static final double POSITION_FACTOR_ROTOR_ROTATION_TO_MECHANISM_DEGREES = 4.1638
-      * CONVERSION_FOR_MATCH_EXTERNAL_ENCODER;
+  public static final double POSITION_FACTOR_ROTOR_ROTATION_TO_MECHANISM_DEGREES = 4.1638;
   public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_DEG_PER_SECOND = 6;
 
   public class tunning_values_pivot {

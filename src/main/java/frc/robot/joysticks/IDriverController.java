@@ -23,9 +23,9 @@ public interface IDriverController {
 
   Trigger x();
 
-  boolean rotateLeft();
+  Trigger leftBumper();
 
-  boolean rotateRight();
+  Trigger rightBumper();
 
   Trigger resetGyro();
 
