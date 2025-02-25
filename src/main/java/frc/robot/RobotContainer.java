@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -13,10 +12,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
+import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -34,8 +33,6 @@ public class RobotContainer {
 
   public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
-
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
 
@@ -55,19 +52,9 @@ public class RobotContainer {
 
     driverController.rightBumper().whileTrue(drivetrain.wheelRadiusCharacterization());
 
-    driverController.a()
-        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-
-    driverController.y()
-        .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-    driverController.b()
-        .whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-
-    driverController.x()
-        .whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+
+    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
 
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
