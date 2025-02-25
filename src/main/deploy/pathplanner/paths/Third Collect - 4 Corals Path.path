@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.02737338510359
+    "rotation": -52.888917760236374
   },
   "reversed": false,
-  "folder": null,
+  "folder": "4 Corals",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 121.8274465766731
+    "rotation": -62.0
   },
   "useDefaultConstraints": true
 }

@@ -4,7 +4,7 @@ public interface IClimber {
 
   void climb();
 
-  void isAtSetPoint();
+  boolean isAtSetPoint();
 
   void raiseClimber();
 

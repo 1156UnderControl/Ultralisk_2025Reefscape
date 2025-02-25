@@ -1,6 +1,6 @@
 //LimelightHelpers v1.9 (REQUIRES 2024.9.1)
 
-package frc.Java_Is_UnderControl.Vision.Cameras;
+package frc.Java_Is_UnderControl.Vision.Deprecated.Cameras;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -988,7 +988,7 @@ public class LimelightHelpers {
    * Gets the Pose2d and timestamp for use with WPILib pose estimator
    * (addVisionMeasurement) when you are on the RED
    * alliance
-   * 
+   *
    * @param limelightName
    * @return
    */
@@ -1000,7 +1000,7 @@ public class LimelightHelpers {
    * Gets the Pose2d and timestamp for use with WPILib pose estimator
    * (addVisionMeasurement) when you are on the RED
    * alliance
-   * 
+   *
    * @param limelightName
    * @return
    */

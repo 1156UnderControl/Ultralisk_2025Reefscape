@@ -72,13 +72,13 @@ public class ControlBoard implements IDriverController, IOperatorController {
   }
 
   @Override
-  public boolean rotateLeft() {
-    return mDriverController.rotateLeft();
+  public Trigger leftBumper() {
+    return mDriverController.leftBumper();
   }
 
   @Override
-  public boolean rotateRight() {
-    return mDriverController.rotateRight();
+  public Trigger rightBumper() {
+    return mDriverController.rightBumper();
   }
 
   @Override

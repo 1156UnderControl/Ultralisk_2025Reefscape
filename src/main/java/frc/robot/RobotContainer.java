@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -15,8 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
+import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
-import frc.robot.joysticks.ControlBoard;
+import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -25,15 +25,14 @@ public class RobotContainer {
 
   private final SendableChooser<Command> autoChooser;
 
-  private ControlBoard driverController = ControlBoard.getInstance();
-  private OperatorController operatorPanel = OperatorController.getInstance();
+  private OperatorController keyBoard = OperatorController.getInstance();
+
+  private DriverController driverController = DriverController.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
   public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
-
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
 
@@ -51,14 +50,16 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    driverController.a()
-        .onTrue(new CollectPosition(superStructure, drivetrain));
+    driverController.rightBumper().whileTrue(drivetrain.wheelRadiusCharacterization());
 
-    driverController.y()
-        .onTrue(new DefaultPosition(superStructure));
+    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
-    driverController.b()
-        .onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+
+    keyBoard.removeAlgaeFromBranch()
+        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
+
+    keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

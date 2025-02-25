@@ -6,6 +6,7 @@ import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
 import frc.robot.constants.ClimberConstants;
+import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
@@ -29,7 +30,7 @@ public class ClimberSubsystem implements IClimber {
   }
 
   private void configureClimberMotor() {
-    climberArmMotor.setMotorBrake(true);
+    climberArmMotor.setPosition(0);
     climberArmMotor.configureMotionProfiling(
         ClimberConstants.tunning_values_arm.PID.P,
         ClimberConstants.tunning_values_arm.PID.I,
@@ -41,25 +42,37 @@ public class ClimberSubsystem implements IClimber {
         ClimberConstants.tunning_values_arm.MAX_ACCELERATION,
         ClimberConstants.tunning_values_arm.JERK);
     cageIntakeMotor.burnFlash();
+    climberArmMotor.setMotorBrake(true);
   }
 
   @Override
   public void climb() {
+
   }
 
-  private void activateRollers(double speed) {
-    cageIntakeMotor.set(speed);
+  public void moveArmsToPosition(double position, double arbFF) {
+    double goal = limitGoalArm(position);
+    climberArmMotor.setPositionReferenceMotionProfiling(goal, arbFF);
   }
 
-  private void moveArmsToPosition(double position) {
-    climberArmMotor.set(position);
+  private double limitGoalArm(double goal) {
+    if (goal >= PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE) {
+      return PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE;
+    } else if (goal <= PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE) {
+      return PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE;
+    } else {
+      return goal;
+    }
   }
 
   public void periodic() {
   }
 
   @Override
-  public void isAtSetPoint() {
+  public boolean isAtSetPoint() {
+    // return Util.atSetpoint(this.climberArmMotor.getPosition(), ,
+    // previousVelocity);
+    return false;
   }
 
   @Override

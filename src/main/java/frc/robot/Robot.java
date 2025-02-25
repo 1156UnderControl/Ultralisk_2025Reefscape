@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -25,6 +26,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    DataLogManager.start();
   }
 
   @Override
@@ -34,12 +36,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    // Pose3d pose =
-    // CoordinatesTransform.applyRotationToPoseAngle(CoordinatesTransform
-    // .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions.get(1).get(ReefLevel.L2)),
-    // 1.0),
-    // new Rotation3d(Rotation2d.k180deg));
-    // logPosesred.appendRadians(pose.toPose2d());
     CommandScheduler.getInstance().run();
   }
 
