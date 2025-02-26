@@ -18,7 +18,7 @@ public class SwerveAlignWithCoralStation extends Command {
 
   @Override
   public void execute() {
-    this.swerve.driveToNearestHP();
+    this.swerve.driveLockedAngleToNearestHP();
   }
 
   @Override

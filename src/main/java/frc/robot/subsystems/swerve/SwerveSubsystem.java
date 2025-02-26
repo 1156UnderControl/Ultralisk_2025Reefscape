@@ -94,14 +94,18 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void driveToNearestHP() {
+  public void driveLockedAngleToNearestHP() {
     Pose2d nearestCoralStation;
+
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
+        controller.getXtranslation());
+    this.state = "DRIVE_ALIGN_ANGLE_CORAL_STATION";
 
     if (getPose().getY() <= 4.0259) {
       nearestCoralStation = FieldConstants.CoralStation.leftCenterFace;
     } else {
       nearestCoralStation = FieldConstants.CoralStation.rightCenterFace;
     }
-    this.goToPoseWithPathfind(nearestCoralStation);
+    this.driveFieldOrientedLockedAngle(desiredSpeeds, nearestCoralStation.getRotation());
   }
 }
