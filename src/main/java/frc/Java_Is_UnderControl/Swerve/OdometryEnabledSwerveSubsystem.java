@@ -46,8 +46,6 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private Pose2d targetAimPose;
 
-  private Pose2d poseVision;
-
   private CustomPose2dLogger targetPoseLogger = new CustomPose2dLogger("/SwerveSubsystem/TargetPose");
 
   private CustomPose2dLogger targetAimPositionLogger = new CustomPose2dLogger("/SwerveSubsystem/TargetAimPosition");
@@ -74,7 +72,6 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();
     this.targetAimPose = new Pose2d();
-    this.poseVision = new Pose2d();
   }
 
   public OdometryEnabledSwerveSubsystem(OdometryEnabledSwerveConfig config,
@@ -90,7 +87,6 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();
     this.targetAimPose = new Pose2d();
-    this.poseVision = new Pose2d();
   }
 
   private void updateOdometry() {
@@ -106,8 +102,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     Optional<PoseEstimation> possibleEstimatedPose = poseEstimator.getEstimatedPose(referencePose);
     if (possibleEstimatedPose.isPresent()) {
       PoseEstimation estimatedPose = possibleEstimatedPose.get();
-      this.poseVision = estimatedPose.estimatedPose.toPose2d();
-      super.addVisionMeasurement(this.poseVision, estimatedPose.timestampSeconds);
+      Pose2d poseVision = estimatedPose.estimatedPose.toPose2d();
+      this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds);
     }
   }
 
@@ -293,7 +289,7 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private void updateOdometrySwerveLogs() {
     this.targetAimPositionLogger.appendRadians(targetAimPose);
-    this.poseVisionLogger.appendRadians(this.poseVision);
+    this.poseVisionLogger.appendRadians(this.getPose());
     this.targetPoseLogger.appendRadians(this.targetPose);
   }
 

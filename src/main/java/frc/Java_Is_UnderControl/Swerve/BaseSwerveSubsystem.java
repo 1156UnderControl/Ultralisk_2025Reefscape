@@ -300,6 +300,11 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     return super.getState().Pose;
   }
 
+  @Override
+  public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
+    super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+  }
+
   protected Pose2d getEarlyPoseMoving(double dt) {
     Pose2d actualPose = getPose();
     Translation2d earlyTranslation = new Translation2d(
@@ -382,7 +387,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   }
 
   private void updateBaseLogs() {
-    // this.poseLogger.appendRadians(this.getPose());
+    this.poseLogger.appendRadians(this.getPose());
     this.targetSpeedsLogger.append(this.targetSpeeds);
     this.absoluteTargetSpeedLogger.append(CustomMath.toAbsoluteSpeed(this.targetSpeeds));
     this.measuredSpeedsLogger.append(this.getRobotVelocity());

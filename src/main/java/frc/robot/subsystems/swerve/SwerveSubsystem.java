@@ -88,9 +88,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     PoseEstimator arducamLeft = new PhotonVisionPoseEstimator(new PhotonCamera("Arducam-left"), robotToCamArducamLeft,
         false);
     PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, true, 2);
+    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, true, 2);
     listOfEstimators.add(arducamRight);
     listOfEstimators.add(arducamLeft);
     listOfEstimators.add(limelightReef);
+    listOfEstimators.add(limelightSource);
     PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators);
     return estimatorMultiCamera;
   }
