@@ -26,11 +26,11 @@ public class MoveToPosePIDConfig {
   }
 
   public ProfiledPIDController getProfiledPIDX() {
-    return new ProfiledPIDController(pidX.kP, pidX.kI, pidX.kI, constraintsX);
+    return new ProfiledPIDController(pidX.kP, pidX.kI, pidX.kD, constraintsX);
   }
 
   public ProfiledPIDController getProfiledPIDY() {
-    return new ProfiledPIDController(pidY.kP, pidY.kI, pidY.kI, constraintsY);
+    return new ProfiledPIDController(pidY.kP, pidY.kI, pidY.kD, constraintsY);
   }
 
 }
