@@ -11,6 +11,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
@@ -45,6 +47,10 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
   private Pose2d targetPose;
 
   private Pose2d targetAimPose;
+
+  private CustomDoubleLogger targetVyDriveToPoseLogger = new CustomDoubleLogger("/SwerveSubsystem/targetVyDriveToPose");
+
+  private CustomDoubleLogger targetVxDriveToPoseLogger = new CustomDoubleLogger("/SwerveSubsystem/targetVxDriveToPose");
 
   private CustomPose2dLogger targetPoseLogger = new CustomPose2dLogger("/SwerveSubsystem/TargetPose");
 
@@ -103,7 +109,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     if (possibleEstimatedPose.isPresent()) {
       PoseEstimation estimatedPose = possibleEstimatedPose.get();
       Pose2d poseVision = estimatedPose.estimatedPose.toPose2d();
-      this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds);
+      this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds,
+          VecBuilder.fill(0.03, 0.03, 9999));
     }
   }
 
@@ -147,7 +154,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     Pose2d currentPose = this.getPose();
     double targetXVelocity = this.moveToPoseXAxisPid.calculate(currentPose.getX(), targetPose.getX());
     double targetYVelocity = this.moveToPoseYAxisPid.calculate(currentPose.getY(), targetPose.getY());
-    ChassisSpeeds desiredSpeeds = new ChassisSpeeds(targetXVelocity, targetYVelocity, 0);
+    targetVxDriveToPoseLogger.append(targetXVelocity);
+    targetVyDriveToPoseLogger.append(targetYVelocity);
+    ChassisSpeeds desiredSpeeds = new ChassisSpeeds(targetXVelocity, -targetYVelocity, 0);
     this.driveFieldOrientedLockedAngle(desiredSpeeds, targetPose.getRotation());
     this.targetPose = targetPose;
   }
