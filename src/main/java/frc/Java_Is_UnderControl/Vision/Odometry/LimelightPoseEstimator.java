@@ -85,6 +85,9 @@ public class LimelightPoseEstimator implements PoseEstimator {
       limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(this.limelightName);
       this.stateOfPoseUpdate.append("GETTING_MEGATAG_2");
     }
+    if (limelightPoseEstimate == null) {
+      return Optional.empty();
+    }
     PoseEstimation poseEstimation = convertPoseEstimate(limelightPoseEstimate);
     this.isDetectingLogger.append(true);
     this.detectedPoseLogger.appendRadians(poseEstimation.estimatedPose.toPose2d());
