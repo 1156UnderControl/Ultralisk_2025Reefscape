@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    m_robotContainer.leds.setRainbow();
     CommandScheduler.getInstance().run();
   }
 
