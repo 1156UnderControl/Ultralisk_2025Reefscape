@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
@@ -28,6 +29,8 @@ public class RobotContainer {
   private OperatorController keyBoard = OperatorController.getInstance();
 
   private DriverController driverController = DriverController.getInstance();
+
+  private LedSubsystem led = LedSubsystem.getInstance();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
@@ -52,9 +55,9 @@ public class RobotContainer {
 
     driverController.rightBumper().whileTrue(drivetrain.wheelRadiusCharacterization());
 
-    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain, led));
 
-    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain, led));
 
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));

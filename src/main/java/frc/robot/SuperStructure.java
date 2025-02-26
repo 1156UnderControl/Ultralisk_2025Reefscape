@@ -2,6 +2,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.Java_Is_UnderControl.LEDs.ILed;
+import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -15,6 +17,7 @@ public class SuperStructure extends SubsystemBase {
   public IScorer scorer;
   public IIntake intake;
   public IClimber climber;
+  public ILed led;
 
   private ControlBoard controlBoard = ControlBoard.getInstance();
 
@@ -25,6 +28,7 @@ public class SuperStructure extends SubsystemBase {
   private CustomDoubleLogger totalCurrentDrawLogEntry = new CustomDoubleLogger("/Robot/TotalCurrentDraw");
 
   public SuperStructure() {
+    this.led = LedSubsystem.getInstance();
     this.scorer = ScorerSubsystem.getInstance();
     this.intake = IntakeSubsystem.getInstance();
     this.climber = ClimberSubsystem.getInstance();
@@ -46,9 +50,9 @@ public class SuperStructure extends SubsystemBase {
   // return this.scorer.hasCoral();
   // }
 
-  // public boolean intakeHasCoral() {
-  // return this.scorer.hasCoral();
-  // }
+  public boolean intakeHasCoral() {
+    return this.scorer.hasCoral();
+  }
 
   public void setCoastToRobot() {
     this.scorer.setCoastScorer();
