@@ -1,4 +1,4 @@
-package frc.robot.commands.states;
+package frc.robot.states;
 
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -8,9 +8,9 @@ import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToScorePosition;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class ScoreCoralPosition extends SequentialCommandGroup {
+public class ScoreCoralState extends SequentialCommandGroup {
 
-  public ScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
+  public ScoreCoralState(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(new MoveScorerToScorePosition(superStructure),
         Commands.run(() -> superStructure.scorer.placeCoral(), superStructure).withTimeout(Seconds.of(1)),
         Commands.idle(superStructure));
