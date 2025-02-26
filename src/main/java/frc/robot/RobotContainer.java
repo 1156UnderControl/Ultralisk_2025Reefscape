@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.commands.states.CollectPosition;
-import frc.robot.commands.states.DefaultPosition;
-import frc.robot.commands.states.RemoveAlgaePosition;
-import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
+import frc.robot.states.CollectState;
+import frc.robot.states.DefaultState;
+import frc.robot.states.RemoveAlgaeState;
+import frc.robot.states.ScoreCoralState;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
@@ -42,7 +42,7 @@ public class RobotContainer {
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
-    superStructure.setDefaultCommand(new DefaultPosition(superStructure));
+    superStructure.setDefaultCommand(new DefaultState(superStructure));
   }
 
   private void configureBindings() {
@@ -52,14 +52,14 @@ public class RobotContainer {
 
     driverController.rightBumper().whileTrue(drivetrain.wheelRadiusCharacterization());
 
-    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+    keyBoard.collectCoral().onTrue(new CollectState(superStructure, drivetrain));
 
-    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralState(superStructure, drivetrain));
 
     keyBoard.removeAlgaeFromBranch()
-        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
+        .onTrue(new RemoveAlgaeState(superStructure, drivetrain));
 
-    keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
+    keyBoard.cancelAction().onTrue(new DefaultState(superStructure));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
