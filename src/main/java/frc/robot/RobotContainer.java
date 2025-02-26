@@ -66,7 +66,7 @@ public class RobotContainer {
 
     keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain));
 
-    keyBoard.goToReefB().onTrue(drivetrain.driveToPosetest(new Pose2d(0, 0, new Rotation2d())));
+    keyBoard.goToReefB().onTrue(drivetrain.driveToPosetest(new Pose2d(15, 2, new Rotation2d())));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

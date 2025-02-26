@@ -389,6 +389,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     this.absoluteMeasuredSpeedLogger.append(this.getAbsoluteRobotVelocity());
     this.targetHeadingLogger.append(this.targetHeadingDegrees);
     this.measuredHeadingLogger.append(this.getHeading().getDegrees());
+    this.poseLogger.appendRadians(this.getPose());
   }
 
   protected void driveFieldOrientedLockedAngle(ChassisSpeeds speeds, Rotation2d targetHeading) {
