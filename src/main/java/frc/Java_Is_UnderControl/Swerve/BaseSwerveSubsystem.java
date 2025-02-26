@@ -72,7 +72,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric applyFieldCentricDrive = new SwerveRequest.FieldCentric()
       .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+      .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake applyBrakeSwerveX = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt applyPointWheelsAt = new SwerveRequest.PointWheelsAt();
   private SwerveRequest.FieldCentricFacingAngle applyFieldCentricDrivePointingAtAngle = new FieldCentricFacingAngle()
@@ -298,6 +298,13 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
 
   protected Pose2d getPose() {
     return super.getState().Pose;
+  }
+
+  @Override
+  public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds,
+      Matrix<N3, N1> visionMeasurementStdDevs) {
+    super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
+        visionMeasurementStdDevs);
   }
 
   @Override
