@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.Java_Is_UnderControl.LEDs.ILed;
+import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
@@ -40,6 +42,8 @@ public class RobotContainer {
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
 
   public final SuperStructure superStructure = new SuperStructure();
+
+  public final ILed leds = LedSubsystem.getInstance();
 
   public RobotContainer() {
     configureBindings();
@@ -68,6 +72,9 @@ public class RobotContainer {
 
     keyBoard.goToReefB().onTrue(drivetrain.driveToPosetest(new Pose2d(15, 2, new Rotation2d())));
 
+    driverController.x().and(() -> DriverStation.isDisabled())
+        .whileTrue(Commands.runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot())
+            .ignoringDisable(true));
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
