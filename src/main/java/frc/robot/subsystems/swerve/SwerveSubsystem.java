@@ -25,11 +25,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Util.GeomUtil;
+import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
@@ -51,7 +53,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private TargetBranch targetBranch = TargetBranch.A;
 
+  CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
+
   CustomPose2dLogger posetraj = new CustomPose2dLogger("Testpose");
+
+  private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.5);
 
   private String state = "NULL";
 
@@ -69,8 +75,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         new NoPoseEstimator(),
         configureMulticameraPoseEstimation(),
         new PIDConfig(7.1, 0, 0.06),
-        new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_X_PID, SwerveConstants.MOVE_TO_POSE_X_CONSTRAINTS,
-            SwerveConstants.MOVE_TO_POSE_Y_PID, SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
+        new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_TRANSLATION_PID,
+            SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
         drivetrainConstants,
         modules);
   }
@@ -118,7 +124,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   public Command goToPoseWithPathfind(Pose3d pose) {
-
+    this.state = "PATHFIND_TO_POSE";
     return driveToPoseWithPathfinding(pose.toPose2d());
   }
 
@@ -129,8 +135,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void periodic() {
     super.periodic();
-    Pose2d currentPose = SwerveConstants.TargetBranch.B.getTargetPoseToScore();
-    posetraj.appendRadians(getDriveTarget(getPose(), currentPose, false));
+    updateLogs();
     LimelightHelpers.SetRobotOrientation("limelight-reef",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
@@ -139,9 +144,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
   }
 
-  @Override
   protected void updateLogs() {
-
+    this.swerveStateLogger.append(this.state);
   }
 
   @Override
@@ -163,7 +167,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public boolean isAtTargetPosition() {
-    return isAtTargetPose(0.05, 0.05, 2);
+    return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(0.03, 0.03, 1));
   }
 
   public void driveToPoseTest() {
