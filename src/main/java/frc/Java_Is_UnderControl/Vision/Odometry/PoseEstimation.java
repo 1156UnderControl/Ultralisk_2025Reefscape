@@ -1,6 +1,10 @@
 package frc.Java_Is_UnderControl.Vision.Odometry;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 
 /** An estimated pose based on pipeline result */
 public class PoseEstimation {
@@ -16,6 +20,8 @@ public class PoseEstimation {
   /** The distance from the tag */
   public final double distanceToTag;
 
+  public Matrix<N3, N1> visionStdDev = VecBuilder.fill(0.7, 0.7, 999999);
+
   /**
    * Constructs an EstimatedRobotPose
    *
@@ -25,10 +31,25 @@ public class PoseEstimation {
   public PoseEstimation(
       Pose3d estimatedPose,
       double timestampSeconds,
+      int numberOfTargetsUsed, double distanceToTag, Matrix<N3, N1> visionStdDev) {
+    this.estimatedPose = estimatedPose;
+    this.timestampSeconds = timestampSeconds;
+    this.numberOfTargetsUsed = numberOfTargetsUsed;
+    this.distanceToTag = distanceToTag;
+    this.visionStdDev = visionStdDev;
+  }
+
+  public PoseEstimation(
+      Pose3d estimatedPose,
+      double timestampSeconds,
       int numberOfTargetsUsed, double distanceToTag) {
     this.estimatedPose = estimatedPose;
     this.timestampSeconds = timestampSeconds;
     this.numberOfTargetsUsed = numberOfTargetsUsed;
     this.distanceToTag = distanceToTag;
+  }
+
+  public void changeVisionStdDev(Matrix<N3, N1> visionStdDev) {
+    this.visionStdDev = visionStdDev;
   }
 }
