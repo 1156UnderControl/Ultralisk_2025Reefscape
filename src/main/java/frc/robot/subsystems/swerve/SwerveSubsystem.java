@@ -166,8 +166,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     return isAtTargetPose(0.05, 0.05, 2);
   }
 
-  public Command driveToPosetest(Pose2d pose) {
-    return run(() -> driveToPose(pose));
+  public void driveToPoseTest() {
+    driveToPose(new Pose2d(15, 2, new Rotation2d(Units.degreesToRadians(180))));
   }
 
   private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack) {

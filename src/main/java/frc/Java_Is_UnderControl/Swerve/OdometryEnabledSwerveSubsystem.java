@@ -11,8 +11,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -40,9 +39,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private PoseEstimator teleopPoseEstimator;
 
-  private ProfiledPIDController moveToPoseXAxisPid;
+  private PIDController moveToPoseXAxisPid;
 
-  private ProfiledPIDController moveToPoseYAxisPid;
+  private PIDController moveToPoseYAxisPid;
 
   private Pose2d targetPose;
 
@@ -71,8 +70,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
   public OdometryEnabledSwerveSubsystem(OdometryEnabledSwerveConfig config,
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants... modules) {
     super(config, drivetrainConstants, modules);
-    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getProfiledPIDY();
-    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getProfiledPIDX();
+    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getPidX();
+    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getPidY();
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
@@ -86,8 +85,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
       SwerveModuleConstants... modules) {
     super(config, drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
         modules);
-    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getProfiledPIDY();
-    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getProfiledPIDX();
+    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getPidX();
+    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getPidY();
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
@@ -109,8 +108,7 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     if (possibleEstimatedPose.isPresent()) {
       PoseEstimation estimatedPose = possibleEstimatedPose.get();
       Pose2d poseVision = estimatedPose.estimatedPose.toPose2d();
-      this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds,
-          VecBuilder.fill(0.03, 0.03, 9999));
+      this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds);
     }
   }
 
@@ -154,9 +152,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     Pose2d currentPose = this.getPose();
     double targetXVelocity = this.moveToPoseXAxisPid.calculate(currentPose.getX(), targetPose.getX());
     double targetYVelocity = this.moveToPoseYAxisPid.calculate(currentPose.getY(), targetPose.getY());
-    targetVxDriveToPoseLogger.append(targetXVelocity);
-    targetVyDriveToPoseLogger.append(targetYVelocity);
-    ChassisSpeeds desiredSpeeds = new ChassisSpeeds(targetXVelocity, -targetYVelocity, 0);
+    this.targetVxDriveToPoseLogger.append(targetXVelocity);
+    this.targetVyDriveToPoseLogger.append(targetYVelocity);
+    ChassisSpeeds desiredSpeeds = new ChassisSpeeds(targetXVelocity, targetYVelocity, 0);
     this.driveFieldOrientedLockedAngle(desiredSpeeds, targetPose.getRotation());
     this.targetPose = targetPose;
   }

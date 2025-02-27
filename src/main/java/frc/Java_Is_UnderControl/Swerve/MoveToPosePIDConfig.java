@@ -1,5 +1,6 @@
 package frc.Java_Is_UnderControl.Swerve;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
@@ -23,6 +24,14 @@ public class MoveToPosePIDConfig {
 
   public MoveToPosePIDConfig(PIDConfig pid, Constraints constraints) {
     this(pid, constraints, pid, constraints);
+  }
+
+  public PIDController getPidX() {
+    return new PIDController(pidX.kP, pidX.kI, pidX.kD);
+  }
+
+  public PIDController getPidY() {
+    return new PIDController(pidY.kP, pidY.kI, pidY.kD);
   }
 
   public ProfiledPIDController getProfiledPIDX() {

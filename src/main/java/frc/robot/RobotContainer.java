@@ -7,8 +7,6 @@ package frc.robot;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,6 +19,7 @@ import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.commands.swerve.SwerveGoToPoseTest;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -70,7 +69,7 @@ public class RobotContainer {
 
     keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain));
 
-    keyBoard.goToReefB().onTrue(drivetrain.driveToPosetest(new Pose2d(15, 2, new Rotation2d())));
+    keyBoard.goToReefB().onTrue(new SwerveGoToPoseTest(drivetrain));
 
     driverController.x().and(() -> DriverStation.isDisabled())
         .whileTrue(Commands.runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot())
