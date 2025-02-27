@@ -70,8 +70,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
   public OdometryEnabledSwerveSubsystem(OdometryEnabledSwerveConfig config,
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants... modules) {
     super(config, drivetrainConstants, modules);
-    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getPidX();
-    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getPidY();
+    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getPidTranslation();
+    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getPidTranslation();
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
@@ -85,8 +85,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
       SwerveModuleConstants... modules) {
     super(config, drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation,
         modules);
-    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getPidX();
-    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getPidY();
+    this.moveToPoseXAxisPid = config.moveToPosePIDConfig.getPidTranslation();
+    this.moveToPoseYAxisPid = config.moveToPosePIDConfig.getPidTranslation();
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
@@ -108,6 +108,7 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     if (possibleEstimatedPose.isPresent()) {
       PoseEstimation estimatedPose = possibleEstimatedPose.get();
       Pose2d poseVision = estimatedPose.estimatedPose.toPose2d();
+      this.poseVisionLogger.appendRadians(poseVision);
       this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds);
     }
   }
@@ -150,8 +151,10 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   protected void driveToPose(Pose2d targetPose) {
     Pose2d currentPose = this.getPose();
-    double targetXVelocity = this.moveToPoseXAxisPid.calculate(currentPose.getX(), targetPose.getX());
-    double targetYVelocity = this.moveToPoseYAxisPid.calculate(currentPose.getY(), targetPose.getY());
+    double targetXVelocity = this.moveToPoseXAxisPid.calculate(currentPose.getX(),
+        (targetPose.getX()));
+    double targetYVelocity = this.moveToPoseYAxisPid.calculate(currentPose.getY(),
+        (targetPose.getY()));
     this.targetVxDriveToPoseLogger.append(targetXVelocity);
     this.targetVyDriveToPoseLogger.append(targetYVelocity);
     ChassisSpeeds desiredSpeeds = new ChassisSpeeds(targetXVelocity, targetYVelocity, 0);
@@ -296,7 +299,6 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private void updateOdometrySwerveLogs() {
     this.targetAimPositionLogger.appendRadians(targetAimPose);
-    this.poseVisionLogger.appendRadians(this.getPose());
     this.targetPoseLogger.appendRadians(this.targetPose);
   }
 

@@ -7,6 +7,10 @@ import frc.Java_Is_UnderControl.Control.PIDConfig;
 
 public class MoveToPosePIDConfig {
 
+  public PIDConfig pidTranslation;
+
+  public Constraints constraintsTranslation;
+
   public PIDConfig pidX;
 
   public Constraints constraintsX;
@@ -22,8 +26,16 @@ public class MoveToPosePIDConfig {
     this.constraintsY = constraintsY;
   }
 
-  public MoveToPosePIDConfig(PIDConfig pid, Constraints constraints) {
-    this(pid, constraints, pid, constraints);
+  public MoveToPosePIDConfig(PIDConfig pidTranslation, Constraints constraints) {
+    this(pidTranslation, constraints, pidTranslation, constraints);
+    this.pidTranslation = pidTranslation;
+    this.constraintsTranslation = constraints;
+  }
+
+  public PIDController getPidTranslation() {
+    PIDController pidTranslationController = new PIDController(pidTranslation.kP, pidTranslation.kI, pidTranslation.kD);
+    pidTranslationController.setIZone(this.pidTranslation.iZone);
+    return pidTranslationController;
   }
 
   public PIDController getPidX() {
