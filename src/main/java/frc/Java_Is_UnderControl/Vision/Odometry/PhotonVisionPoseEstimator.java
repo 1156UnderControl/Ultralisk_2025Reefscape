@@ -1,11 +1,13 @@
 package frc.Java_Is_UnderControl.Vision.Odometry;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
@@ -41,7 +43,7 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
     this.camera = camera;
     this.aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     this.photonPoseEstimator = new PhotonPoseEstimator(this.aprilTagFieldLayout,
-        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cameraPosition);
+        PoseStrategy.PNP_DISTANCE_TRIG_SOLVE, cameraPosition);
     this.photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     this.detectedPoseLogger = new CustomPose2dLogger(
         "/Vision/PhotonVisionPoseEstimator/" + camera.getName() + "/DetectedPose");
@@ -61,9 +63,9 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
     this.only2TagsMeasurements = only2TagsMeasurements;
     this.camera = camera;
     this.aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
-    this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+    this.photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CONSTRAINED_SOLVEPNP,
         cameraPosition);
-    this.photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+    // this.photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
     this.detectedPoseLogger = new CustomPose2dLogger(
         "/Vision/PhotonVisionPoseEstimator/" + camera.getName() + "/DetectedPose");
     this.numberOfDetectedTagsLogger = new CustomDoubleLogger(
@@ -80,7 +82,7 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
 
   public Optional<PoseEstimation> getEstimatedPose(Pose2d referencePose) {
     this.photonPoseEstimator.setReferencePose(referencePose);
-    var results = camera.getAllUnreadResults();
+    List<PhotonPipelineResult> results = camera.getAllUnreadResults();
     if (results.isEmpty()) {
       return Optional.empty();
     }

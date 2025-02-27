@@ -16,7 +16,7 @@ import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.PivotConstants;
 
 public class ScorerSubsystem implements IScorer {
@@ -57,7 +57,7 @@ public class ScorerSubsystem implements IScorer {
   CustomBooleanLogger pivotStoppedByElevatorLimit = new CustomBooleanLogger(
       "/ScorerSubsystem/pivotStoppedByElevatorLimit");
 
-  private ReefHeight targetReefHeight = ReefHeight.L1;
+  private ReefLevel targetReefHeight = ReefLevel.L1;
 
   private AlgaeHeight targetAlgaeHeight = AlgaeHeight.LOW;
 
@@ -249,7 +249,7 @@ public class ScorerSubsystem implements IScorer {
     branchHeightTarget = this.targetReefHeight.name();
   }
 
-  private void assignSetpointsForLevel(ReefHeight level) {
+  private void assignSetpointsForLevel(ReefLevel level) {
     switch (level) {
       case L1:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.L1_HEIGHT;
@@ -334,7 +334,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
-    if (targetReefHeight == ReefHeight.L1) {
+    if (targetReefHeight == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
@@ -396,7 +396,7 @@ public class ScorerSubsystem implements IScorer {
         .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
   }
 
-  public void setTargetReefHeight(ReefHeight targetReefHeight) {
+  public void setTargetReefHeight(ReefLevel targetReefHeight) {
     this.targetReefHeight = targetReefHeight;
   }
 
@@ -484,7 +484,7 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void setTargetBranchLevel(ReefHeight reefHeight) {
+  public void setTargetBranchLevel(ReefLevel reefHeight) {
     this.targetReefHeight = reefHeight;
   }
 
