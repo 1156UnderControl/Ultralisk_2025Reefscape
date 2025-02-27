@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
-import frc.robot.commands.states.AutoIntakeCoralPosition;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
@@ -57,7 +56,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    driverController.rightBumper().onTrue(new AutoIntakeCoralPosition(superStructure, drivetrain));
+    // driverController.rightBumper().onTrue(new
+    // AutoIntakeCoralPosition(superStructure, drivetrain));
 
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
