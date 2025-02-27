@@ -18,7 +18,7 @@ public class SwerveGoToPoseTest extends Command {
 
   @Override
   public void execute() {
-    this.swerve.driveToBranch(TargetBranch.B, true);
+    this.swerve.driveToBranch(TargetBranch.B, false);
   }
 
   @Override
