@@ -3,6 +3,7 @@ package frc.robot.constants;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.util.Units;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
@@ -33,5 +34,17 @@ public class SwerveConstants {
           Rotation2d.k180deg);
       return transformedPose;
     }
+  }
+
+  public class CoralStations {
+    public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
+        Units.inchesToMeters(33.526),
+        Units.inchesToMeters(25.824),
+        Rotation2d.fromDegrees(45)).rotateBy(Rotation2d.k180deg);
+
+    public static final Pose2d CORAL_STATION_LEFT_POSE_FOR_ROBOT = new Pose2d(
+        Units.inchesToMeters(33.526),
+        Units.inchesToMeters(291.176),
+        Rotation2d.fromDegrees(-45));
   }
 }

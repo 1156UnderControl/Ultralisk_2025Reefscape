@@ -38,7 +38,6 @@ import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -162,9 +161,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private Pose2d getNearestCoralStationPose() {
     if (this.getPose().getY() >= 4.0259) {
-      return FieldConstants.CoralStation.rightCenterFace;
+      return SwerveConstants.CoralStations.CORAL_STATION_RIGHT_POSE_FOR_ROBOT;
     } else {
-      return FieldConstants.CoralStation.leftCenterFace;
+      return SwerveConstants.CoralStations.CORAL_STATION_LEFT_POSE_FOR_ROBOT;
     }
   }
 
