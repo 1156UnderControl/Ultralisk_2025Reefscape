@@ -38,6 +38,7 @@ import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -159,10 +160,29 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     }
   }
 
+  private Pose2d getNearestCoralStationPose() {
+    if (this.getPose().getY() >= 4.0259) {
+      return FieldConstants.CoralStation.rightCenterFace;
+    } else {
+      return FieldConstants.CoralStation.rightCenterFace;
+    }
+  }
+
   @Override
-  public void driveAimingToNearestHP() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'driveAimingToNearestHP'");
+  public void driveLockedAngleToNearestCoralStation() {
+    Rotation2d nearestCoralStationRotationAngle = this.getNearestCoralStationPose().getRotation();
+
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
+        controller.getXtranslation());
+    this.state = "DRIVE_ALIGN_ANGLE_CORAL_STATION";
+    this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
+        nearestCoralStationRotationAngle.getSin());
+  }
+
+  @Override
+  public void driveToNearestCoralStation() {
+    Pose2d nearestCoralStationPose2D = this.getNearestCoralStationPose();
+    this.driveToPose(nearestCoralStationPose2D);
   }
 
   @Override
