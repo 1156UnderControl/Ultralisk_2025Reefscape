@@ -2,6 +2,7 @@ package frc.Java_Is_UnderControl.Vision.Odometry;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
@@ -13,6 +14,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers.PoseEstimate;
+import frc.robot.constants.VisionConstants;
 
 public class LimelightPoseEstimator implements PoseEstimator {
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -29,6 +31,8 @@ public class LimelightPoseEstimator implements PoseEstimator {
 
   boolean useMegaTag1;
 
+  private Boolean useVisionHeadingCorrection = false;
+
   CustomStringLogger stateOfPoseUpdate;
 
   CustomBooleanLogger isDetectingLogger;
@@ -40,6 +44,10 @@ public class LimelightPoseEstimator implements PoseEstimator {
   CustomDoubleLogger distToTag;
 
   CustomDoubleLogger headingMegaTag2;
+
+  CustomDoubleLogger stdDevXYLogger;
+
+  CustomDoubleLogger stdDevThetaLogger;
 
   public LimelightPoseEstimator(String limelightName, boolean only2TagsMeasurements, boolean useMegaTag1,
       double limitAngVelForUpdating) {
@@ -59,6 +67,9 @@ public class LimelightPoseEstimator implements PoseEstimator {
         "/Vision/LimelightPoseEstimator/" + limelightName + "/DistanceToTag");
     this.stateOfPoseUpdate = new CustomStringLogger(
         "/Vision/LimelightPoseEstimator/" + limelightName + "/StateOfPoseUpdate");
+    this.stdDevXYLogger = new CustomDoubleLogger("Vision/PhotonVisionPoseEstimator/" + limelightName + "/stdDevXY");
+    this.stdDevThetaLogger = new CustomDoubleLogger(
+        "Vision/PhotonVisionPoseEstimator/" + limelightName + "/stdDevTheta");
   }
 
   public LimelightPoseEstimator(String limelightName, boolean only2TagsMeasurements) {
@@ -88,6 +99,13 @@ public class LimelightPoseEstimator implements PoseEstimator {
     if (limelightPoseEstimate == null) {
       return Optional.empty();
     }
+
+    if (limelightPoseEstimate.tagCount == 1) {
+      useVisionHeadingCorrection = false;
+    } else {
+      useVisionHeadingCorrection = false;
+    }
+
     PoseEstimation poseEstimation = convertPoseEstimate(limelightPoseEstimate);
     this.isDetectingLogger.append(true);
     this.detectedPoseLogger.appendRadians(poseEstimation.estimatedPose.toPose2d());
@@ -101,6 +119,7 @@ public class LimelightPoseEstimator implements PoseEstimator {
       this.stateOfPoseUpdate.append("REJECTED_BY_ONLY_2_TAGS_MEASUREMENTS");
       return Optional.empty();
     }
+
     return Optional.of(poseEstimation);
   }
 
@@ -111,8 +130,15 @@ public class LimelightPoseEstimator implements PoseEstimator {
   }
 
   private PoseEstimation convertPoseEstimate(PoseEstimate limelightPoseEstimate) {
+    double stdDevXY = VisionConstants.xyStdDevCoefficient * Math.pow(limelightPoseEstimate.avgTagDist, 2)
+        / limelightPoseEstimate.tagCount;
+    double stdDevTheta = useVisionHeadingCorrection
+        ? VisionConstants.xyStdDevCoefficient * Math.pow(limelightPoseEstimate.avgTagDist, 2)
+            / limelightPoseEstimate.tagCount
+        : Double.POSITIVE_INFINITY;
     return new PoseEstimation(new Pose3d(limelightPoseEstimate.pose), limelightPoseEstimate.timestampSeconds,
-        limelightPoseEstimate.tagCount, limelightPoseEstimate.avgTagDist);
+        limelightPoseEstimate.tagCount, limelightPoseEstimate.avgTagDist, VecBuilder.fill(stdDevXY,
+            stdDevXY, stdDevTheta));
   }
 
 }

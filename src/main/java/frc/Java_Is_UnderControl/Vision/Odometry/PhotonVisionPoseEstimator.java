@@ -12,12 +12,15 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.wpilibj.Timer;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
+import frc.robot.constants.VisionConstants;
 
 public class PhotonVisionPoseEstimator implements PoseEstimator {
 
@@ -39,6 +42,12 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
 
   CustomStringLogger stateOfPoseUpdate;
 
+  CustomDoubleLogger stdDevXYLogger;
+
+  CustomDoubleLogger stdDevThetaLogger;
+
+  private Boolean useVisionHeadingCorrection = false;
+
   public PhotonVisionPoseEstimator(PhotonCamera camera, Transform3d cameraPosition) {
     this.camera = camera;
     this.aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
@@ -57,6 +66,9 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
     this.stateOfPoseUpdate = new CustomStringLogger(
         "/Vision/PhotonVisionPoseEstimator/" + camera.getName() +
             "/StateOfPoseUpdate");
+    this.stdDevXYLogger = new CustomDoubleLogger("Vision/PhotonVisionPoseEstimator/" + camera.getName() + "/stdDevXY");
+    this.stdDevThetaLogger = new CustomDoubleLogger(
+        "Vision/PhotonVisionPoseEstimator/" + camera.getName() + "/stdDevTheta");
   }
 
   public PhotonVisionPoseEstimator(PhotonCamera camera, Transform3d cameraPosition, boolean only2TagsMeasurements) {
@@ -78,10 +90,14 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
     this.stateOfPoseUpdate = new CustomStringLogger(
         "/Vision/PhotonVisionPoseEstimator/" + camera.getName() +
             "/StateOfPoseUpdate");
+    this.stdDevXYLogger = new CustomDoubleLogger("Vision/PhotonVisionPoseEstimator/" + camera.getName() + "/stdDevXY");
+    this.stdDevThetaLogger = new CustomDoubleLogger(
+        "Vision/PhotonVisionPoseEstimator/" + camera.getName() + "/stdDevTheta");
   }
 
   public Optional<PoseEstimation> getEstimatedPose(Pose2d referencePose) {
     this.photonPoseEstimator.setReferencePose(referencePose);
+    this.photonPoseEstimator.addHeadingData(Timer.getFPGATimestamp(), referencePose.getRotation());
     List<PhotonPipelineResult> results = camera.getAllUnreadResults();
     if (results.isEmpty()) {
       return Optional.empty();
@@ -94,6 +110,7 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
       return Optional.empty();
     }
     isDetectingLogger.append(true);
+
     PoseEstimation poseEstimation = convertPhotonPoseEstimation(photonPoseEstimation.get());
     if (only2TagsMeasurements && poseEstimation.numberOfTargetsUsed < 2) {
       stateOfPoseUpdate.append("LESS_THAN_2_TARGETS");
@@ -118,13 +135,22 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
   }
 
   private PoseEstimation convertPhotonPoseEstimation(EstimatedRobotPose photonPoseEstimation) {
+    double avgTagDist = photonPoseEstimation.estimatedPose.getTranslation().getDistance(
+        this.aprilTagFieldLayout.getTagPose(photonPoseEstimation.targetsUsed.get(photonPoseEstimation.targetsUsed.size()
+            - 1).getFiducialId()).get().getTranslation());
 
+    double stdDevXY = VisionConstants.xyStdDevCoefficient * Math.pow(avgTagDist, 2)
+        / photonPoseEstimation.targetsUsed.size();
+    this.stdDevXYLogger.append(stdDevXY);
+    double stdDevTheta = useVisionHeadingCorrection ? VisionConstants.thetaStdDevCoefficient * Math.pow(avgTagDist, 2)
+        / photonPoseEstimation.targetsUsed.size() : Double.POSITIVE_INFINITY;
+    this.stdDevThetaLogger.append(stdDevTheta);
     return new PoseEstimation(photonPoseEstimation.estimatedPose,
         photonPoseEstimation.timestampSeconds,
         photonPoseEstimation.targetsUsed.size(),
-        photonPoseEstimation.targetsUsed.get(photonPoseEstimation.targetsUsed.size()
-            - 1).getBestCameraToTarget()
-            .getX());
+        avgTagDist,
+        VecBuilder.fill(stdDevXY,
+            stdDevXY, stdDevTheta));
   }
 
 }
