@@ -4,11 +4,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class SwerveGoToPoseTest extends Command {
+public class SwerveGoToBranch extends Command {
   SwerveSubsystem swerve;
+  TargetBranch targetBranch;
 
-  public SwerveGoToPoseTest(SwerveSubsystem swerve) {
+  public SwerveGoToBranch(SwerveSubsystem swerve, TargetBranch branch, boolean backupBranch) {
     this.swerve = swerve;
+    this.targetBranch = branch;
     addRequirements(swerve);
   }
 
@@ -18,7 +20,7 @@ public class SwerveGoToPoseTest extends Command {
 
   @Override
   public void execute() {
-    this.swerve.driveToBranch(TargetBranch.B, false);
+    this.swerve.driveToBranch(this.targetBranch, false);
   }
 
   @Override
