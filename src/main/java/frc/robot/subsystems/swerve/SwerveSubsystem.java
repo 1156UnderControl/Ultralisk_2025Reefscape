@@ -164,7 +164,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     if (this.getPose().getY() >= 4.0259) {
       return FieldConstants.CoralStation.rightCenterFace;
     } else {
-      return FieldConstants.CoralStation.rightCenterFace;
+      return FieldConstants.CoralStation.leftCenterFace;
     }
   }
 
