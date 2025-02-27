@@ -1,6 +1,7 @@
 package frc.robot.commands.swerve;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class SwerveGoToPoseTest extends Command {
@@ -17,7 +18,7 @@ public class SwerveGoToPoseTest extends Command {
 
   @Override
   public void execute() {
-    this.swerve.driveToPoseTest();
+    this.swerve.driveToBranch(TargetBranch.B, true);
   }
 
   @Override

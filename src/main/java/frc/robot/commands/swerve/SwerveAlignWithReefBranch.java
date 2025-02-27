@@ -17,7 +17,7 @@ public class SwerveAlignWithReefBranch extends Command {
 
   @Override
   public void execute() {
-    this.swerve.driveToBranch(this.targetBranch, true);
+    this.swerve.driveToBranch(this.targetBranch, false);
   }
 
   @Override
