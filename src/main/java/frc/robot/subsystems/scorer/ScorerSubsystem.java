@@ -7,6 +7,7 @@ import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -46,6 +47,8 @@ public class ScorerSubsystem implements IScorer {
 
   @Logged(name = "Target Reef Face To Remove Algae", importance = Importance.INFO)
   private String reefFaceTarget = "NONE";
+
+  CustomStringLogger scorerStateLogger = new CustomStringLogger("/ScorerSubsystem/State");
 
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
 
@@ -137,6 +140,10 @@ public class ScorerSubsystem implements IScorer {
     SmartDashboard.putNumber("Elevator Velocity", elevatorMotorLeader.getVelocity());
     SmartDashboard.putNumber("EndEffector Velocity", endEffectorMotor.getVelocity());
     SmartDashboard.putString("state", state);
+    updateLogs();
+  }
+
+  private void updateLogs() {
     elevatorMotorLeader.updateLogs();
     elevatorMotorFollower.updateLogs();
     pivotMotor.updateLogs();
@@ -274,9 +281,19 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void removeAlgaeFromBranch() {
+    assignAlgaeRemovalSetpointsForAlgaeHeight();
+    state = "MOVING_ELEVATOR_TO_REMOVE_ALGAE_FROM_REEF";
+  }
+
+  @Override
+  public void removeAlgaeEndEffector() {
     endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
-    assignAlgaeRemovalSetpointsForFace();
     state = "REMOVING_ALGAE_FROM_REEF";
+  }
+
+  @Override
+  public void stopEndEffector() {
+    endEffectorMotor.set(0);
   }
 
   private int getReefFaceIndexFromPose(Pose3d pose) {
@@ -295,7 +312,7 @@ public class ScorerSubsystem implements IScorer {
     return bestIndex;
   }
 
-  private void assignAlgaeRemovalSetpointsForFace() {
+  private void assignAlgaeRemovalSetpointsForAlgaeHeight() {
     switch (targetAlgaeHeight) {
       case LOW:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.ALGAE_REMOVAL_LOW;
