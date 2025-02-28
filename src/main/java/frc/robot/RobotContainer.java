@@ -12,10 +12,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.constants.FieldConstants.ReefHeight;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -55,6 +58,28 @@ public class RobotContainer {
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
     keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+
+    driverController.x().whileTrue(
+        Commands.runEnd(() -> superStructure.scorer.setCoastScorer(), () -> superStructure.scorer.setBrakeScorer())
+            .ignoringDisable(true));
+
+    keyBoard.reefL1()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L1);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
+        }));
+
+    keyBoard.reefL2()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L2);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
+        }));
+
+    keyBoard.reefL3()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L3)));
+
+    keyBoard.reefL4()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L4)));
 
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
