@@ -34,6 +34,10 @@ public class SwerveConstants {
     }
   }
 
+  public enum PoseEstimatorState {
+    REEF_ESTIMATION, GLOBAL_POSE_ESTIMATION, AUTO_POSE_ESTIMATION;
+  }
+
   public class CoralStations {
     public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
         Units.inchesToMeters(33.526),

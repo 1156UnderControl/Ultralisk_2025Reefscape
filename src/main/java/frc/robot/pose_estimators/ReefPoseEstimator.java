@@ -63,9 +63,9 @@ public class ReefPoseEstimator implements PoseEstimator {
     this.arducamLeft = arducamLeft;
     this.arducamRight = arducamRight;
     this.aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
-    this.photonPoseEstimatorLeft = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
+    this.photonPoseEstimatorLeft = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CONSTRAINED_SOLVEPNP,
         cameraPositionLeft);
-    this.photonPoseEstimatorRight = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE,
+    this.photonPoseEstimatorRight = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CONSTRAINED_SOLVEPNP,
         cameraPositionRight);
     this.detectedPoseLogger = new CustomPose2dLogger("/Vision/ReefPoseEstimator/DetectedPose");
     this.numberOfDetectedTagsLogger = new CustomDoubleLogger("/Vision/MultiCameraEstimator/NumberOfDetectedTags");
@@ -97,28 +97,33 @@ public class ReefPoseEstimator implements PoseEstimator {
 
     PoseEstimation poseEstimationRight = null;
 
-    Optional<EstimatedRobotPose> photonPoseEstimationLeft = this.photonPoseEstimatorLeft
-        .update(resultsLeft.get(resultsLeft.size() - 1));
+    if (!resultsLeft.isEmpty()) {
+      Optional<EstimatedRobotPose> photonPoseEstimationLeft = this.photonPoseEstimatorLeft
+          .update(resultsLeft.get(resultsLeft.size() - 1));
 
-    if (!photonPoseEstimationLeft.isPresent()) {
-      arducamLeftNotSeeing = true;
-      isLeftDetectingLogger.append(false);
-      stateOfPoseUpdateLeft.append("NO_TARGETS");
-    } else {
-      poseEstimationLeft = convertPhotonPoseEstimation(photonPoseEstimationLeft.get());
-      isLeftDetectingLogger.append(true);
+      if (!photonPoseEstimationLeft.isPresent()) {
+        arducamLeftNotSeeing = true;
+        isLeftDetectingLogger.append(false);
+        stateOfPoseUpdateLeft.append("NO_TARGETS");
+      } else {
+        poseEstimationLeft = convertPhotonPoseEstimation(photonPoseEstimationLeft.get());
+        isLeftDetectingLogger.append(true);
+      }
+
     }
 
-    Optional<EstimatedRobotPose> photonPoseEstimationRight = this.photonPoseEstimatorRight
-        .update(resultsRight.get(resultsRight.size() - 1));
+    if (!resultsRight.isEmpty()) {
+      Optional<EstimatedRobotPose> photonPoseEstimationRight = this.photonPoseEstimatorRight
+          .update(resultsRight.get(resultsRight.size() - 1));
 
-    if (!photonPoseEstimationRight.isPresent()) {
-      arducamRightNotSeeing = true;
-      isRightDetectingLogger.append(false);
-      stateOfPoseUpdateRight.append("NO_TARGETS");
-    } else {
-      poseEstimationRight = convertPhotonPoseEstimation(photonPoseEstimationRight.get());
-      isRightDetectingLogger.append(true);
+      if (!photonPoseEstimationRight.isPresent()) {
+        arducamRightNotSeeing = true;
+        isRightDetectingLogger.append(false);
+        stateOfPoseUpdateRight.append("NO_TARGETS");
+      } else {
+        poseEstimationRight = convertPhotonPoseEstimation(photonPoseEstimationRight.get());
+        isRightDetectingLogger.append(true);
+      }
     }
 
     if (poseEstimationLeft == null && poseEstimationRight == null) {

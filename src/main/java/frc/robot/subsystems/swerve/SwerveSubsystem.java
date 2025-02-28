@@ -15,21 +15,18 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
-import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.GeomUtil;
 import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
@@ -38,10 +35,14 @@ import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
+import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.SwerveConstants;
+import frc.robot.constants.SwerveConstants.PoseEstimatorState;
 import frc.robot.constants.SwerveConstants.TargetBranch;
+import frc.robot.constants.VisionConstants;
 import frc.robot.joysticks.DriverController;
+import frc.robot.pose_estimators.ReefPoseEstimator;
 
 public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements ISwerve {
 
@@ -53,13 +54,23 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private TargetBranch targetBranch = TargetBranch.A;
 
-  CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
+  private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
 
-  CustomPose2dLogger posetraj = new CustomPose2dLogger("Testpose");
+  private static PhotonCamera arducamRight = new PhotonCamera("Arducam-right");
+
+  private ReefPoseEstimator reefPoseEstimator = new ReefPoseEstimator(arducamLeft,
+      VisionConstants.robotToCamArducamLeft,
+      arducamRight, VisionConstants.robotToCamArducamRight);
+
+  CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
 
   private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.5);
 
   private String state = "NULL";
+
+  CustomStringLogger poseEstimatorStateLogger = new CustomStringLogger("SwerveSubsystem/State_PoseEstimator");
+
+  private PoseEstimatorState poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
 
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
       new PIDConstants(5, 0, 0),
@@ -82,21 +93,16 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
-    Transform3d robotToCamArducamLeft = new Transform3d(new Translation3d(0.11, -0.2707, 0.2223),
-        new Rotation3d(0, Units.degreesToRadians(-18.234),
-            Units.degreesToRadians(7.2367)));
-    Transform3d robotToCamArducamRight = new Transform3d(new Translation3d(0.1968, -0.2707, 0.2223),
-        new Rotation3d(0, Units.degreesToRadians(-18.234),
-            Units.degreesToRadians(7.2367)));
     List<PoseEstimator> listOfEstimators = new ArrayList<PoseEstimator>();
-    PoseEstimator arducamRight = new PhotonVisionPoseEstimator(new PhotonCamera("Arducam-right"),
-        robotToCamArducamRight, false);
-    PoseEstimator arducamLeft = new PhotonVisionPoseEstimator(new PhotonCamera("Arducam-left"), robotToCamArducamLeft,
+    PoseEstimator arducamRightEstimator = new PhotonVisionPoseEstimator(arducamRight,
+        VisionConstants.robotToCamArducamRight, false);
+    PoseEstimator arducamLeftEstimator = new PhotonVisionPoseEstimator(arducamLeft,
+        VisionConstants.robotToCamArducamLeft,
         false);
     PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, true, 2);
     PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, true, 2);
-    listOfEstimators.add(arducamRight);
-    listOfEstimators.add(arducamLeft);
+    listOfEstimators.add(arducamRightEstimator);
+    listOfEstimators.add(arducamLeftEstimator);
     listOfEstimators.add(limelightReef);
     listOfEstimators.add(limelightSource);
     PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators);
@@ -135,6 +141,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void periodic() {
     super.periodic();
+    selectPoseEstimator();
     updateLogs();
     LimelightHelpers.SetRobotOrientation("limelight-reef",
         OdometryEnabledSwerveSubsystem.robotOrientation,
@@ -142,6 +149,25 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     LimelightHelpers.SetRobotOrientation("limelight-source",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
+  }
+
+  private void selectPoseEstimator() {
+    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2) {
+      poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
+    } else {
+      poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
+    }
+    switch (poseEstimatorState) {
+      case GLOBAL_POSE_ESTIMATION:
+        overrideTeleOpPoseEstimator(null);
+        break;
+      case REEF_ESTIMATION:
+        overrideTeleOpPoseEstimator(reefPoseEstimator);
+        break;
+      default:
+        overrideTeleOpPoseEstimator(null);
+        break;
+    }
   }
 
   protected void updateLogs() {
