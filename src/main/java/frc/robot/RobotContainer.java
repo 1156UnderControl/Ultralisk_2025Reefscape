@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.robot.commands.states.AutoScoreCoralPosition;
@@ -19,6 +20,8 @@ import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
@@ -62,6 +65,28 @@ public class RobotContainer {
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
     keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+
+    driverController.x().whileTrue(
+        Commands.runEnd(() -> superStructure.scorer.setCoastScorer(), () -> superStructure.scorer.setBrakeScorer())
+            .ignoringDisable(true));
+
+    keyBoard.reefL1()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
+        }));
+
+    keyBoard.reefL2()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
+        }));
+
+    keyBoard.reefL3()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
+
+    keyBoard.reefL4()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
 
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));

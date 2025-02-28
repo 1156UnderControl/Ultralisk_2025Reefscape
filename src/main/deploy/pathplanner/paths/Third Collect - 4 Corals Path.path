@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.63711384738197,
-        "y": 5.064859194205983
+        "x": 3.7113738489199135,
+        "y": 5.055107063467748
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.8837499563125295,
-        "y": 6.001473761481504
+        "x": 2.958009957850473,
+        "y": 5.991721630743269
       },
       "isLocked": false,
       "linkedName": "Third Point - 4 Corals Path END"
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": "4 Corals",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -62.0
+    "rotation": -60.14515186725141
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }
