@@ -6,7 +6,10 @@
     "4 Corals",
     "TEST"
   ],
-  "autoFolders": [],
+  "autoFolders": [
+    "Match Autos",
+    "Odometry Tests"
+  ],
   "defaultMaxVel": 1.0,
   "defaultMaxAccel": 1.0,
   "defaultMaxAngVel": 540.0,

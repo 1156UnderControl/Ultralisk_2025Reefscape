@@ -11,21 +11,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "First Collect - 4 Corals Path"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
           }
         },
         {
@@ -35,21 +23,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Second Collect - 4 Corals Path"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
           }
         },
         {
@@ -59,21 +35,9 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "Third Collect - 4 Corals Path"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
           }
         },
         {
@@ -86,6 +50,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Match Autos",
   "choreoAuto": false
 }
