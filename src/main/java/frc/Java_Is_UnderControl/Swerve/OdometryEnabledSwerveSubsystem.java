@@ -39,6 +39,10 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   private PoseEstimator teleopPoseEstimator;
 
+  private PoseEstimator defaultAutonomousPoseEstimator;
+
+  private PoseEstimator defaultTeleopPoseEstimator;
+
   private PIDController moveToPoseXAxisPid;
 
   private PIDController moveToPoseYAxisPid;
@@ -75,6 +79,9 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
+    this.defaultAutonomousPoseEstimator = config.teleoperatedPoseEstimator;
+    this.defaultAutonomousPoseEstimator = config.autonomousPoseEstimator;
+    this.defaultTeleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();
     this.targetAimPose = new Pose2d();
   }
@@ -90,6 +97,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     this.constraints = config.pathPlannerConfig.pathFinderConstraints;
     this.autonomousPoseEstimator = config.autonomousPoseEstimator;
     this.teleopPoseEstimator = config.teleoperatedPoseEstimator;
+    this.defaultAutonomousPoseEstimator = config.autonomousPoseEstimator;
+    this.defaultTeleopPoseEstimator = config.teleoperatedPoseEstimator;
     this.targetPose = new Pose2d();
     this.targetAimPose = new Pose2d();
   }
@@ -100,6 +109,22 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     } else {
       this.updateOdometryWithPoseEstimator(this.teleopPoseEstimator);
     }
+  }
+
+  protected void overrideTeleOpPoseEstimator(PoseEstimator poseEstimator) {
+    if (poseEstimator == null) {
+      this.teleopPoseEstimator = this.defaultTeleopPoseEstimator;
+      return;
+    }
+    this.teleopPoseEstimator = poseEstimator;
+  }
+
+  protected void overrideAutonomousPoseEstimator(PoseEstimator poseEstimator) {
+    if (poseEstimator == null) {
+      this.autonomousPoseEstimator = this.defaultAutonomousPoseEstimator;
+      return;
+    }
+    this.autonomousPoseEstimator = poseEstimator;
   }
 
   private void updateOdometryWithPoseEstimator(PoseEstimator poseEstimator) {
