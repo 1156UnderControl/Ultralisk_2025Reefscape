@@ -18,7 +18,7 @@ import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -65,21 +65,21 @@ public class RobotContainer {
 
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
-          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L1);
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
           this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
         }));
 
     keyBoard.reefL2()
         .onTrue(new InstantCommand(() -> {
-          this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L2);
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
           this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
         }));
 
     keyBoard.reefL3()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L3)));
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
 
     keyBoard.reefL4()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefHeight.L4)));
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
 
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
