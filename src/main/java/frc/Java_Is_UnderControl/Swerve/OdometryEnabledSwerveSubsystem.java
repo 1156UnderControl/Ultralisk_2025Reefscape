@@ -109,6 +109,7 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
       PoseEstimation estimatedPose = possibleEstimatedPose.get();
       Pose2d poseVision = estimatedPose.estimatedPose.toPose2d();
       this.poseVisionLogger.appendRadians(poseVision);
+      this.setVisionStdDev(estimatedPose.visionStdDev);
       this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds);
     }
   }

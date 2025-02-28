@@ -24,6 +24,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -84,6 +85,8 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
+  private Matrix<N3, N1> actualVisionStdDev = VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY);
+
   private ChassisSpeeds targetSpeeds = new ChassisSpeeds();
 
   private double targetHeadingDegrees = Double.NaN;
@@ -99,6 +102,10 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
 
   private CustomDoubleLogger absoluteMeasuredSpeedLogger = new CustomDoubleLogger(
       "/SwerveSubsystem/AbsoluteMeasuredSpeed");
+
+  private CustomDoubleLogger stdDevXYLogger = new CustomDoubleLogger("/SwerveSubsystem/XyStdDev");
+
+  private CustomDoubleLogger stdDevThetaLogger = new CustomDoubleLogger("/SwerveSubsystem/ThetaStdDev");
 
   private CustomPose2dLogger poseLogger = new CustomPose2dLogger("/SwerveSubsystem/Pose");
 
@@ -311,6 +318,14 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
   }
 
+  protected void setVisionStdDev(Matrix<N3, N1> visionMeasurementsStdDev) {
+    if (visionMeasurementsStdDev.isEqual(actualVisionStdDev, 0)) {
+      return;
+    }
+    setVisionMeasurementStdDevs(visionMeasurementsStdDev);
+    actualVisionStdDev = visionMeasurementsStdDev;
+  }
+
   protected Pose2d getEarlyPoseMoving(double dt) {
     Pose2d actualPose = getPose();
     Translation2d earlyTranslation = new Translation2d(
@@ -394,6 +409,8 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   }
 
   private void updateBaseLogs() {
+    this.stdDevXYLogger.append(actualVisionStdDev.get(0, 0));
+    this.stdDevThetaLogger.append(actualVisionStdDev.get(2, 0));
     this.poseLogger.appendRadians(this.getPose());
     this.targetSpeedsLogger.append(this.targetSpeeds);
     this.absoluteTargetSpeedLogger.append(CustomMath.toAbsoluteSpeed(this.targetSpeeds));
