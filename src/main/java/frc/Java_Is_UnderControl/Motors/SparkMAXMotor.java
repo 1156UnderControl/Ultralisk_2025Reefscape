@@ -68,6 +68,8 @@ public class SparkMAXMotor implements IMotor {
   private CustomIntegerLogger faultsLog;
   private CustomDoubleLogger targetPositionLog;
   private CustomDoubleLogger targetSpeedLog;
+  private CustomDoubleLogger externalEncoderPositionLog;
+  private CustomDoubleLogger externalEncoderVelocityLog;
 
   private double targetPercentage;
   private double targetPosition;
@@ -128,6 +130,8 @@ public class SparkMAXMotor implements IMotor {
     this.faultsLog = new CustomIntegerLogger("/motors/" + motorId + "/faults");
     this.targetPositionLog = new CustomDoubleLogger("/motors/" + motorId + "/targetPosition");
     this.targetSpeedLog = new CustomDoubleLogger("/motors/" + motorId + "/targetSpeed");
+    this.externalEncoderPositionLog = new CustomDoubleLogger("/motors/" + motorId + "/externalEncoderPosition");
+    this.externalEncoderVelocityLog = new CustomDoubleLogger("/motors/" + motorId + "/externalEncoderVelocity");
     StringLogEntry firmwareVersionLog = new StringLogEntry(DataLogManager.getLog(),
         "/motors/" + motorId + "/firmwareVersion");
     firmwareVersionLog.append(this.motor.getFirmwareString());
@@ -149,8 +153,10 @@ public class SparkMAXMotor implements IMotor {
     this.velocityLog.append(this.getVelocity());
     this.temperatureLog.append(this.motor.getMotorTemperature());
     // this.faultsLog.append(this.motor.getFaults());
+    this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
     this.targetPositionLog.append(this.targetPosition);
     this.targetSpeedLog.append(this.targetVelocity);
+    this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
   }
 
   private void configureSparkMax(Supplier<REVLibError> config) {
