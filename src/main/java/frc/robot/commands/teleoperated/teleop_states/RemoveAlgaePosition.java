@@ -1,4 +1,4 @@
-package frc.robot.commands.teleoperated.states;
+package frc.robot.commands.teleoperated.teleop_states;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;

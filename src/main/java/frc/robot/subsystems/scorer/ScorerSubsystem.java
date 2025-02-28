@@ -249,6 +249,14 @@ public class ScorerSubsystem implements IScorer {
     branchHeightTarget = this.targetReefHeight.name();
   }
 
+  @Override
+  public void prepareToPlaceCoralOnBranch(ReefLevel reefLevel) {
+    this.setTargetReefHeight(reefLevel);
+    assignSetpointsForLevel(this.targetReefHeight);
+    state = "PREPARE_TO_PLACE_CORAL";
+    branchHeightTarget = this.targetReefHeight.name();
+  }
+
   private void assignSetpointsForLevel(ReefLevel level) {
     switch (level) {
       case L1:

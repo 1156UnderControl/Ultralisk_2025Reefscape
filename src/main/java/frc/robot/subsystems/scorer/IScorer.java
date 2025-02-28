@@ -15,6 +15,8 @@ public interface IScorer {
 
   void prepareToPlaceCoralOnBranch();
 
+  void prepareToPlaceCoralOnBranch(ReefLevel reefLevel);
+
   void removeAlgaeFromBranch();
 
   void moveScorerToDefaultPosition();

@@ -1,4 +1,4 @@
-package frc.robot.commands.teleoperated.states;
+package frc.robot.commands.teleoperated.teleop_states;
 
 import static edu.wpi.first.units.Units.Seconds;
 

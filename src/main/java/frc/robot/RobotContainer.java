@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,11 +16,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
-import frc.robot.commands.teleoperated.states.AutoScoreCoralPosition;
-import frc.robot.commands.teleoperated.states.CollectPosition;
-import frc.robot.commands.teleoperated.states.DefaultPosition;
-import frc.robot.commands.teleoperated.states.RemoveAlgaePosition;
-import frc.robot.commands.teleoperated.states.ScoreCoralPosition;
+import frc.robot.commands.teleoperated.teleop_states.AutoScoreCoralPosition;
+import frc.robot.commands.teleoperated.teleop_states.CollectPosition;
+import frc.robot.commands.teleoperated.teleop_states.DefaultPosition;
+import frc.robot.commands.teleoperated.teleop_states.RemoveAlgaePosition;
+import frc.robot.commands.teleoperated.teleop_states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -52,6 +53,40 @@ public class RobotContainer {
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
     superStructure.setDefaultCommand(new DefaultPosition(superStructure));
+    NamedCommands.registerCommand("Intake Coral", new CollectPosition(superStructure, drivetrain));
+    NamedCommands.registerCommand("Score Coral A",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
+    NamedCommands.registerCommand("Score Coral B",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.B));
+    NamedCommands.registerCommand("Score Coral C",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.C));
+    NamedCommands.registerCommand("Score Coral D",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.D));
+    NamedCommands.registerCommand("Score Coral E",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.E));
+    NamedCommands.registerCommand("Score Coral F",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.F));
+    NamedCommands.registerCommand("Score Coral G",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.G));
+    NamedCommands.registerCommand("Score Coral H",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.H));
+    NamedCommands.registerCommand("Score Coral I",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.I));
+    NamedCommands.registerCommand("Score Coral J",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.J));
+    NamedCommands.registerCommand("Score Coral K",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.K));
+    NamedCommands.registerCommand("Score Coral L",
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.L));
+
+    NamedCommands.registerCommand("Set Coral Level L1",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1)));
+    NamedCommands.registerCommand("Set Coral Level L2",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2)));
+    NamedCommands.registerCommand("Set Coral Level L3",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
+    NamedCommands.registerCommand("Set Coral Level L4",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
   }
 
   private void configureBindings() {
