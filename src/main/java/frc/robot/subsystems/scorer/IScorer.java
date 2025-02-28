@@ -17,6 +17,10 @@ public interface IScorer {
 
   void removeAlgaeFromBranch();
 
+  void removeAlgaeEndEffector();
+
+  void stopEndEffector();
+
   void moveScorerToDefaultPosition();
 
   void placeCoral();
