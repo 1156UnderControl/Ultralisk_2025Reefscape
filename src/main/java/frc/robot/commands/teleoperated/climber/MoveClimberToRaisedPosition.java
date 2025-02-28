@@ -1,4 +1,4 @@
-package frc.robot.commands.climber;
+package frc.robot.commands.teleoperated.climber;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.SuperStructure;

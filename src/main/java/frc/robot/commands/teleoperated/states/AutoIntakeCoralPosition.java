@@ -1,11 +1,11 @@
-package frc.robot.commands.states;
+package frc.robot.commands.teleoperated.states;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
-import frc.robot.commands.intake.CollectCoralFromHP;
-import frc.robot.commands.scorer.MoveScorerToCollectPosition;
-import frc.robot.commands.swerve.SwerveAlignWithCoralStation;
+import frc.robot.commands.teleoperated.intake.CollectCoralFromHP;
+import frc.robot.commands.teleoperated.scorer.MoveScorerToCollectPosition;
+import frc.robot.commands.teleoperated.swerve.SwerveAlignWithCoralStation;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class AutoIntakeCoralPosition extends SequentialCommandGroup {

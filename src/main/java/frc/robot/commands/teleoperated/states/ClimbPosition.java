@@ -1,11 +1,11 @@
-package frc.robot.commands.states;
+package frc.robot.commands.teleoperated.states;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
-import frc.robot.commands.climber.MoveClimberToClimbedPosition;
-import frc.robot.commands.climber.MoveClimberToRaisedPosition;
-import frc.robot.commands.scorer.MoveScorerToDefaultPosition;
+import frc.robot.commands.teleoperated.climber.MoveClimberToClimbedPosition;
+import frc.robot.commands.teleoperated.climber.MoveClimberToRaisedPosition;
+import frc.robot.commands.teleoperated.scorer.MoveScorerToDefaultPosition;
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 

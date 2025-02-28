@@ -1,28 +1,29 @@
-package frc.robot.commands.scorer;
+package frc.robot.commands.teleoperated.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.SuperStructure;
 
-public class MoveScorerToRemovePosition extends Command {
+public class CollectCoralFromHP extends Command {
   SuperStructure superStructure;
 
-  public MoveScorerToRemovePosition(SuperStructure superStructure) {
+  public CollectCoralFromHP(SuperStructure superStructure) {
     this.superStructure = superStructure;
     addRequirements(this.superStructure);
   }
 
   @Override
   public void initialize() {
-    superStructure.scorer.removeAlgaeFromBranch();
+    superStructure.intake.intake();
+    superStructure.scorer.intakeFromHP();
   }
 
   @Override
   public void execute() {
-    superStructure.scorer.removeAlgaeFromBranch();
+    superStructure.scorer.intakeFromHP();
   }
 
   @Override
   public boolean isFinished() {
-    return superStructure.scorer.isAtRemovePosition();
+    return superStructure.scorer.hasCoral();
   }
 }

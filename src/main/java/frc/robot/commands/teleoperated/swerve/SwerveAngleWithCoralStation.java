@@ -1,4 +1,4 @@
-package frc.robot.commands.swerve;
+package frc.robot.commands.teleoperated.swerve;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.ISwerve;

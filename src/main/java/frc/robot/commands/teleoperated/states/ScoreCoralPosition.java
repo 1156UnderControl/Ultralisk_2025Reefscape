@@ -1,11 +1,11 @@
-package frc.robot.commands.states;
+package frc.robot.commands.teleoperated.states;
 
 import static edu.wpi.first.units.Units.Seconds;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
-import frc.robot.commands.scorer.MoveScorerToScorePosition;
+import frc.robot.commands.teleoperated.scorer.MoveScorerToScorePosition;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class ScoreCoralPosition extends SequentialCommandGroup {

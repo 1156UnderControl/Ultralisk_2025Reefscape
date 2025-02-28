@@ -15,11 +15,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
-import frc.robot.commands.states.AutoScoreCoralPosition;
-import frc.robot.commands.states.CollectPosition;
-import frc.robot.commands.states.DefaultPosition;
-import frc.robot.commands.states.RemoveAlgaePosition;
-import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.commands.teleoperated.states.AutoScoreCoralPosition;
+import frc.robot.commands.teleoperated.states.CollectPosition;
+import frc.robot.commands.teleoperated.states.DefaultPosition;
+import frc.robot.commands.teleoperated.states.RemoveAlgaePosition;
+import frc.robot.commands.teleoperated.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -62,7 +62,8 @@ public class RobotContainer {
     // driverController.rightBumper().onTrue(new
     // AutoIntakeCoralPosition(superStructure, drivetrain));
 
-    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+    keyBoard.collectCoral()
+        .onTrue(new CollectPosition(superStructure, drivetrain));
 
     keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
 
