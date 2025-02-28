@@ -151,18 +151,44 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void driveToBranch(TargetBranch branch, boolean backupBranch) {
     this.targetBranch = branch;
-    if (targetBranch.getTargetPoseToScore().getTranslation().getDistance(getPose().getTranslation()) < 3) {
+    double distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
+        .getDistance(getPose().getTranslation());
+    if (distanceToTargetBranch < 3) {
+      if (distanceToTargetBranch < 1) {
+        driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch), 1);
+        this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";
+        return;
+      }
       driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch));
-      this.state = "DRIVE_TO_BRANCH_" + branch.name();
+      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR";
     } else {
       driveAlignAngleJoy();
     }
   }
 
+  private Pose2d getNearestCoralStationPose() {
+    if (this.getPose().getY() >= 4.0259) {
+      return SwerveConstants.CoralStations.CORAL_STATION_RIGHT_POSE_FOR_ROBOT;
+    } else {
+      return SwerveConstants.CoralStations.CORAL_STATION_LEFT_POSE_FOR_ROBOT;
+    }
+  }
+
   @Override
-  public void driveAimingToNearestHP() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'driveAimingToNearestHP'");
+  public void driveLockedAngleToNearestCoralStation() {
+    Rotation2d nearestCoralStationRotationAngle = this.getNearestCoralStationPose().getRotation();
+
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
+        controller.getXtranslation());
+    this.state = "DRIVE_ALIGN_ANGLE_CORAL_STATION";
+    this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
+        nearestCoralStationRotationAngle.getSin());
+  }
+
+  @Override
+  public void driveToNearestCoralStation() {
+    Pose2d nearestCoralStationPose2D = this.getNearestCoralStationPose();
+    this.driveToPose(nearestCoralStationPose2D);
   }
 
   @Override

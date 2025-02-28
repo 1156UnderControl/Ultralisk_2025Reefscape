@@ -151,11 +151,21 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
   }
 
   protected void driveToPose(Pose2d targetPose) {
+    this.driveToPose(targetPose, Double.POSITIVE_INFINITY);
+  }
+
+  protected void driveToPose(Pose2d targetPose, double maxSpeed) {
     Pose2d currentPose = this.getPose();
     double targetXVelocity = this.moveToPoseXAxisPid.calculate(currentPose.getX(),
         (targetPose.getX()));
     double targetYVelocity = this.moveToPoseYAxisPid.calculate(currentPose.getY(),
         (targetPose.getY()));
+    double targetTranslationVelocity = new Translation2d(targetXVelocity, targetYVelocity).getNorm();
+    if (targetTranslationVelocity > maxSpeed) {
+      double conversionFactor = maxSpeed / targetTranslationVelocity;
+      targetXVelocity = targetXVelocity * conversionFactor;
+      targetYVelocity = targetYVelocity * conversionFactor;
+    }
     this.targetVxDriveToPoseLogger.append(targetXVelocity);
     this.targetVyDriveToPoseLogger.append(targetYVelocity);
     ChassisSpeeds desiredSpeeds = new ChassisSpeeds(targetXVelocity, targetYVelocity, 0);

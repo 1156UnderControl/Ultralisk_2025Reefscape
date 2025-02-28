@@ -19,7 +19,7 @@ import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
-import frc.robot.commands.swerve.SwerveGoToPoseTest;
+import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -56,7 +56,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
-    driverController.rightBumper().whileTrue(drivetrain.wheelRadiusCharacterization());
+    // driverController.rightBumper().onTrue(new
+    // AutoIntakeCoralPosition(superStructure, drivetrain));
 
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
@@ -67,9 +68,29 @@ public class RobotContainer {
 
     keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
-    keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain));
+    keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
 
-    keyBoard.goToReefB().onTrue(new SwerveGoToPoseTest(drivetrain));
+    keyBoard.goToReefB().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.B));
+
+    keyBoard.goToReefC().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.C));
+
+    keyBoard.goToReefD().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.D));
+
+    keyBoard.goToReefE().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.E));
+
+    keyBoard.goToReefF().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.F));
+
+    keyBoard.goToReefG().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.G));
+
+    keyBoard.goToReefH().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.H));
+
+    keyBoard.goToReefI().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.I));
+
+    keyBoard.goToReefJ().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.J));
+
+    keyBoard.goToReefK().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.K));
+
+    keyBoard.goToReefL().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.L));
 
     driverController.x().and(() -> DriverStation.isDisabled())
         .whileTrue(Commands.runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot())
