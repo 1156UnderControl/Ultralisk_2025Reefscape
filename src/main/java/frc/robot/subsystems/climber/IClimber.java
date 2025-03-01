@@ -4,7 +4,9 @@ public interface IClimber {
 
   void climb();
 
-  boolean isAtSetPoint();
+  boolean isAtRaisedPosition();
+
+  boolean isAtClimbPosition();
 
   void raiseClimber();
 

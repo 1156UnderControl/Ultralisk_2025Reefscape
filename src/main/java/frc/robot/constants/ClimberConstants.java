@@ -39,8 +39,8 @@ public class ClimberConstants {
     public static final double JERK = 0;
 
     public class setpoints {
-      public static final double MAX_ANGLE = 0.65;
-      public static final double MIN_ANGLE = 0.088134;
+      public static final double CLIMBED_ANGLE = 0.65;
+      public static final double RAISED_ANGLE = 0.088134;
     }
 
     public class PID {

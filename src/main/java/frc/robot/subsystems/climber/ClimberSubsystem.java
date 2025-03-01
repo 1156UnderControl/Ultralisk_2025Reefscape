@@ -1,17 +1,24 @@
 package frc.robot.subsystems.climber;
 
+import com.ctre.phoenix6.signals.GravityTypeValue;
+
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
+import edu.wpi.first.wpilibj.Servo;
 import frc.Java_Is_UnderControl.Motors.IMotor;
-import frc.Java_Is_UnderControl.Motors.NoMotor;
+import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
+import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
+import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ClimberConstants;
 import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
-  private IMotor cageIntakeMotor = new NoMotor();
-  private IMotor climberArmMotor = new NoMotor();
+  private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "Climber Intake Motor");
+  private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor, GravityTypeValue.Arm_Cosine,
+      "Climber Arm Motor", "rio");
+  private Servo climberServoMotor = new Servo(0);
 
   private double previousVelocity = 0;
   private boolean isCageCollected = false;
@@ -73,15 +80,21 @@ public class ClimberSubsystem implements IClimber {
   }
 
   @Override
-  public boolean isAtSetPoint() {
-    // return Util.atSetpoint(this.climberArmMotor.getPosition(), ,
-    // previousVelocity);
-    return false;
+  public boolean isAtRaisedPosition() {
+    return Util.atSetpoint(this.climberArmMotor.getPosition(),
+        ClimberConstants.tunning_values_arm.setpoints.RAISED_ANGLE, 0.01);
+  }
+
+  @Override
+  public boolean isAtClimbPosition() {
+    return Util.atSetpoint(this.climberArmMotor.getPosition(),
+        ClimberConstants.tunning_values_arm.setpoints.CLIMBED_ANGLE, 0.01);
   }
 
   @Override
   public void raiseClimber() {
-    isCageCollected = false;
+    this.climberArmMotor.setPositionReference(ClimberConstants.tunning_values_arm.setpoints.RAISED_ANGLE);
+    this.climberServoMotor.set(1);
   }
 
   @Override
@@ -89,10 +102,11 @@ public class ClimberSubsystem implements IClimber {
     runCageIntakeDetection();
     if (!isCageCollected) {
       cageIntakeMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+      state = "INTAKING_CAGE";
     } else {
       cageIntakeMotor.set(0);
+      state = "STOPPED_INTAKING_CAGE";
     }
-    state = "INTAKING_CAGE";
   }
 
   public void runCageIntakeDetection() {
@@ -132,11 +146,11 @@ public class ClimberSubsystem implements IClimber {
   @Override
   public void setArmDutyCycle(double dutyCycle) {
     System.out.println(dutyCycle);
-    if (climberArmMotor.getPosition() >= ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE
+    if (climberArmMotor.getPosition() >= ClimberConstants.tunning_values_arm.setpoints.RAISED_ANGLE
         && dutyCycle < 0) {
       climberArmMotor.set(dutyCycle);
       System.out.println("Indo para Baixo");
-    } else if (climberArmMotor.getPosition() <= ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE
+    } else if (climberArmMotor.getPosition() <= ClimberConstants.tunning_values_arm.setpoints.CLIMBED_ANGLE
         && dutyCycle > 0) {
       climberArmMotor.set(dutyCycle);
       System.out.println("Indo para Cima");

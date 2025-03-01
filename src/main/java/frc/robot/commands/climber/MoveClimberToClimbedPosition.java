@@ -23,6 +23,6 @@ public class MoveClimberToClimbedPosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return superStructure.climber.isAtSetPoint();
+    return superStructure.climber.isAtClimbPosition();
   }
 }
