@@ -7,10 +7,12 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class SwerveGoToBranch extends Command {
   SwerveSubsystem swerve;
   TargetBranch targetBranch;
+  boolean isSpacedToBranch;
 
-  public SwerveGoToBranch(SwerveSubsystem swerve, TargetBranch branch, boolean backupBranch) {
+  public SwerveGoToBranch(SwerveSubsystem swerve, TargetBranch branch, boolean isSpacedToBranch) {
     this.swerve = swerve;
     this.targetBranch = branch;
+    this.isSpacedToBranch = isSpacedToBranch;
     addRequirements(swerve);
   }
 
@@ -20,7 +22,7 @@ public class SwerveGoToBranch extends Command {
 
   @Override
   public void execute() {
-    this.swerve.driveToBranch(this.targetBranch, false);
+    this.swerve.driveToBranch(this.targetBranch, this.isSpacedToBranch);
   }
 
   @Override

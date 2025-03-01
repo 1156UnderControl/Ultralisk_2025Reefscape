@@ -185,7 +185,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";
         return;
       }
-      driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch));
+      driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch), 2);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR";
     } else {
       driveAlignAngleJoy();
@@ -219,7 +219,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public boolean isAtTargetPosition() {
-    return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(0.03, 0.03, 1));
+    return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(0.015, 0.015, 3));
   }
 
   public void driveToPoseTest() {
@@ -228,7 +228,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack) {
     if (moveBack) {
-      goal = goal.transformBy(GeomUtil.toTransform2d(-0.5, 0.0));
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.25, 0.0));
+    } else {
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.13, 0.0));
     }
 
     // Final line up
