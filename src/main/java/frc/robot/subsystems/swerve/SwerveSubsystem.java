@@ -54,6 +54,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private TargetBranch targetBranch = TargetBranch.A;
 
+  private double goToPoseTranslationDeadband = 0.02;
+
+  private double goToPoseHeadingDeadband = 3;
+
   private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
 
   private static PhotonCamera arducamRight = new PhotonCamera("Arducam-right");
@@ -219,18 +223,23 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public boolean isAtTargetPosition() {
-    return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(0.015, 0.015, 3));
+    return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(this.goToPoseTranslationDeadband,
+        this.goToPoseTranslationDeadband, this.goToPoseHeadingDeadband));
   }
 
   public void driveToPoseTest() {
     driveToPose(new Pose2d(15, 2, new Rotation2d(Units.degreesToRadians(180))));
   }
 
-  private static Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack) {
+  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack) {
     if (moveBack) {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.25, 0.0));
+      this.goToPoseTranslationDeadband = 0.05;
+      this.goToPoseHeadingDeadband = 10;
     } else {
-      goal = goal.transformBy(GeomUtil.toTransform2d(-0.13, 0.0));
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
+      this.goToPoseTranslationDeadband = 0.025;
+      this.goToPoseHeadingDeadband = 3;
     }
 
     // Final line up

@@ -16,6 +16,6 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
     addCommands(new SwerveGoToBranch(swerve, branch, true), new MoveScorerToScorePosition(superStructure),
         new SwerveGoToBranch(swerve, branch, false),
         Commands.run(() -> superStructure.scorer.placeCoral(), superStructure).withTimeout(Seconds.of(1)),
-        Commands.idle(swerve, superStructure));
+        Commands.run(() -> swerve.driveAlignAngleJoy()));
   }
 }
