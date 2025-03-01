@@ -64,7 +64,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private ReefPoseEstimator reefPoseEstimator = new ReefPoseEstimator(arducamLeft,
       VisionConstants.robotToCamArducamLeft,
-      arducamRight, VisionConstants.robotToCamArducamRight);
+      arducamRight, VisionConstants.robotToCamArducamRight, () -> getTargetBranch());
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
 
@@ -147,6 +147,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     super.periodic();
     selectPoseEstimator();
     updateLogs();
+    reefPoseEstimator.setHeadingMeasurement(getHeading());
     LimelightHelpers.SetRobotOrientation("limelight-reef",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
@@ -156,7 +157,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void selectPoseEstimator() {
-    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2) {
+    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2
+        && state.contains("DRIVE_TO_BRANCH")) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
       poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
@@ -194,6 +196,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     } else {
       driveAlignAngleJoy();
     }
+  }
+
+  private TargetBranch getTargetBranch() {
+    return this.targetBranch;
   }
 
   private Pose2d getNearestCoralStationPose() {
