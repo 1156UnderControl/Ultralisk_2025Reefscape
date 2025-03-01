@@ -27,6 +27,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     m_robotContainer = new RobotContainer();
     DataLogManager.start();
+    DataLogManager.start("", "", 0.05);
   }
 
   @Override
