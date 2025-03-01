@@ -1,7 +1,7 @@
 package frc.robot.subsystems.scorer;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 
 public interface IScorer {
 
@@ -15,7 +15,7 @@ public interface IScorer {
 
   void prepareToPlaceCoralOnBranch();
 
-  void removeAlgaeFromBranch(Pose3d reefFaceToRemove);
+  void removeAlgaeFromBranch();
 
   void moveScorerToDefaultPosition();
 
@@ -39,9 +39,13 @@ public interface IScorer {
 
   boolean isAtDefaultPosition();
 
+  boolean isAtRemovePosition();
+
   boolean isSecuredToPlaceCoral();
 
-  void setTargetBranch(ReefHeight reefHeight);
+  void setTargetBranchLevel(ReefLevel reefHeight);
+
+  void setTargetAlgaeHeight(AlgaeHeight algaeHeight);
 
   boolean hasPlaced();
 

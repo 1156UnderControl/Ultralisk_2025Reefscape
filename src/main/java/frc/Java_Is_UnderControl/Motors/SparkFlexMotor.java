@@ -376,7 +376,6 @@ public class SparkFlexMotor implements IMotor {
   public double getPosition() {
     if (usingAlternateEncoder) {
       return motor.getExternalEncoder().getPosition();
-
     }
     return motor.getEncoder().getPosition();
   }
@@ -491,5 +490,39 @@ public class SparkFlexMotor implements IMotor {
   @Override
   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
     return this.sysIdRoutine.dynamic(direction);
+  }
+
+  @Override
+  public double getPositionExternalEncoder() {
+    if (!usingAlternateEncoder) {
+      this.config.externalEncoder.countsPerRevolution(8192);
+      this.usingAlternateEncoder = true;
+    }
+    return motor.getExternalEncoder().getPosition();
+  }
+
+  @Override
+  public void setPositionFactorExternalEncoder(double factor) {
+    this.config.externalEncoder.positionConversionFactor(factor);
+  }
+
+  @Override
+  public void setVelocityFactorExternalEncoder(double factor) {
+    this.config.externalEncoder.positionConversionFactor(factor);
+  }
+
+  @Override
+  public void setPositionExternalEncoder(double position) {
+    this.motor.getExternalEncoder().setPosition(position);
+  }
+
+  @Override
+  public void configExternalEncoder() {
+    this.config.externalEncoder.countsPerRevolution(8192);
+  }
+
+  @Override
+  public double getVelocityExternalEncoder() {
+    return this.motor.getExternalEncoder().getVelocity();
   }
 }

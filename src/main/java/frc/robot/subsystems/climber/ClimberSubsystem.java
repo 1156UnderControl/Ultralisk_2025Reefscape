@@ -1,22 +1,17 @@
 package frc.robot.subsystems.climber;
 
-import com.ctre.phoenix6.signals.GravityTypeValue;
-
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
 import frc.Java_Is_UnderControl.Motors.IMotor;
-import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
-import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
+import frc.Java_Is_UnderControl.Motors.NoMotor;
 import frc.robot.constants.ClimberConstants;
 import frc.robot.constants.EndEffectorConstants;
 import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
-  private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
-  private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor,
-      GravityTypeValue.Arm_Cosine,
-      "CLIMBER_ARM");
+  private IMotor cageIntakeMotor = new NoMotor();
+  private IMotor climberArmMotor = new NoMotor();
 
   private double previousVelocity = 0;
   private boolean isCageCollected = false;
@@ -38,8 +33,7 @@ public class ClimberSubsystem implements IClimber {
   }
 
   private void configureClimberMotor() {
-    climberArmMotor.setMotorBrake(true);
-    climberArmMotor.setPositionFactor(200);
+    climberArmMotor.setPosition(0);
     climberArmMotor.configureMotionProfiling(
         ClimberConstants.tunning_values_arm.PID.P,
         ClimberConstants.tunning_values_arm.PID.I,
@@ -51,15 +45,12 @@ public class ClimberSubsystem implements IClimber {
         ClimberConstants.tunning_values_arm.MAX_ACCELERATION,
         ClimberConstants.tunning_values_arm.JERK);
     cageIntakeMotor.burnFlash();
-    climberArmMotor.setPosition(0);
+    climberArmMotor.setMotorBrake(true);
   }
 
   @Override
   public void climb() {
-  }
 
-  private void activateRollers(double speed) {
-    cageIntakeMotor.set(speed);
   }
 
   public void moveArmsToPosition(double position, double arbFF) {
@@ -82,7 +73,10 @@ public class ClimberSubsystem implements IClimber {
   }
 
   @Override
-  public void isAtSetPoint() {
+  public boolean isAtSetPoint() {
+    // return Util.atSetpoint(this.climberArmMotor.getPosition(), ,
+    // previousVelocity);
+    return false;
   }
 
   @Override

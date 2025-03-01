@@ -2,9 +2,9 @@ package frc.Java_Is_UnderControl.Util;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
 
 public class CoordinatesTransform {
   /**
@@ -14,14 +14,17 @@ public class CoordinatesTransform {
    * @param distance The distance to move backward.
    * @return A new Pose3d moved backward.
    */
-  public static Pose3d getRetreatPose(Pose3d pose, double distance) {
-    // Move backwards along the robot's forward X-axis in local space
-    Transform3d backwardsTransform = new Transform3d(distance, 0, 0, new Rotation3d());
+  public static Pose2d getRetreatPose(Pose2d pose, double distance) {
+    Transform2d backwardsTransform = new Transform2d(distance, 0, new Rotation2d());
     return pose.plus(backwardsTransform);
   }
 
   public static Pose3d applyRotationToPoseAngle(Pose3d pose, Rotation3d rotation) {
     return new Pose3d(pose.getX(), pose.getY(), pose.getZ(), pose.getRotation().rotateBy(rotation));
+  }
+
+  public static Pose2d applyRotationToPoseAngle(Pose2d pose, Rotation2d rotation) {
+    return new Pose2d(pose.getX(), pose.getY(), pose.getRotation().rotateBy(rotation));
   }
 
   public static Pose2d fromRobotRelativeToF(Pose2d robotPose, Pose2d poseForConversion) {
