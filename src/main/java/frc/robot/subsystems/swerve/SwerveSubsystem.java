@@ -54,7 +54,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private TargetBranch targetBranch = TargetBranch.A;
 
-  private double goToPoseTranslationDeadband = 0.03;
+  private double goToPoseTranslationDeadband = 0.02;
 
   private double goToPoseHeadingDeadband = 1;
 
