@@ -54,9 +54,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private TargetBranch targetBranch = TargetBranch.A;
 
-  private double goToPoseTranslationDeadband = 0.02;
+  private double goToPoseTranslationDeadband = 0.03;
 
-  private double goToPoseHeadingDeadband = 3;
+  private double goToPoseHeadingDeadband = 1;
 
   private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
 
@@ -68,7 +68,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
 
-  private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.5);
+  private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.15);
 
   private String state = "NULL";
 
@@ -103,8 +103,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     PoseEstimator arducamLeftEstimator = new PhotonVisionPoseEstimator(arducamLeft,
         VisionConstants.robotToCamArducamLeft,
         false);
-    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, true, 2);
-    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, true, 2);
+    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
+    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, false, 2);
     listOfEstimators.add(arducamRightEstimator);
     listOfEstimators.add(arducamLeftEstimator);
     listOfEstimators.add(limelightReef);

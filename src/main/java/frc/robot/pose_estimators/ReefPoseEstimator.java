@@ -151,7 +151,7 @@ public class ReefPoseEstimator implements PoseEstimator {
     isArightTargetLogger.append(isArightBranchTarget);
 
     List<PhotonPipelineResult> resultsLeft = arducamLeft.getAllUnreadResults();
-    List<PhotonPipelineResult> resultsRight = arducamLeft.getAllUnreadResults();
+    List<PhotonPipelineResult> resultsRight = arducamRight.getAllUnreadResults();
 
     if (resultsLeft.isEmpty() && resultsRight.isEmpty()) {
       return Optional.empty();
@@ -173,9 +173,10 @@ public class ReefPoseEstimator implements PoseEstimator {
             t -> t.fiducialId == this.desiredApriltagsIDs[0] || t.fiducialId == this.desiredApriltagsIDs[1])) {
           poseEstimationLeft = convertPhotonPoseEstimation(photonPoseEstimationLeft.get());
           isLeftDetectingLogger.append(true);
+        } else {
+          isLeftDetectingLogger.append(true);
+          stateOfPoseUpdateLeft.append("WITHOUT_DESIRED_APRILTAGS" + Arrays.toString(this.desiredApriltagsIDs));
         }
-        isLeftDetectingLogger.append(true);
-        stateOfPoseUpdateLeft.append("WITHOUT_DESIRED_APRILTAGS" + Arrays.toString(this.desiredApriltagsIDs));
       }
     } else {
       stateOfPoseUpdateLeft.append("NO_TARGETS_OR_TARGET_BRANCH_IS_LEFT");
@@ -193,9 +194,10 @@ public class ReefPoseEstimator implements PoseEstimator {
             t -> t.fiducialId == this.desiredApriltagsIDs[0] || t.fiducialId == this.desiredApriltagsIDs[1])) {
           poseEstimationRight = convertPhotonPoseEstimation(photonPoseEstimationRight.get());
           isRightDetectingLogger.append(true);
+        } else {
+          isRightDetectingLogger.append(true);
+          stateOfPoseUpdateRight.append("WITHOUT_DESIRED_APRILTAGS" + Arrays.toString(this.desiredApriltagsIDs));
         }
-        isRightDetectingLogger.append(true);
-        stateOfPoseUpdateRight.append("WITHOUT_DESIRED_APRILTAGS" + Arrays.toString(this.desiredApriltagsIDs));
       }
     } else {
       stateOfPoseUpdateRight.append("NO_TARGETS_OR_TARGET_BRANCH_IS_RIGHT");
@@ -224,7 +226,7 @@ public class ReefPoseEstimator implements PoseEstimator {
   }
 
   private Optional<PoseEstimation> returnPoseEstimationLeftCamera(PoseEstimation poseEstimationLeft) {
-    stateOfPoseUpdateRight.append("UPDATING_WITH_LEFT_CAMERA");
+    stateOfPoseUpdateLeft.append("UPDATING_WITH_LEFT_CAMERA");
     detectedPoseLogger.appendRadians(poseEstimationLeft.estimatedPose.toPose2d());
     return Optional.of(poseEstimationLeft);
   }
