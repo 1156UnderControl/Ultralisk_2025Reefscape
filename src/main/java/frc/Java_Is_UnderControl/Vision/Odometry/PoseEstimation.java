@@ -20,7 +20,7 @@ public class PoseEstimation {
   /** The distance from the tag */
   public final double distanceToTag;
 
-  public Matrix<N3, N1> visionStdDev = VecBuilder.fill(0.7, 0.7, 999999);
+  public Matrix<N3, N1> visionStdDev = VecBuilder.fill(0.7, 0.7, Double.POSITIVE_INFINITY);
 
   /**
    * Constructs an EstimatedRobotPose
