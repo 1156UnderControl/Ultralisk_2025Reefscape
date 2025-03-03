@@ -60,7 +60,7 @@ public class ScorerSubsystem implements IScorer {
   CustomBooleanLogger pivotStoppedByElevatorLimit = new CustomBooleanLogger(
       "/ScorerSubsystem/pivotStoppedByElevatorLimit");
 
-  private ReefLevel targetReefHeight = ReefLevel.L1;
+  private ReefLevel targetReefLevel = ReefLevel.L1;
 
   private AlgaeHeight targetAlgaeHeight = AlgaeHeight.LOW;
 
@@ -251,9 +251,9 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void prepareToPlaceCoralOnBranch() {
-    assignSetpointsForLevel(this.targetReefHeight);
+    assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
-    branchHeightTarget = this.targetReefHeight.name();
+    branchHeightTarget = this.targetReefLevel.name();
   }
 
   private void assignSetpointsForLevel(ReefLevel level) {
@@ -351,7 +351,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
-    if (targetReefHeight == ReefLevel.L1) {
+    if (targetReefLevel == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
@@ -413,8 +413,8 @@ public class ScorerSubsystem implements IScorer {
         .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
   }
 
-  public void setTargetReefHeight(ReefLevel targetReefHeight) {
-    this.targetReefHeight = targetReefHeight;
+  public void setTargetReefLevel(ReefLevel targetReefHeight) {
+    this.targetReefLevel = targetReefHeight;
   }
 
   @Override
@@ -502,11 +502,16 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setTargetBranchLevel(ReefLevel reefHeight) {
-    this.targetReefHeight = reefHeight;
+    this.targetReefLevel = reefHeight;
   }
 
   @Override
   public void setTargetAlgaeHeight(AlgaeHeight algaeHeight) {
     this.targetAlgaeHeight = algaeHeight;
+  }
+
+  @Override
+  public ReefLevel getTargetReefLevel() {
+    return this.targetReefLevel;
   }
 }
