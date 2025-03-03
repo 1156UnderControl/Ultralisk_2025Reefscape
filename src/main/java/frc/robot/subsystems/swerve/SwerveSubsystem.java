@@ -191,10 +191,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.targetBranch = branch;
     double distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
         .getDistance(getPose().getTranslation());
+
+    Pose2d targetBranchScorePose = this.scorerTargetReefLevel.get() == ReefLevel.L4
+        ? CoordinatesTransform.getForwardPose(targetBranch.getTargetPoseToScore(), 0.2)
+        : targetBranch.getTargetPoseToScore();
     if (distanceToTargetBranch < 3) {
-      Pose2d targetBranchScorePose = this.scorerTargetReefLevel.get() == ReefLevel.L4
-          ? CoordinatesTransform.getForwardPose(targetBranch.getTargetPoseToScore(), 0.2)
-          : targetBranch.getTargetPoseToScore();
       if (distanceToTargetBranch < 1) {
         driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 1);
         this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";

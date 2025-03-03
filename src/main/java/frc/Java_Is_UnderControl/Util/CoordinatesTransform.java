@@ -27,8 +27,8 @@ public class CoordinatesTransform {
    * @return A new Pose2d moved forward.
    */
   public static Pose2d getForwardPose(Pose2d pose, double distance) {
-    Transform2d forwardTransform = new Transform2d(-distance, 0, new Rotation2d());
-    return pose.plus(forwardTransform);
+    Transform2d forwardTransform = new Transform2d(distance, 0, new Rotation2d());
+    return pose.plus(forwardTransform.inverse());
   }
 
   public static Pose3d applyRotationToPoseAngle(Pose3d pose, Rotation3d rotation) {
