@@ -29,4 +29,9 @@ public class SwerveGoToBranch extends Command {
   public boolean isFinished() {
     return this.swerve.isAtTargetPosition();
   }
+
+  @Override
+  public void end(boolean interrupted) {
+    this.swerve.driveAlignAngleJoy();
+  }
 }
