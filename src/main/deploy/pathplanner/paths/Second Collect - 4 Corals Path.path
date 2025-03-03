@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.9516932346990203,
-        "y": 5.236407337447831
+        "x": 3.8162109375,
+        "y": 5.481988267495598
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9056255064811953,
-        "y": 6.248888710373411
+        "x": 2.770143209282175,
+        "y": 6.494469640421178
       },
       "isLocked": false,
       "linkedName": "Second Point - 4 Corals Path END"
@@ -48,7 +48,7 @@
   "folder": "4 Corals",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -55.0
+    "rotation": -56.81424235191722
   },
   "useDefaultConstraints": false
 }

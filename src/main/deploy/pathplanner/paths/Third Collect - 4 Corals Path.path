@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.7113738489199135,
-        "y": 5.055107063467748
+        "x": 3.5813387158890846,
+        "y": 5.388570436289613
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.958009957850473,
-        "y": 5.991721630743269
+        "x": 2.827974824819644,
+        "y": 6.325185003565134
       },
       "isLocked": false,
       "linkedName": "Third Point - 4 Corals Path END"
