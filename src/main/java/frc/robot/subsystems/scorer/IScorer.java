@@ -56,4 +56,6 @@ public interface IScorer {
   void setCoastScorer();
 
   void setBrakeScorer();
+
+  ReefLevel getTargetReefLevel();
 }
