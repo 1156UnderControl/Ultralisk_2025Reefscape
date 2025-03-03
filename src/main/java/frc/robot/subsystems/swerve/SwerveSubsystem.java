@@ -76,7 +76,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
 
-  private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.15);
+  private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.150);
 
   private String state = "NULL";
 
@@ -122,7 +122,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     return estimatorMultiCamera;
   }
 
-  public void driveAlignAngleJoy() {
+  @Override
+  public void driveAlignAngleJoystick() {
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
         controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_JOY";
@@ -196,7 +197,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         .getDistance(getPose().getTranslation());
 
     Pose2d targetBranchScorePose = this.scorerTargetReefLevel.get() == ReefLevel.L4
-        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.1)
+        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
         : targetBranch.getTargetPoseToScore();
     if (distanceToTargetBranch < 3) {
       if (distanceToTargetBranch < 1) {
@@ -207,7 +208,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 2);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR";
     } else {
-      driveAlignAngleJoy();
+      driveAlignAngleJoystick();
     }
   }
 
@@ -274,6 +275,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         GeomUtil.toTransform2d(
             -shiftXT * 1.2,
             Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())));
+  }
+
+  @Override
+  public void stopSwerve() {
+    this.driveRobotOriented(new ChassisSpeeds());
   }
 
 }
