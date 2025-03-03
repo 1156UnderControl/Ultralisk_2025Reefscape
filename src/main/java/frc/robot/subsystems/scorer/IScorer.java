@@ -47,6 +47,8 @@ public interface IScorer {
 
   boolean isSecuredToPlaceCoral();
 
+  ReefLevel getTargetReefLevel();
+
   void setTargetBranchLevel(ReefLevel reefHeight);
 
   void setTargetAlgaeHeight(AlgaeHeight algaeHeight);
@@ -56,6 +58,4 @@ public interface IScorer {
   void setCoastScorer();
 
   void setBrakeScorer();
-
-  ReefLevel getTargetReefLevel();
 }
