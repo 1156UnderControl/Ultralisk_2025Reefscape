@@ -53,12 +53,12 @@ public class RobotContainer {
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
     superStructure.setDefaultCommand(new DefaultPosition(superStructure));
+    drivetrain.setDefaultCommand(
+        Commands.run(() -> drivetrain.driveAlignAngleJoystick(), drivetrain)
+            .onlyIf(() -> DriverStation.isTeleopEnabled()));
   }
 
   private void configureBindings() {
-
-    drivetrain.setDefaultCommand(
-        Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     // driverController.rightBumper().onTrue(new
     // AutoIntakeCoralPosition(superStructure, drivetrain));
