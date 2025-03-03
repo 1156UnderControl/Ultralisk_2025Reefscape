@@ -214,13 +214,11 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   @Override
   protected void driveFieldOriented(ChassisSpeeds targetSpeeds) {
-    this.targetPose = new Pose2d();
     super.driveFieldOriented(targetSpeeds);
   }
 
   @Override
   protected void driveRobotOriented(ChassisSpeeds targetSpeeds) {
-    this.targetPose = new Pose2d();
     super.driveRobotOriented(targetSpeeds);
   }
 
