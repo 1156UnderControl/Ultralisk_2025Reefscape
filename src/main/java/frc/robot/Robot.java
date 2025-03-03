@@ -6,11 +6,9 @@ package frc.robot;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.robot.joysticks.OperatorController;
 
 public class Robot extends TimedRobot {
@@ -18,16 +16,12 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  CustomPose2dLogger logPoses = new CustomPose2dLogger("pose reef");
-
-  CustomPose2dLogger logPosesred = new CustomPose2dLogger("pose reef red");
-
   OperatorController controller = OperatorController.getInstance();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
-    DataLogManager.start();
-    DataLogManager.start("", "", 0.05);
+    // DataLogManager.start();
+    // DataLogManager.start("", "", 0.5);
   }
 
   @Override
