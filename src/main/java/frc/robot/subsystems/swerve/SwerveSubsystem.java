@@ -22,6 +22,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
@@ -62,6 +63,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private double goToPoseHeadingDeadband = 1;
 
   Supplier<ReefLevel> scorerTargetReefLevel;
+
+  CustomPose2dLogger logPoses = new CustomPose2dLogger("pose reef");
 
   private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
 
@@ -193,7 +196,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         .getDistance(getPose().getTranslation());
 
     Pose2d targetBranchScorePose = this.scorerTargetReefLevel.get() == ReefLevel.L4
-        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.15)
+        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.1)
         : targetBranch.getTargetPoseToScore();
     if (distanceToTargetBranch < 3) {
       if (distanceToTargetBranch < 1) {
