@@ -193,7 +193,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         .getDistance(getPose().getTranslation());
 
     Pose2d targetBranchScorePose = this.scorerTargetReefLevel.get() == ReefLevel.L4
-        ? CoordinatesTransform.getForwardPose(targetBranch.getTargetPoseToScore(), 0.2)
+        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), -0.2)
         : targetBranch.getTargetPoseToScore();
     if (distanceToTargetBranch < 3) {
       if (distanceToTargetBranch < 1) {
