@@ -11,7 +11,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class CollectPosition extends SequentialCommandGroup {
 
   public CollectPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
-    addCommands(new MoveScorerToCollectPosition(superStructure),
+    addCommands(Commands.race(new MoveScorerToCollectPosition(superStructure), new SwerveAngleWithCoralStation(swerve)),
         Commands.race(new CollectCoralFromHP(superStructure), new SwerveAngleWithCoralStation(swerve)),
         Commands.waitSeconds(0.2));
   }
