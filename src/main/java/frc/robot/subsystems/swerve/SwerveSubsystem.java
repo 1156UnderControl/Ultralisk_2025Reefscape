@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
 
@@ -27,6 +28,7 @@ import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
+import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.Java_Is_UnderControl.Util.GeomUtil;
 import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
@@ -37,6 +39,7 @@ import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.SwerveConstants.PoseEstimatorState;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -57,6 +60,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private double goToPoseTranslationDeadband = 0.02;
 
   private double goToPoseHeadingDeadband = 1;
+
+  Supplier<ReefLevel> scorerTargetReefLevel;
 
   private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
 
@@ -83,7 +88,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
           3.0, 4.0,
           Units.degreesToRadians(540), Units.degreesToRadians(720)));
 
-  public SwerveSubsystem(
+  public SwerveSubsystem(Supplier<ReefLevel> scorerTargetReefLevel,
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
@@ -94,6 +99,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
             SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
         drivetrainConstants,
         modules);
+    this.scorerTargetReefLevel = scorerTargetReefLevel;
   }
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
@@ -186,12 +192,15 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     double distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
         .getDistance(getPose().getTranslation());
     if (distanceToTargetBranch < 3) {
+      Pose2d targetBranchScorePose = this.scorerTargetReefLevel.get() == ReefLevel.L4
+          ? CoordinatesTransform.getForwardPose(targetBranch.getTargetPoseToScore(), 0.2)
+          : targetBranch.getTargetPoseToScore();
       if (distanceToTargetBranch < 1) {
-        driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch), 1);
+        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 1);
         this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";
         return;
       }
-      driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch), 2);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 2);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR";
     } else {
       driveAlignAngleJoy();

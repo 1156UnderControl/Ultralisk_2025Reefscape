@@ -36,14 +36,15 @@ public class RobotContainer {
 
   private DriverController driverController = DriverController.getInstance();
 
+  public final SuperStructure superStructure = new SuperStructure();
+
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
-  public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
+  public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.getTargetReefLevel(),
+      TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
-
-  public final SuperStructure superStructure = new SuperStructure();
 
   public final ILed leds = LedSubsystem.getInstance();
 

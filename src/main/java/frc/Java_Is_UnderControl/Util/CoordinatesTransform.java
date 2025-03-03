@@ -10,13 +10,25 @@ public class CoordinatesTransform {
   /**
    * Moves a given Pose3d backward by a specified distance.
    *
-   * @param pose     The original Pose3d.
+   * @param pose     The original Pose2d.
    * @param distance The distance to move backward.
-   * @return A new Pose3d moved backward.
+   * @return A new Pose2d moved backward.
    */
   public static Pose2d getRetreatPose(Pose2d pose, double distance) {
     Transform2d backwardsTransform = new Transform2d(distance, 0, new Rotation2d());
     return pose.plus(backwardsTransform);
+  }
+
+  /**
+   * Moves a given Pose3d backward by a specified distance.
+   *
+   * @param pose     The original Pose2d.
+   * @param distance The distance to move forward.
+   * @return A new Pose2d moved forward.
+   */
+  public static Pose2d getForwardPose(Pose2d pose, double distance) {
+    Transform2d forwardTransform = new Transform2d(-distance, 0, new Rotation2d());
+    return pose.plus(forwardTransform);
   }
 
   public static Pose3d applyRotationToPoseAngle(Pose3d pose, Rotation3d rotation) {
