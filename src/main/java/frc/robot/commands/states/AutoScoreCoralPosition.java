@@ -16,7 +16,9 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
   public AutoScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
     addCommands(new SwerveGoToBranch(swerve, branch, true), new MoveScorerToScorePosition(superStructure),
         new JoystickInterruptible(new SwerveGoToBranch(swerve, branch, false), 0.2),
-        Commands.idle(superStructure).until(operatorKeyboard.scoreCoral().or(() -> swerve.isAtTargetPosition())),
+        Commands.idle(superStructure)
+            .until(operatorKeyboard.scoreCoral().or(() -> swerve.isAtTargetPosition())
+                .and(() -> superStructure.scorer.isSecuredToPlaceCoral())),
         Commands.run(() -> superStructure.scorer.placeCoral()));
   }
 }
