@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
 
@@ -21,12 +22,14 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
+import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.Java_Is_UnderControl.Util.GeomUtil;
 import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
@@ -37,6 +40,7 @@ import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.SwerveConstants.PoseEstimatorState;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -56,7 +60,13 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private double goToPoseTranslationDeadband = 0.02;
 
-  private double goToPoseHeadingDeadband = 3;
+  private double goToPoseHeadingDeadband = 1;
+
+  Supplier<ReefLevel> scorerTargetReefLevelSupplier;
+
+  Supplier<Boolean> elevatorAtHighPositionSupplier;
+
+  CustomPose2dLogger logPoses = new CustomPose2dLogger("pose reef");
 
   private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
 
@@ -64,11 +74,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private ReefPoseEstimator reefPoseEstimator = new ReefPoseEstimator(arducamLeft,
       VisionConstants.robotToCamArducamLeft,
-      arducamRight, VisionConstants.robotToCamArducamRight);
+      arducamRight, VisionConstants.robotToCamArducamRight, () -> getTargetBranch());
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
 
-  private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.5);
+  private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.150);
 
   private String state = "NULL";
 
@@ -83,17 +93,19 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
           3.0, 4.0,
           Units.degreesToRadians(540), Units.degreesToRadians(720)));
 
-  public SwerveSubsystem(
+  public SwerveSubsystem(Supplier<Boolean> elevatorAtHighPositionSupplier, Supplier<ReefLevel> scorerTargetReefLevel,
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
         new NoPoseEstimator(),
         configureMulticameraPoseEstimation(),
-        new PIDConfig(7.1, 0, 0.06),
+        new PIDConfig(7.5, 0, 0.3),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_TRANSLATION_PID,
             SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
         drivetrainConstants,
         modules);
+    this.elevatorAtHighPositionSupplier = elevatorAtHighPositionSupplier;
+    this.scorerTargetReefLevelSupplier = scorerTargetReefLevel;
   }
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
@@ -103,8 +115,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     PoseEstimator arducamLeftEstimator = new PhotonVisionPoseEstimator(arducamLeft,
         VisionConstants.robotToCamArducamLeft,
         false);
-    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, true, 2);
-    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, true, 2);
+    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
+    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, false, 2);
     listOfEstimators.add(arducamRightEstimator);
     listOfEstimators.add(arducamLeftEstimator);
     listOfEstimators.add(limelightReef);
@@ -113,7 +125,20 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     return estimatorMultiCamera;
   }
 
-  public void driveAlignAngleJoy() {
+  @Override
+  public void driveAlignAngleJoystick() {
+    if (elevatorAtHighPositionSupplier.get()) {
+      driveAlignAngleJoystickSuperSlow();
+      return;
+    }
+    if (controller.leftBumper().getAsBoolean()) {
+      driveRotating(false);
+      return;
+    }
+    if (controller.rightBumper().getAsBoolean()) {
+      driveRotating(false);
+      return;
+    }
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
         controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_JOY";
@@ -121,12 +146,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         controller.getSIN_Joystick());
   }
 
-  public void driveRotatingButton() {
+  public void driveRotating(boolean rotateRight) {
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
-        controller.getXtranslation(), 0);
-    double angleTarget = Math.atan2(controller.getCOS_Joystick(), controller.getSIN_Joystick());
-    this.state = "DRIVE_ALIGN_ANGLE_JOY";
-    this.driveFieldOrientedLockedAngle(desiredSpeeds, new Rotation2d(angleTarget));
+        controller.getXtranslation(), rotateRight ? -3 : 3);
+    this.state = "DRIVE_ALIGN_ANGLE_ROTATING_RIGHT?:" + Boolean.toString(rotateRight);
+    this.driveFieldOriented(desiredSpeeds);
   }
 
   public Command goToPoseWithPathfind(Pose2d pose) {
@@ -147,6 +171,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     super.periodic();
     selectPoseEstimator();
     updateLogs();
+    reefPoseEstimator.setHeadingMeasurement(getHeading());
     LimelightHelpers.SetRobotOrientation("limelight-reef",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
@@ -156,7 +181,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void selectPoseEstimator() {
-    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2) {
+    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2
+        && state.contains("DRIVE_TO_BRANCH")) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
       poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
@@ -183,17 +209,24 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.targetBranch = branch;
     double distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
         .getDistance(getPose().getTranslation());
+    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
+        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
+        : targetBranch.getTargetPoseToScore();
     if (distanceToTargetBranch < 3) {
       if (distanceToTargetBranch < 1) {
-        driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch), 1);
+        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 1);
         this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";
         return;
       }
-      driveToPose(getDriveTarget(getPose(), targetBranch.getTargetPoseToScore(), backupBranch), 2);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 2);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR";
     } else {
-      driveAlignAngleJoy();
+      driveAlignAngleJoystick();
     }
+  }
+
+  private TargetBranch getTargetBranch() {
+    return this.targetBranch;
   }
 
   private Pose2d getNearestCoralStationPose() {
@@ -207,12 +240,15 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void driveLockedAngleToNearestCoralStation() {
     Rotation2d nearestCoralStationRotationAngle = this.getNearestCoralStationPose().getRotation();
-
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
         controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_CORAL_STATION";
-    this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
-        nearestCoralStationRotationAngle.getSin());
+    if (!controller.notUsingJoystick()) {
+      this.driveAlignAngleJoystick();
+    } else {
+      this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
+          nearestCoralStationRotationAngle.getSin());
+    }
   }
 
   @Override
@@ -255,6 +291,20 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         GeomUtil.toTransform2d(
             -shiftXT * 1.2,
             Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())));
+  }
+
+  @Override
+  public void stopSwerve() {
+    this.driveRobotOriented(new ChassisSpeeds());
+  }
+
+  @Override
+  public void driveAlignAngleJoystickSuperSlow() {
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
+        controller.getXtranslation()).times(0.12);
+    this.state = "DRIVE_ALIGN_ANGLE_JOY_SUPER_SLOW";
+    this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, controller.getCOS_Joystick(),
+        controller.getSIN_Joystick());
   }
 
 }

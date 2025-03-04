@@ -9,5 +9,11 @@ public interface ISwerve {
 
   public void driveToBranch(TargetBranch branch, boolean backupBranch);
 
+  public void driveAlignAngleJoystick();
+
+  public void driveAlignAngleJoystickSuperSlow();
+
+  public void stopSwerve();
+
   public boolean isAtTargetPosition();
 }

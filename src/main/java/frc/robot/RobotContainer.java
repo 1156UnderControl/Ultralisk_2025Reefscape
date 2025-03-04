@@ -36,14 +36,16 @@ public class RobotContainer {
 
   private DriverController driverController = DriverController.getInstance();
 
+  public final SuperStructure superStructure = new SuperStructure();
+
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
-  public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
+  public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.isElevatorInHighPosition(),
+      () -> superStructure.scorer.getTargetReefLevel(),
+      TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
-
-  public final SuperStructure superStructure = new SuperStructure();
 
   public final ILed leds = LedSubsystem.getInstance();
 
@@ -52,12 +54,12 @@ public class RobotContainer {
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
     superStructure.setDefaultCommand(new DefaultPosition(superStructure));
+    drivetrain.setDefaultCommand(
+        Commands.run(() -> drivetrain.driveAlignAngleJoystick(), drivetrain)
+            .onlyIf(() -> DriverStation.isTeleopEnabled()));
   }
 
   private void configureBindings() {
-
-    drivetrain.setDefaultCommand(
-        Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     // driverController.rightBumper().onTrue(new
     // AutoIntakeCoralPosition(superStructure, drivetrain));

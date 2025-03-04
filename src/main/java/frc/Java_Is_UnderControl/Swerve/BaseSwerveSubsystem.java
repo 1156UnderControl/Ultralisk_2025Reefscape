@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentricFacingAngle;
 import com.ctre.phoenix6.swerve.SwerveRequest.RobotCentric;
+import com.ctre.phoenix6.swerve.SwerveRequest.SwerveDriveBrake;
 import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
@@ -42,6 +43,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomChassisSpeedsLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Util.CustomMath;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
@@ -70,15 +72,11 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   private final SwervePathPlannerConfig pathPlannerConfig;
 
   /* Setting up bindings for necessary control of the swerve drive platform */
-  private final SwerveRequest.FieldCentric applyFieldCentricDrive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.Velocity); // Use open-loop control for drive motors
-  private final SwerveRequest.SwerveDriveBrake applyBrakeSwerveX = new SwerveRequest.SwerveDriveBrake();
+  private final SwerveRequest.FieldCentric applyFieldCentricDrive = new SwerveRequest.FieldCentric();
   private final SwerveRequest.PointWheelsAt applyPointWheelsAt = new SwerveRequest.PointWheelsAt();
-  private SwerveRequest.FieldCentricFacingAngle applyFieldCentricDrivePointingAtAngle = new FieldCentricFacingAngle()
-      .withDeadband(MaxSpeed * 0.1);
-  private SwerveRequest.RobotCentric applyRobotCentricDrive = new RobotCentric().withDeadband(MaxSpeed * 0.1)
-      .withRotationalDeadband(MaxAngularRate * 0.1);
+  private SwerveRequest.FieldCentricFacingAngle applyFieldCentricDrivePointingAtAngle = new FieldCentricFacingAngle();
+  private SwerveRequest.RobotCentric applyRobotCentricDrive = new RobotCentric();
+  private SwerveRequest.SwerveDriveBrake applyBrakeSwerveX = new SwerveDriveBrake();
 
   /* Swerve requests to apply during SysId characterization */
   private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
@@ -91,7 +89,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
 
   private double targetHeadingDegrees = Double.NaN;
 
-  private double lastDesiredJoystickAngle = 0;
+  private double lastDesiredJoystickAngle = AllianceFlipUtil.shouldFlip() ? 180 : 0;
 
   private CustomChassisSpeedsLogger targetSpeedsLogger = new CustomChassisSpeedsLogger("/SwerveSubsystem/TargetSpeeds");
 
@@ -422,9 +420,10 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   }
 
   protected void driveFieldOrientedLockedAngle(ChassisSpeeds speeds, Rotation2d targetHeading) {
+    this.lastDesiredJoystickAngle = targetHeading.getRadians();
     this.targetHeadingDegrees = targetHeading.getDegrees();
     applyFieldCentricDrivePointingAtAngle.withTargetDirection(targetHeading)
-        .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond).withRotationalDeadband(0);
+        .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond);
     setControl(applyFieldCentricDrivePointingAtAngle);
   }
 
@@ -435,7 +434,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     this.targetHeadingDegrees = Units.radiansToDegrees(angle);
     applyFieldCentricDrivePointingAtAngle
         .withTargetDirection(Rotation2d.fromDegrees(targetHeadingDegrees))
-        .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond).withRotationalDeadband(0);
+        .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond);
     setControl(applyFieldCentricDrivePointingAtAngle);
   }
 
