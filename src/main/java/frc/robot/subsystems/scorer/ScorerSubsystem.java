@@ -2,9 +2,6 @@ package frc.robot.subsystems.scorer;
 
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
@@ -37,16 +34,15 @@ public class ScorerSubsystem implements IScorer {
 
   CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/Correcting Pivot");
 
-  @Logged(name = "State", importance = Importance.CRITICAL)
   private String state = "START";
 
-  @Logged(name = "Target Branch Height", importance = Importance.INFO)
   private String branchHeightTarget = "NONE";
 
-  @Logged(name = "Target Reef Face To Remove Algae", importance = Importance.INFO)
-  private String reefFaceTarget = "NONE";
-
   CustomStringLogger scorerStateLogger = new CustomStringLogger("/ScorerSubsystem/State");
+
+  CustomStringLogger targetAlgaeLevelLogger = new CustomStringLogger("/ScorerSubsystem/targetAlgaeLevel");
+
+  CustomStringLogger targetBranchLevelLogger = new CustomStringLogger("/ScorerSubsystem/targetBranchLevel");
 
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
 
@@ -131,12 +127,6 @@ public class ScorerSubsystem implements IScorer {
       setScorerStructureGoals();
     }
     correctPivotPosition();
-    SmartDashboard.putNumber("Pivot Position ext", pivotMotor.getPositionExternalEncoder());
-    SmartDashboard.putNumber("Pivot Position ", pivotMotor.getPosition());
-    SmartDashboard.putNumber("Elevator Position", elevatorMotorLeader.getPosition());
-    SmartDashboard.putNumber("Elevator Velocity", elevatorMotorLeader.getVelocity());
-    SmartDashboard.putNumber("EndEffector Velocity", endEffectorMotor.getVelocity());
-    SmartDashboard.putString("state", state);
     updateLogs();
   }
 
@@ -147,6 +137,9 @@ public class ScorerSubsystem implements IScorer {
     endEffectorMotor.updateLogs();
     hasCoralLog.append(this.hasCoral);
     hasAcceleratedLog.append(this.endEffectorAccelerated);
+    scorerStateLogger.append(this.state);
+    targetBranchLevelLogger.append(this.targetReefLevel.name());
+    targetAlgaeLevelLogger.append(this.targetAlgaeHeight.name());
   }
 
   private void setScorerStructureGoals() {
@@ -498,6 +491,6 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isElevatorInHighPosition() {
-    return this.elevatorMotorLeader.getPosition() > 0.6;
+    return this.elevatorMotorLeader.getPosition() > 0.7;
   }
 }
