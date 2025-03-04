@@ -65,7 +65,7 @@ public class DriverController implements IDriverController {
   public boolean notUsingJoystick() {
     return Util.inRange(getCOS_Joystick(),
         -JoystickConstants.DEADBAND,
-        0.2)
+        JoystickConstants.DEADBAND)
         && Util.inRange(getSIN_Joystick(), -JoystickConstants.DEADBAND,
             JoystickConstants.DEADBAND);
   }
