@@ -100,9 +100,6 @@ public class RobotContainer {
                 .until(() -> superStructure.robotIsClimbed)
                 .andThen(Commands.run(() -> drivetrain.stopSwerve(), drivetrain)))));
 
-    driverController.a().whileTrue(Commands.runEnd(() -> superStructure.climber.unlockClimber(),
-        () -> superStructure.climber.lockClimber()));
-
     keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
     keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
