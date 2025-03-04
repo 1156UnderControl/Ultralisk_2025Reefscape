@@ -35,7 +35,6 @@ import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
-import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.FieldConstants;
@@ -99,7 +98,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
-        new NoPoseEstimator(),
+        new LimelightPoseEstimator("limelight-reef", false, true, 2),
         configureMulticameraPoseEstimation(),
         new PIDConfig(7.5, 0, 0.3),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_TRANSLATION_PID,
@@ -117,8 +116,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     PoseEstimator arducamLeftEstimator = new PhotonVisionPoseEstimator(arducamLeft,
         VisionConstants.robotToCamArducamLeft,
         false);
-    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
-    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, false, 2);
+    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, true, 2);
+    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, true, 2);
     listOfEstimators.add(arducamRightEstimator);
     listOfEstimators.add(arducamLeftEstimator);
     listOfEstimators.add(limelightReef);
@@ -192,9 +191,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     switch (poseEstimatorState) {
       case GLOBAL_POSE_ESTIMATION:
         overrideTeleOpPoseEstimator(null);
+        overrideAutonomousPoseEstimator(null);
         break;
       case REEF_ESTIMATION:
         overrideTeleOpPoseEstimator(reefPoseEstimator);
+        overrideAutonomousPoseEstimator(reefPoseEstimator);
         break;
       default:
         overrideTeleOpPoseEstimator(null);
