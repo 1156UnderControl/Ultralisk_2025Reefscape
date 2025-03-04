@@ -258,7 +258,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_CORAL_STATION";
     if (!controller.notUsingJoystick()) {
-      this.driveAlignAngleJoy();
+      this.driveAlignAngleJoystick();
     } else {
       this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
           nearestCoralStationRotationAngle.getSin());
