@@ -7,7 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Push 1 Allience"
+            "pathName": "First Point - Push Robots"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "First Push - Push Robot"
           }
         }
       ]

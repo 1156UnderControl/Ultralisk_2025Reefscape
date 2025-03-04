@@ -257,8 +257,12 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
         controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_CORAL_STATION";
-    this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
-        nearestCoralStationRotationAngle.getSin());
+    if (!controller.notUsingJoystick()) {
+      this.driveAlignAngleJoy();
+    } else {
+      this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
+          nearestCoralStationRotationAngle.getSin());
+    }
   }
 
   @Override

@@ -3,33 +3,68 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.969976426311828,
-        "y": 5.265272761054559
+        "x": 5.021429701254402,
+        "y": 5.602562444982394
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.294146234788419,
-        "y": 5.657500584259366
+        "x": 4.345599509730993,
+        "y": 5.9947902681872005
       },
       "isLocked": false,
-      "linkedName": "First Point - 4 Corals Path END"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.640969264839,
-        "y": 7.3875457983335
+        "x": 1.5939367159991198,
+        "y": 7.351551840338908
       },
       "prevControl": {
-        "x": 2.728931143845294,
-        "y": 6.6456499428669815
+        "x": 1.873836750865629,
+        "y": 7.530627443910954
+      },
+      "nextControl": {
+        "x": 1.3833482293608863,
+        "y": 7.216820666160775
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.9147062059859156,
+        "y": 6.840288361025528
+      },
+      "prevControl": {
+        "x": 1.380633704733301,
+        "y": 7.158020568473061
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "First Collect - 4 Corals Path END"
+      "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -54.22508965852118
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.7307373526522595,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 0.7,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -42,7 +77,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -52.888917760236374
+    "rotation": -52.889
   },
   "reversed": false,
   "folder": "4 Corals",
