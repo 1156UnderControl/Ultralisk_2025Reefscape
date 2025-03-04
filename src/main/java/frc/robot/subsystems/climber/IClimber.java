@@ -4,13 +4,15 @@ public interface IClimber {
 
   void climb();
 
-  boolean isAtRaisedPosition();
+  boolean isAtIntakeCagePosition();
 
   boolean isAtClimbPosition();
 
   void lockClimber();
 
-  void raiseClimber();
+  void unlockClimber();
+
+  void goToIntakeCagePosition();
 
   void intakeCage();
 
@@ -24,5 +26,4 @@ public interface IClimber {
 
   void setBrakeClimber();
 
-  void setArmDutyCycle(double dutyCicle);
 }

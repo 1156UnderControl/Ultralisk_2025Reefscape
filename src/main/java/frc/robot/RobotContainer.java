@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.robot.commands.states.AutoScoreCoralPosition;
+import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
@@ -92,6 +93,15 @@ public class RobotContainer {
 
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
+
+    keyBoard.alignToClimb().onTrue(new ClimbPosition(superStructure)
+        .deadlineFor(Commands.runOnce(() -> drivetrain.setAngleForClimb())
+            .andThen(Commands.run(() -> drivetrain.driveLockedAngleToClimb(), drivetrain)
+                .until(() -> superStructure.robotIsClimbed)
+                .andThen(Commands.run(() -> drivetrain.stopSwerve(), drivetrain)))));
+
+    driverController.a().whileTrue(Commands.runEnd(() -> superStructure.climber.unlockClimber(),
+        () -> superStructure.climber.lockClimber()));
 
     keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 

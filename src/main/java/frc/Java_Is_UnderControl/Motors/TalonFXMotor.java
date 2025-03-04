@@ -22,7 +22,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
@@ -274,7 +273,7 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void setMotorBrake(boolean isBrakeMode) {
-    talonConfiguration.MotorOutput.NeutralMode = isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    talonConfiguration.MotorOutput.withNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     talonConfigurator.apply(talonConfiguration.MotorOutput);
   }
 
@@ -327,18 +326,17 @@ public class TalonFXMotor implements IMotor {
   }
 
   public void setPositionReferenceArbFF(double position, double feedforward) {
-    double positionInRotations = Units.degreesToRotations(position);
     targetPosition = position;
     targetOutput = Double.NaN;
     targetVelocity = Double.NaN;
-    motor.setControl(new PositionDutyCycle(positionInRotations).withFeedForward(feedforward));
+    motor.setControl(new PositionDutyCycle(position).withFeedForward(feedforward).withEnableFOC(true));
   }
 
   @Override
   public void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity,
       double maxAcceleration, double positionErrorAllowed) {
     talonConfigurator.refresh(talonConfiguration.Slot0);
-    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D);
+    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withGravityType(gravityType);
     MotionMagicConfigs motionMagicConfigs = talonConfiguration.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
     motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
@@ -350,7 +348,8 @@ public class TalonFXMotor implements IMotor {
       double maxVelocity,
       double maxAcceleration, double jerk) {
     talonConfigurator.refresh(talonConfiguration.Slot0);
-    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withKS(kS).withKV(kV).withKA(kA);
+    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withKS(kS).withKV(kV).withKA(kA)
+        .withGravityType(gravityType);
     var motionMagicConfigs = talonConfiguration.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
     motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
@@ -422,6 +421,8 @@ public class TalonFXMotor implements IMotor {
     talonConfigurator
         .refresh(talonConfiguration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
             .withSensorToMechanismRatio(factor));
+    talonConfiguration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withSensorToMechanismRatio(factor);
     talonConfigurator.apply(talonConfiguration);
   }
 

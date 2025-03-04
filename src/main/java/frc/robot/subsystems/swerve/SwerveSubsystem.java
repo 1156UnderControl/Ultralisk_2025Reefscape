@@ -86,6 +86,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private PoseEstimatorState poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
 
+  private Rotation2d bestAngleForClimb = new Rotation2d();
+
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
       new PIDConstants(5, 0, 0),
       new PIDConstants(5, 0, 0),
@@ -237,6 +239,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     }
   }
 
+  public void setAngleForClimb() {
+    if (this.getPose().getX() >= FieldConstants.fieldLength / 2) {
+      this.bestAngleForClimb = AllianceFlipUtil.apply(Rotation2d.fromDegrees(-90));
+    } else {
+      this.bestAngleForClimb = AllianceFlipUtil.apply(Rotation2d.fromDegrees(90));
+    }
+  }
+
   @Override
   public void driveLockedAngleToNearestCoralStation() {
     Rotation2d nearestCoralStationRotationAngle = this.getNearestCoralStationPose().getRotation();
@@ -249,6 +259,18 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, nearestCoralStationRotationAngle.getCos(),
           nearestCoralStationRotationAngle.getSin());
     }
+  }
+
+  @Override
+  public void driveLockedAngleToClimb() {
+    if (!controller.notUsingJoystick()) {
+      this.driveAlignAngleJoystick();
+      return;
+    }
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
+        controller.getXtranslation());
+    this.state = "DRIVE_ALIGN_ANGLE_CLIMB";
+    this.driveFieldOrientedLockedAngle(desiredSpeeds.times(0.5), this.bestAngleForClimb);
   }
 
   @Override
@@ -296,6 +318,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void stopSwerve() {
     this.driveRobotOriented(new ChassisSpeeds());
+    this.state = "STOP_SWERVE";
   }
 
   @Override
@@ -309,7 +332,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public boolean swerveIsToCloseToReefForLiftingElevador() {
-    return getPose().getTranslation().getDistance(Reef.center) < 1;
+    return getPose().getTranslation().getDistance(AllianceFlipUtil.apply(Reef.center)) < 1;
   }
 
 }

@@ -13,6 +13,8 @@ public class MoveClimberToClimbedPosition extends Command {
 
   @Override
   public void initialize() {
+    superStructure.climber.lockClimber();
+    superStructure.climber.stopIntakingCage();
     superStructure.climber.climb();
   }
 

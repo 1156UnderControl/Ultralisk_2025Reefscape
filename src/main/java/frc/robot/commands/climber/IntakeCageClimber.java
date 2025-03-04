@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.SuperStructure;
 
 public class IntakeCageClimber extends Command {
+
   SuperStructure superStructure;
 
   public IntakeCageClimber(SuperStructure superStructure) {
@@ -22,6 +23,6 @@ public class IntakeCageClimber extends Command {
 
   @Override
   public boolean isFinished() {
-    return superStructure.climber.isCageCollected();
+    return true;
   }
 }
