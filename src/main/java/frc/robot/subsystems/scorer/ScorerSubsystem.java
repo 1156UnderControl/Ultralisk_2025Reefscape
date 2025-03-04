@@ -474,7 +474,7 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean isPivotAndElevatorAtSetpoint() {
     return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPositionExternalEncoder(), this.goalPivot, 2);
+        && Util.atSetpoint(this.pivotMotor.getPositionExternalEncoder(), this.goalPivot, 5);
   }
 
   @Override
