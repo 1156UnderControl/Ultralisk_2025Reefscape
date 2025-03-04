@@ -307,4 +307,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         controller.getSIN_Joystick());
   }
 
+  @Override
+  public boolean swerveIsToCloseToReefForLiftingElevador() {
+    return getPose().getTranslation().getDistance(Reef.center) < 1;
+  }
+
 }
