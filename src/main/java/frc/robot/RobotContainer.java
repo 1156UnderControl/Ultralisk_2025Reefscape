@@ -40,7 +40,8 @@ public class RobotContainer {
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
-  public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.getTargetReefLevel(),
+  public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.isElevatorInHighPosition(),
+      () -> superStructure.scorer.getTargetReefLevel(),
       TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
 

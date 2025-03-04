@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
@@ -15,7 +14,6 @@ import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.PivotConstants;
@@ -296,22 +294,6 @@ public class ScorerSubsystem implements IScorer {
     endEffectorMotor.set(0);
   }
 
-  private int getReefFaceIndexFromPose(Pose3d pose) {
-    double minDistance = Double.MAX_VALUE;
-    int bestIndex = -1;
-    for (int i = 0; i < FieldConstants.Reef.centerFaces.length; i++) {
-      var facePose = FieldConstants.Reef.centerFaces[i];
-      double dx = pose.getX() - facePose.getTranslation().getX();
-      double dy = pose.getY() - facePose.getTranslation().getY();
-      double distance = Math.hypot(dx, dy);
-      if (distance < minDistance) {
-        minDistance = distance;
-        bestIndex = i;
-      }
-    }
-    return bestIndex;
-  }
-
   private void assignAlgaeRemovalSetpointsForAlgaeHeight() {
     switch (targetAlgaeHeight) {
       case LOW:
@@ -513,5 +495,10 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public ReefLevel getTargetReefLevel() {
     return this.targetReefLevel;
+  }
+
+  @Override
+  public boolean isElevatorInHighPosition() {
+    return this.elevatorMotorLeader.getPosition() > 0.6;
   }
 }

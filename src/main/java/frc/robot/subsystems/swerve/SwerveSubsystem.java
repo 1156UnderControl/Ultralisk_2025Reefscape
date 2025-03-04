@@ -62,7 +62,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private double goToPoseHeadingDeadband = 1;
 
-  Supplier<ReefLevel> scorerTargetReefLevel;
+  Supplier<ReefLevel> scorerTargetReefLevelSupplier;
+
+  Supplier<Boolean> elevatorAtHighPositionSupplier;
 
   CustomPose2dLogger logPoses = new CustomPose2dLogger("pose reef");
 
@@ -91,7 +93,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
           3.0, 4.0,
           Units.degreesToRadians(540), Units.degreesToRadians(720)));
 
-  public SwerveSubsystem(Supplier<ReefLevel> scorerTargetReefLevel,
+  public SwerveSubsystem(Supplier<Boolean> elevatorAtHighPositionSupplier, Supplier<ReefLevel> scorerTargetReefLevel,
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
@@ -102,7 +104,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
             SwerveConstants.MOVE_TO_POSE_Y_CONSTRAINTS)),
         drivetrainConstants,
         modules);
-    this.scorerTargetReefLevel = scorerTargetReefLevel;
+    this.elevatorAtHighPositionSupplier = elevatorAtHighPositionSupplier;
+    this.scorerTargetReefLevelSupplier = scorerTargetReefLevel;
   }
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
@@ -124,6 +127,18 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void driveAlignAngleJoystick() {
+    if (elevatorAtHighPositionSupplier.get()) {
+      driveAlignAngleJoystickSuperSlow();
+      return;
+    }
+    if (controller.leftBumper().getAsBoolean()) {
+      driveRotating(false);
+      return;
+    }
+    if (controller.rightBumper().getAsBoolean()) {
+      driveRotating(false);
+      return;
+    }
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
         controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_JOY";
@@ -131,12 +146,11 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         controller.getSIN_Joystick());
   }
 
-  public void driveRotatingButton() {
+  public void driveRotating(boolean rotateRight) {
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
-        controller.getXtranslation(), 0);
-    double angleTarget = Math.atan2(controller.getCOS_Joystick(), controller.getSIN_Joystick());
-    this.state = "DRIVE_ALIGN_ANGLE_JOY";
-    this.driveFieldOrientedLockedAngle(desiredSpeeds, new Rotation2d(angleTarget));
+        controller.getXtranslation(), rotateRight ? -3 : 3);
+    this.state = "DRIVE_ALIGN_ANGLE_ROTATING_RIGHT?:" + Boolean.toString(rotateRight);
+    this.driveFieldOriented(desiredSpeeds);
   }
 
   public Command goToPoseWithPathfind(Pose2d pose) {
@@ -195,8 +209,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.targetBranch = branch;
     double distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
         .getDistance(getPose().getTranslation());
-
-    Pose2d targetBranchScorePose = this.scorerTargetReefLevel.get() == ReefLevel.L4
+    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
         ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
         : targetBranch.getTargetPoseToScore();
     if (distanceToTargetBranch < 3) {
@@ -227,7 +240,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void driveLockedAngleToNearestCoralStation() {
     Rotation2d nearestCoralStationRotationAngle = this.getNearestCoralStationPose().getRotation();
-
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
         controller.getXtranslation());
     this.state = "DRIVE_ALIGN_ANGLE_CORAL_STATION";
@@ -280,6 +292,15 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void stopSwerve() {
     this.driveRobotOriented(new ChassisSpeeds());
+  }
+
+  @Override
+  public void driveAlignAngleJoystickSuperSlow() {
+    ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
+        controller.getXtranslation()).times(0.1);
+    this.state = "DRIVE_ALIGN_ANGLE_JOY_SUPER_SLOW";
+    this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, controller.getCOS_Joystick(),
+        controller.getSIN_Joystick());
   }
 
 }

@@ -11,6 +11,8 @@ public interface ISwerve {
 
   public void driveAlignAngleJoystick();
 
+  public void driveAlignAngleJoystickSuperSlow();
+
   public void stopSwerve();
 
   public boolean isAtTargetPosition();
