@@ -23,6 +23,6 @@ public class MoveClimberToRaisedPosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return superStructure.climber.isCageCollected() && superStructure.climber.isAtRaisedPosition();
+    return superStructure.climber.isAtRaisedPosition();
   }
 }

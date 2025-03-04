@@ -25,6 +25,8 @@ public class ClimberSubsystem implements IClimber {
 
   boolean cageIntakeAccelerated = false;
 
+  double armGoal = 0;
+
   @Logged(name = "State", importance = Importance.CRITICAL)
   private String state = "START";
 
@@ -60,8 +62,12 @@ public class ClimberSubsystem implements IClimber {
 
   }
 
-  public void moveArmsToPosition(double position, double arbFF) {
+  public void moveArmToPosition(double position, double arbFF) {
     double goal = limitGoalArm(position);
+    if (climberServoMotor.get() > 0.4) {
+      climberArmMotor.set(0);
+      return;
+    }
     climberArmMotor.setPositionReferenceMotionProfiling(goal, arbFF);
   }
 
@@ -76,6 +82,7 @@ public class ClimberSubsystem implements IClimber {
   }
 
   public void periodic() {
+    moveArmToPosition(this.armGoal, 0);
     climberArmMotor.updateLogs();
   }
 
@@ -93,8 +100,8 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void raiseClimber() {
-    this.climberArmMotor.setPositionReference(ClimberConstants.tunning_values_arm.setpoints.RAISED_ANGLE);
-    this.climberServoMotor.set(1);
+    this.climberServoMotor.set(0);
+    this.armGoal = ClimberConstants.tunning_values_arm.setpoints.RAISED_ANGLE;
   }
 
   @Override
@@ -157,5 +164,10 @@ public class ClimberSubsystem implements IClimber {
     } else {
       climberArmMotor.set(0);
     }
+  }
+
+  @Override
+  public void lockClimber() {
+    climberServoMotor.set(1);
   }
 }

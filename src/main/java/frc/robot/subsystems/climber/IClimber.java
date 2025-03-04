@@ -8,6 +8,8 @@ public interface IClimber {
 
   boolean isAtClimbPosition();
 
+  void lockClimber();
+
   void raiseClimber();
 
   void intakeCage();
