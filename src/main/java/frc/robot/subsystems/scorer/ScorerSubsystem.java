@@ -4,9 +4,9 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -14,9 +14,8 @@ import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.PivotConstants;
 
 public class ScorerSubsystem implements IScorer {
@@ -47,6 +46,8 @@ public class ScorerSubsystem implements IScorer {
   @Logged(name = "Target Reef Face To Remove Algae", importance = Importance.INFO)
   private String reefFaceTarget = "NONE";
 
+  CustomStringLogger scorerStateLogger = new CustomStringLogger("/ScorerSubsystem/State");
+
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
 
   CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
@@ -57,7 +58,7 @@ public class ScorerSubsystem implements IScorer {
   CustomBooleanLogger pivotStoppedByElevatorLimit = new CustomBooleanLogger(
       "/ScorerSubsystem/pivotStoppedByElevatorLimit");
 
-  private ReefHeight targetReefHeight = ReefHeight.L1;
+  private ReefLevel targetReefLevel = ReefLevel.L1;
 
   private AlgaeHeight targetAlgaeHeight = AlgaeHeight.LOW;
 
@@ -137,6 +138,10 @@ public class ScorerSubsystem implements IScorer {
     SmartDashboard.putNumber("Elevator Velocity", elevatorMotorLeader.getVelocity());
     SmartDashboard.putNumber("EndEffector Velocity", endEffectorMotor.getVelocity());
     SmartDashboard.putString("state", state);
+    updateLogs();
+  }
+
+  private void updateLogs() {
     elevatorMotorLeader.updateLogs();
     elevatorMotorFollower.updateLogs();
     pivotMotor.updateLogs();
@@ -244,12 +249,12 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void prepareToPlaceCoralOnBranch() {
-    assignSetpointsForLevel(this.targetReefHeight);
+    assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
-    branchHeightTarget = this.targetReefHeight.name();
+    branchHeightTarget = this.targetReefLevel.name();
   }
 
-  private void assignSetpointsForLevel(ReefHeight level) {
+  private void assignSetpointsForLevel(ReefLevel level) {
     switch (level) {
       case L1:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.L1_HEIGHT;
@@ -274,28 +279,22 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void removeAlgaeFromBranch() {
+    assignAlgaeRemovalSetpointsForAlgaeHeight();
+    state = "MOVING_ELEVATOR_TO_REMOVE_ALGAE_FROM_REEF";
+  }
+
+  @Override
+  public void removeAlgaeEndEffector() {
     endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
-    assignAlgaeRemovalSetpointsForFace();
     state = "REMOVING_ALGAE_FROM_REEF";
   }
 
-  private int getReefFaceIndexFromPose(Pose3d pose) {
-    double minDistance = Double.MAX_VALUE;
-    int bestIndex = -1;
-    for (int i = 0; i < FieldConstants.Reef.centerFaces.length; i++) {
-      var facePose = FieldConstants.Reef.centerFaces[i];
-      double dx = pose.getX() - facePose.getTranslation().getX();
-      double dy = pose.getY() - facePose.getTranslation().getY();
-      double distance = Math.hypot(dx, dy);
-      if (distance < minDistance) {
-        minDistance = distance;
-        bestIndex = i;
-      }
-    }
-    return bestIndex;
+  @Override
+  public void stopEndEffector() {
+    endEffectorMotor.set(0);
   }
 
-  private void assignAlgaeRemovalSetpointsForFace() {
+  private void assignAlgaeRemovalSetpointsForAlgaeHeight() {
     switch (targetAlgaeHeight) {
       case LOW:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.ALGAE_REMOVAL_LOW;
@@ -334,7 +333,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
-    if (targetReefHeight == ReefHeight.L1) {
+    if (targetReefLevel == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
@@ -396,8 +395,8 @@ public class ScorerSubsystem implements IScorer {
         .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
   }
 
-  public void setTargetReefHeight(ReefHeight targetReefHeight) {
-    this.targetReefHeight = targetReefHeight;
+  public void setTargetReefLevel(ReefLevel targetReefHeight) {
+    this.targetReefLevel = targetReefHeight;
   }
 
   @Override
@@ -475,7 +474,7 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean isPivotAndElevatorAtSetpoint() {
     return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPosition(), this.goalPivot, 2);
+        && Util.atSetpoint(this.pivotMotor.getPositionExternalEncoder(), this.goalPivot, 5);
   }
 
   @Override
@@ -484,12 +483,22 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void setTargetBranchLevel(ReefHeight reefHeight) {
-    this.targetReefHeight = reefHeight;
+  public void setTargetBranchLevel(ReefLevel reefHeight) {
+    this.targetReefLevel = reefHeight;
   }
 
   @Override
   public void setTargetAlgaeHeight(AlgaeHeight algaeHeight) {
     this.targetAlgaeHeight = algaeHeight;
+  }
+
+  @Override
+  public ReefLevel getTargetReefLevel() {
+    return this.targetReefLevel;
+  }
+
+  @Override
+  public boolean isElevatorInHighPosition() {
+    return this.elevatorMotorLeader.getPosition() > 0.6;
   }
 }

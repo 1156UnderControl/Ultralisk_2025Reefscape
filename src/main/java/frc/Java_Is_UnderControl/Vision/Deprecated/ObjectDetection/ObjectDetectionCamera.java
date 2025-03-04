@@ -1,4 +1,4 @@
-package frc.Java_Is_UnderControl.Vision.ObjectDetection;
+package frc.Java_Is_UnderControl.Vision.Deprecated.ObjectDetection;
 
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;

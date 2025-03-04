@@ -3,7 +3,6 @@ package frc.robot.joysticks;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.Java_Is_UnderControl.Util.Util;
@@ -22,41 +21,39 @@ public class DriverController implements IDriverController {
   }
 
   final CommandXboxController driverController;
-  final XboxController driverControllerBoolean;
 
   private DriverController() {
     driverController = new CommandXboxController(0);
-    driverControllerBoolean = new XboxController(0);
   }
 
   @Override
   public double getXtranslation() {
     if (turboActivate().getAsBoolean()) {
-      return -MathUtil.applyDeadband(performAllianceSpeedDirectionCorrection(driverController.getLeftX()),
+      return -MathUtil.applyDeadband(performAllianceInputDirectionCorrection(driverController.getLeftX()),
           JoystickConstants.DEADBAND);
     }
-    return -MathUtil.applyDeadband(performAllianceSpeedDirectionCorrection(driverController.getLeftX()),
+    return -MathUtil.applyDeadband(performAllianceInputDirectionCorrection(driverController.getLeftX()),
         JoystickConstants.DEADBAND) * 0.6;
   }
 
   @Override
   public double getYtranslation() {
     if (turboActivate().getAsBoolean()) {
-      return -MathUtil.applyDeadband(performAllianceSpeedDirectionCorrection(driverController.getLeftY()),
+      return -MathUtil.applyDeadband(performAllianceInputDirectionCorrection(driverController.getLeftY()),
           JoystickConstants.DEADBAND);
     }
-    return -MathUtil.applyDeadband(performAllianceSpeedDirectionCorrection(driverController.getLeftY()),
+    return -MathUtil.applyDeadband(performAllianceInputDirectionCorrection(driverController.getLeftY()),
         JoystickConstants.DEADBAND) * 0.6;
   }
 
   @Override
   public double getCOS_Joystick() {
-    return -driverController.getRightX();
+    return performAllianceInputDirectionCorrection(-driverController.getRightX());
   }
 
   @Override
   public double getSIN_Joystick() {
-    return -driverController.getRightY();
+    return performAllianceInputDirectionCorrection(-driverController.getRightY());
   }
 
   @Override
@@ -94,13 +91,13 @@ public class DriverController implements IDriverController {
   }
 
   @Override
-  public boolean rotateLeft() {
-    return driverControllerBoolean.getLeftBumperButton();
+  public Trigger leftBumper() {
+    return driverController.leftBumper();
   }
 
   @Override
-  public boolean rotateRight() {
-    return driverControllerBoolean.getRightBumperButton();
+  public Trigger rightBumper() {
+    return driverController.rightBumper();
   }
 
   @Override
@@ -113,7 +110,7 @@ public class DriverController implements IDriverController {
     return driverController.back();
   }
 
-  private double performAllianceSpeedDirectionCorrection(Double value) {
+  private double performAllianceInputDirectionCorrection(Double value) {
     Alliance alliance = DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()
         : DriverStation.Alliance.Red;
     if (alliance == Alliance.Red) {
@@ -121,5 +118,4 @@ public class DriverController implements IDriverController {
     }
     return value;
   }
-
 }

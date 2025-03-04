@@ -1,7 +1,7 @@
 package frc.robot.subsystems.scorer;
 
 import frc.robot.constants.FieldConstants.AlgaeHeight;
-import frc.robot.constants.FieldConstants.ReefHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
 
 public interface IScorer {
 
@@ -16,6 +16,10 @@ public interface IScorer {
   void prepareToPlaceCoralOnBranch();
 
   void removeAlgaeFromBranch();
+
+  void removeAlgaeEndEffector();
+
+  void stopEndEffector();
 
   void moveScorerToDefaultPosition();
 
@@ -43,7 +47,11 @@ public interface IScorer {
 
   boolean isSecuredToPlaceCoral();
 
-  void setTargetBranchLevel(ReefHeight reefHeight);
+  boolean isElevatorInHighPosition();
+
+  ReefLevel getTargetReefLevel();
+
+  void setTargetBranchLevel(ReefLevel reefHeight);
 
   void setTargetAlgaeHeight(AlgaeHeight algaeHeight);
 
