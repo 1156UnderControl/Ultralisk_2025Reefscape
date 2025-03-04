@@ -2,6 +2,7 @@ package frc.robot.subsystems.scorer;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
@@ -47,6 +48,8 @@ public class ScorerSubsystem implements IScorer {
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
 
   CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
+
+  CustomStringLogger targetReefLevelLog = new CustomStringLogger("/ScorerSubsystem/targetReefLevel");
 
   CustomBooleanLogger elevatorStoppedByPivotLimit = new CustomBooleanLogger(
       "/ScorerSubsystem/elevatorStoppedByPivotLimit");
@@ -140,6 +143,8 @@ public class ScorerSubsystem implements IScorer {
     scorerStateLogger.append(this.state);
     targetBranchLevelLogger.append(this.targetReefLevel.name());
     targetAlgaeLevelLogger.append(this.targetAlgaeHeight.name());
+    targetReefLevelLog.append(this.targetReefLevel.name());
+    SmartDashboard.putString("Scorer/TargetLevelName", this.targetReefLevel.name());
   }
 
   private void setScorerStructureGoals() {
