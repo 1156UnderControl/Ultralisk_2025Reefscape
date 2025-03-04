@@ -58,7 +58,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private TargetBranch targetBranch = TargetBranch.A;
 
-  private double goToPoseTranslationDeadband = 0.02;
+  private double goToPoseTranslationDeadband = 0.03;
 
   private double goToPoseHeadingDeadband = 1;
 
@@ -138,7 +138,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       return;
     }
     if (controller.rightBumper().getAsBoolean()) {
-      driveRotating(false);
+      driveRotating(true);
       return;
     }
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
@@ -150,7 +150,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   public void driveRotating(boolean rotateRight) {
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
-        controller.getXtranslation(), rotateRight ? -3 : 3);
+        controller.getXtranslation(), rotateRight ? -1 : 1);
     this.state = "DRIVE_ALIGN_ANGLE_ROTATING_RIGHT?:" + Boolean.toString(rotateRight);
     this.driveFieldOriented(desiredSpeeds);
   }
