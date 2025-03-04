@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.ISwerve;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class SwerveAlignWithCoralStation extends Command {
+public class SwerveAngleWithCoralStation extends Command {
   ISwerve swerve;
 
-  public SwerveAlignWithCoralStation(SwerveSubsystem swerve) {
+  public SwerveAngleWithCoralStation(SwerveSubsystem swerve) {
     this.swerve = swerve;
     addRequirements(swerve);
   }
@@ -18,7 +18,7 @@ public class SwerveAlignWithCoralStation extends Command {
 
   @Override
   public void execute() {
-    this.swerve.driveToNearestCoralStation();
+    this.swerve.driveLockedAngleToNearestCoralStation();
   }
 
   @Override

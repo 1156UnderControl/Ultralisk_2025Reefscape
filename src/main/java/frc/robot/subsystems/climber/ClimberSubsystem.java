@@ -1,19 +1,14 @@
 package frc.robot.subsystems.climber;
 
-import com.ctre.phoenix6.signals.GravityTypeValue;
-
 import frc.Java_Is_UnderControl.Motors.IMotor;
-import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
-import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
+import frc.Java_Is_UnderControl.Motors.NoMotor;
 import frc.robot.constants.ClimberConstants;
 import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
-  private IMotor cageIntakeMotor = new SparkMAXMotor(ClimberConstants.ID_cageIntakeMotor, "CAGE_INTAKE");
-  private IMotor climberArmMotor = new TalonFXMotor(ClimberConstants.ID_climberArmMotor,
-      GravityTypeValue.Arm_Cosine,
-      "CLIMBER_ARM");
+  private IMotor cageIntakeMotor = new NoMotor();
+  private IMotor climberArmMotor = new NoMotor();
 
   private double previousVelocity = 0;
   private boolean isCageCollected = false;

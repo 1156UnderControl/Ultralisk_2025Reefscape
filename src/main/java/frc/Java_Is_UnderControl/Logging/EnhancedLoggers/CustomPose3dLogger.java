@@ -37,7 +37,7 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
       this.loggedValue = pose;
       super.appendRadians(pose);
       if (!CustomPose3dLogger.isFmsMatch) {
-        this.publisher.set(pose);
+        publisher.set(pose);
       }
     }
   }
@@ -46,10 +46,7 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
   public void appendDegrees(Pose3d pose) {
     super.appendDegrees(pose);
     if (CustomPose3dLogger.isFmsMatch) {
-    }
-
-    if (!CustomPose3dLogger.isFmsMatch) {
-      this.publisher.set(pose);
+      publisher.set(pose);
     }
   }
 }

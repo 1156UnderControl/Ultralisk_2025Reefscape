@@ -4,21 +4,21 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.swerve.ISwerve;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class SwerveAlignWithCoralStation extends Command {
-  ISwerve swerve;
+public class SwerveTeleOpControl extends Command {
+  private ISwerve swerve;
 
-  public SwerveAlignWithCoralStation(SwerveSubsystem swerve) {
+  public SwerveTeleOpControl(SwerveSubsystem swerve) {
     this.swerve = swerve;
     addRequirements(swerve);
   }
 
   @Override
-  public void initialize() {
+  public void execute() {
+    swerve.driveAlignAngleJoystick();
   }
 
   @Override
-  public void execute() {
-    this.swerve.driveToNearestCoralStation();
+  public void end(boolean interrupted) {
   }
 
   @Override

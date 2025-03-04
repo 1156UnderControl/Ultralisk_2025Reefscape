@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.epilogue.Logged;
 import edu.wpi.first.epilogue.Logged.Importance;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
@@ -15,7 +14,6 @@ import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
-import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.PivotConstants;
@@ -60,7 +58,7 @@ public class ScorerSubsystem implements IScorer {
   CustomBooleanLogger pivotStoppedByElevatorLimit = new CustomBooleanLogger(
       "/ScorerSubsystem/pivotStoppedByElevatorLimit");
 
-  private ReefLevel targetReefHeight = ReefLevel.L1;
+  private ReefLevel targetReefLevel = ReefLevel.L1;
 
   private AlgaeHeight targetAlgaeHeight = AlgaeHeight.LOW;
 
@@ -251,9 +249,9 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void prepareToPlaceCoralOnBranch() {
-    assignSetpointsForLevel(this.targetReefHeight);
+    assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
-    branchHeightTarget = this.targetReefHeight.name();
+    branchHeightTarget = this.targetReefLevel.name();
   }
 
   private void assignSetpointsForLevel(ReefLevel level) {
@@ -296,22 +294,6 @@ public class ScorerSubsystem implements IScorer {
     endEffectorMotor.set(0);
   }
 
-  private int getReefFaceIndexFromPose(Pose3d pose) {
-    double minDistance = Double.MAX_VALUE;
-    int bestIndex = -1;
-    for (int i = 0; i < FieldConstants.Reef.centerFaces.length; i++) {
-      var facePose = FieldConstants.Reef.centerFaces[i];
-      double dx = pose.getX() - facePose.getTranslation().getX();
-      double dy = pose.getY() - facePose.getTranslation().getY();
-      double distance = Math.hypot(dx, dy);
-      if (distance < minDistance) {
-        minDistance = distance;
-        bestIndex = i;
-      }
-    }
-    return bestIndex;
-  }
-
   private void assignAlgaeRemovalSetpointsForAlgaeHeight() {
     switch (targetAlgaeHeight) {
       case LOW:
@@ -351,7 +333,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeCoral() {
-    if (targetReefHeight == ReefLevel.L1) {
+    if (targetReefLevel == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
@@ -413,8 +395,8 @@ public class ScorerSubsystem implements IScorer {
         .getPosition() < ElevatorConstants.tunning_values_elevator.setpoints.SECURE_FOR_PIVOT_ROTATION;
   }
 
-  public void setTargetReefHeight(ReefLevel targetReefHeight) {
-    this.targetReefHeight = targetReefHeight;
+  public void setTargetReefLevel(ReefLevel targetReefHeight) {
+    this.targetReefLevel = targetReefHeight;
   }
 
   @Override
@@ -492,7 +474,7 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean isPivotAndElevatorAtSetpoint() {
     return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPosition(), this.goalPivot, 2);
+        && Util.atSetpoint(this.pivotMotor.getPositionExternalEncoder(), this.goalPivot, 5);
   }
 
   @Override
@@ -502,11 +484,21 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void setTargetBranchLevel(ReefLevel reefHeight) {
-    this.targetReefHeight = reefHeight;
+    this.targetReefLevel = reefHeight;
   }
 
   @Override
   public void setTargetAlgaeHeight(AlgaeHeight algaeHeight) {
     this.targetAlgaeHeight = algaeHeight;
+  }
+
+  @Override
+  public ReefLevel getTargetReefLevel() {
+    return this.targetReefLevel;
+  }
+
+  @Override
+  public boolean isElevatorInHighPosition() {
+    return this.elevatorMotorLeader.getPosition() > 0.6;
   }
 }

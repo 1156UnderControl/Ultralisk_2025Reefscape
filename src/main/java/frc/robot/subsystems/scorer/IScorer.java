@@ -47,6 +47,10 @@ public interface IScorer {
 
   boolean isSecuredToPlaceCoral();
 
+  boolean isElevatorInHighPosition();
+
+  ReefLevel getTargetReefLevel();
+
   void setTargetBranchLevel(ReefLevel reefHeight);
 
   void setTargetAlgaeHeight(AlgaeHeight algaeHeight);
