@@ -145,6 +145,8 @@ public class ScorerSubsystem implements IScorer {
     targetAlgaeLevelLogger.append(this.targetAlgaeHeight.name());
     targetReefLevelLog.append(this.targetReefLevel.name());
     SmartDashboard.putString("Scorer/TargetLevelName", this.targetReefLevel.name());
+    SmartDashboard.putString("Scorer/Target Reef Branch", branchHeightTarget);
+    SmartDashboard.putBoolean("Scorer/Has Coral", this.hasCoral());
   }
 
   private void setScorerStructureGoals() {
