@@ -15,17 +15,11 @@
           "data": {
             "pathName": "First Push - Push Robot"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Second Push - Push Robots"
-          }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }
