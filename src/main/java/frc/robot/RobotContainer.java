@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
+import frc.robot.commands.autonomous.auto_states.AutoCollectCoral;
 import frc.robot.commands.teleoperated.teleop_states.AutoScoreCoralPosition;
 import frc.robot.commands.teleoperated.teleop_states.ClimbPosition;
 import frc.robot.commands.teleoperated.teleop_states.CollectPosition;
@@ -56,7 +57,7 @@ public class RobotContainer {
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
-    NamedCommands.registerCommand("Intake Coral", new CollectPosition(superStructure, drivetrain));
+    NamedCommands.registerCommand("Intake Coral", new AutoCollectCoral(superStructure));
     NamedCommands.registerCommand("Score Coral A",
         new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
     NamedCommands.registerCommand("Score Coral B",
