@@ -200,6 +200,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         break;
       default:
         overrideTeleOpPoseEstimator(null);
+        overrideAutonomousPoseEstimator(null);
         break;
     }
   }

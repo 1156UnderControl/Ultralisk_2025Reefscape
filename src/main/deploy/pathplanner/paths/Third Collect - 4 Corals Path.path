@@ -69,9 +69,14 @@
   "eventMarkers": [
     {
       "name": "Intake Coral",
-      "waypointRelativePos": 0.5213347249508843,
+      "waypointRelativePos": 0.15665091154626662,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Intake Coral"
+        }
+      }
     }
   ],
   "globalConstraints": {

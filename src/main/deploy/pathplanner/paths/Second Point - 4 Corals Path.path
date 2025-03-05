@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.578410512709158,
-        "y": 6.226250764380076
+        "x": 2.1937499999999996,
+        "y": 6.824129098360655
       },
       "isLocked": false,
       "linkedName": null
@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Score Coral K",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 1.0,
     "maxAcceleration": 1.0,
@@ -54,7 +47,7 @@
   "reversed": false,
   "folder": "4 Corals",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 1.5,
     "rotation": -52.889
   },
   "useDefaultConstraints": true

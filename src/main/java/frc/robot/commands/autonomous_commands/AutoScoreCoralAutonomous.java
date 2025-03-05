@@ -16,7 +16,7 @@ public class AutoScoreCoralAutonomous extends SequentialCommandGroup {
         new SwerveGoToBranch(swerve, branch, false),
         Commands.idle(superStructure)
             .until(() -> swerve.isAtTargetPosition()),
-        Commands.run(() -> superStructure.scorer.placeCoral())
-            .alongWith(Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)));
+        Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.3),
+        new SwerveGoToBranch(swerve, branch, true));
   }
 }

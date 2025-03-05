@@ -55,10 +55,10 @@ public class RobotContainer {
   public final ILed leds = LedSubsystem.getInstance();
 
   public RobotContainer() {
+    setNamedCommandsForAuto();
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
-    setNamedCommandsForAuto();
     superStructure
         .setDefaultCommand(Commands.either(new DefaultPositionWithCoral(superStructure),
             new DefaultPositionWithoutCoral(superStructure), () -> superStructure.scorer.hasCoral()));

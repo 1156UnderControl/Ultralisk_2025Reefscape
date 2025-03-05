@@ -7,13 +7,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Set Coral Level L4"
+            "name": "Set Coral Level L3"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "First Point - 4 Corals Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral J"
           }
         },
         {
@@ -29,6 +35,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Score Coral K"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Second Collect - 4 Corals Path"
@@ -38,6 +50,12 @@
           "type": "path",
           "data": {
             "pathName": "Third Point - 4 Corals Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral L"
           }
         }
       ]
