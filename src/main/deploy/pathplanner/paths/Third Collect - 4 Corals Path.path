@@ -8,36 +8,52 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.827974824819644,
-        "y": 6.325185003565134
+        "x": 2.8053119240426607,
+        "y": 6.453942530150754
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.530169591769366,
-        "y": 7.29981397172095
+        "x": 1.579,
+        "y": 7.34
       },
       "prevControl": {
-        "x": 1.832735572543087,
-        "y": 7.5106677948074205
+        "x": 2.0298824642173647,
+        "y": 7.6937534743911975
       },
       "nextControl": {
-        "x": 1.240823751100352,
-        "y": 7.098173071632922
+        "x": 1.2052764634440871,
+        "y": 7.046783896002917
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 0.852065567231514,
-        "y": 6.782716906910212
+        "x": 1.823,
+        "y": 6.57
       },
       "prevControl": {
-        "x": 1.261382111025529,
-        "y": 7.1049722161091555
+        "x": 1.6720537846585741,
+        "y": 6.852130669899991
+      },
+      "nextControl": {
+        "x": 2.27175,
+        "y": 5.73125
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.8762500000036026,
+        "y": 4.141999999996026
+      },
+      "prevControl": {
+        "x": 2.379,
+        "y": 5.448499999999999
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,14 +63,18 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": -52.72993291539533
+      "rotationDegrees": -52.7967849561744
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": -27.52353155469389
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6801940078585463,
-      "maxWaypointRelativePos": 2.0,
+      "minWaypointRelativePos": 0.5151364764268079,
+      "maxWaypointRelativePos": 1.7598014888337696,
       "constraints": {
         "maxVelocity": 0.8,
         "maxAcceleration": 0.5,
@@ -80,8 +100,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 1.0,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 1.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -89,7 +109,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -54.14583125571489
+    "rotation": 0.9548412538722248
   },
   "reversed": false,
   "folder": "4 Corals",

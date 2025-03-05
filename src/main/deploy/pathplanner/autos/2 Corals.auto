@@ -5,21 +5,33 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Set Coral Level L3"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "First Point - 4 Corals Path"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "First Collect - 4 Corals Path"
+            "name": "Score Coral A"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Second Point - 4 Corals Path"
+            "pathName": "First Collect, Second Point - 4 Corals Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral K"
           }
         }
       ]
