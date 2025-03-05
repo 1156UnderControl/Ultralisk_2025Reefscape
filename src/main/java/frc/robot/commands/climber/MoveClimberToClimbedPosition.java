@@ -16,6 +16,8 @@ public class MoveClimberToClimbedPosition extends Command {
 
   @Override
   public void initialize() {
+    superStructure.climber.lockClimber();
+    superStructure.climber.stopIntakingCage();
     superStructure.climber.climb();
   }
 
@@ -31,6 +33,6 @@ public class MoveClimberToClimbedPosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return superStructure.climber.isAtSetPoint();
+    return superStructure.climber.isAtClimbPosition();
   }
 }

@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Coral Level L3"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "First Point - 4 Corals Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral A"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "First Collect, Second Point - 4 Corals Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral K"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Match Autos",
+  "choreoAuto": false
+}

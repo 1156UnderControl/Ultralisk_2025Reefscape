@@ -35,6 +35,6 @@ public class MoveScorerToScorePosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return operatorController.scoreCoral().getAsBoolean() && superStructure.scorer.isSecuredToPlaceCoral();
+    return superStructure.scorer.isSecuredToPlaceCoral();
   }
 }

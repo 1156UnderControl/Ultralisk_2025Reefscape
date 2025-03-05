@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "New New Path"
+            "pathName": "First Point - 4 Corals Path"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Match Autos",
   "choreoAuto": false
 }

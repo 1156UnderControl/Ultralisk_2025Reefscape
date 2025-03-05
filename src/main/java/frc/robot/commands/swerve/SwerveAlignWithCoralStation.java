@@ -9,16 +9,16 @@ public class SwerveAlignWithCoralStation extends Command {
 
   public SwerveAlignWithCoralStation(SwerveSubsystem swerve) {
     this.swerve = swerve;
+    addRequirements(swerve);
   }
 
   @Override
   public void initialize() {
-
   }
 
   @Override
   public void execute() {
-
+    this.swerve.driveToNearestCoralStation();
   }
 
   @Override

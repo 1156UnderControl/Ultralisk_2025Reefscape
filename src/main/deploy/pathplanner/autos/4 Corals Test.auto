@@ -7,97 +7,85 @@
         {
           "type": "path",
           "data": {
-            "pathName": "3 METER default"
+            "pathName": "First Point - 4 Corals Path"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 METER default reverse"
+            "pathName": "First Collect, Second Point - 4 Corals Path"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 METER default"
+            "pathName": "Second Point - 4 Corals Path"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 METER default reverse"
+            "pathName": "Second Collect, Third Point - 4 Corals Path"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 METER default"
+            "pathName": "Third Point - 4 Corals Path"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 METER default reverse"
+            "pathName": "Third Collect - 4 Corals Path"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 2.0
+            "waitTime": 1.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "3 METER default"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 2.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "3 METER default reverse"
+            "pathName": "Fourth Point - 4 Corals Path"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Odometry Tests",
   "choreoAuto": false
 }

@@ -50,6 +50,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Odometry Tests",
   "choreoAuto": false
 }

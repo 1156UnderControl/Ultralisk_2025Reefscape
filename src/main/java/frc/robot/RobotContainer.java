@@ -6,17 +6,28 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
+import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
+import frc.robot.commands.autonomous_commands.CollectAutonomous;
+import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
+import frc.robot.commands.states.AutoScoreCoralPosition;
+import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.constants.FieldConstants.ReefLevel;
+import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -30,40 +41,144 @@ public class RobotContainer {
 
   private DriverController driverController = DriverController.getInstance();
 
-  private LedSubsystem led = LedSubsystem.getInstance();
+  public final SuperStructure superStructure = new SuperStructure();
 
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
-  public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
+  public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.isElevatorInHighPosition(),
+      () -> superStructure.scorer.getTargetReefLevel(),
+      TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
 
-  public final SuperStructure superStructure = new SuperStructure();
+  public final ILed leds = LedSubsystem.getInstance();
 
   public RobotContainer() {
+    setNamedCommandsForAuto();
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
-    superStructure.setDefaultCommand(new DefaultPosition(superStructure));
+    superStructure
+        .setDefaultCommand(new DefaultPosition(superStructure));
+    drivetrain.setDefaultCommand(
+        Commands.run(() -> drivetrain.driveAlignAngleJoystick(), drivetrain)
+            .onlyIf(() -> DriverStation.isTeleopEnabled()));
+  }
+
+  private void setNamedCommandsForAuto() {
+    NamedCommands.registerCommand("Intake Coral",
+        new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure)));
+    NamedCommands.registerCommand("Score Coral A",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.A)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral B",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.B)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral C",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.C)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral D",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.D)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral E",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.E)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral F",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.F)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral G",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.G)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral H",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.H)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral I",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.I)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral J",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.J)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral K",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.K)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral L",
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.L)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+
+    NamedCommands.registerCommand("Set Coral Level L1",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1)));
+    NamedCommands.registerCommand("Set Coral Level L2",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2)));
+    NamedCommands.registerCommand("Set Coral Level L3",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
+    NamedCommands.registerCommand("Set Coral Level L4",
+        new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
   }
 
   private void configureBindings() {
 
-    drivetrain.setDefaultCommand(
-        Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
+    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
-    driverController.rightBumper().whileTrue(drivetrain.wheelRadiusCharacterization());
+    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
 
-    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain, led));
+    keyBoard.reefL1()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
+        }));
 
-    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain, led));
+    keyBoard.reefL2()
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
+        }));
+
+    keyBoard.reefL3()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
+
+    keyBoard.reefL4()
+        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
 
     keyBoard.removeAlgaeFromBranch()
-        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
+        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain)
+            .deadlineFor(Commands.run(() -> drivetrain.driveAlignAngleJoystickRemoveAlgae(), drivetrain)));
+
+    keyBoard.alignToClimb().onTrue(new ClimbPosition(superStructure)
+        .deadlineFor(Commands.runOnce(() -> drivetrain.setAngleForClimb())
+            .andThen(Commands.run(() -> drivetrain.driveLockedAngleToClimb(), drivetrain)
+                .until(() -> superStructure.robotIsClimbed)
+                .andThen(Commands.run(() -> drivetrain.stopSwerve(), drivetrain)))));
 
     keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
+    keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
+
+    keyBoard.goToReefB().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.B));
+
+    keyBoard.goToReefC().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.C));
+
+    keyBoard.goToReefD().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.D));
+
+    keyBoard.goToReefE().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.E));
+
+    keyBoard.goToReefF().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.F));
+
+    keyBoard.goToReefG().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.G));
+
+    keyBoard.goToReefH().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.H));
+
+    keyBoard.goToReefI().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.I));
+
+    keyBoard.goToReefJ().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.J));
+
+    keyBoard.goToReefK().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.K));
+
+    keyBoard.goToReefL().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.L));
+
+    driverController.x().and(() -> DriverStation.isDisabled())
+        .whileTrue(Commands.runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot())
+            .ignoringDisable(true));
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
