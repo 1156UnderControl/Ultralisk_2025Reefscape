@@ -11,6 +11,8 @@ public interface IScorer {
 
   void intakeFromHP();
 
+  void moveScorerToDefaultPositionWithoutCoral();
+
   void stopIntakeFromHP();
 
   void prepareToPlaceCoralOnBranch();
@@ -18,6 +20,10 @@ public interface IScorer {
   void prepareToPlaceCoralOnBranch(ReefLevel reefLevel);
 
   void removeAlgaeFromBranch();
+
+  void removeAlgaeEndEffector();
+
+  void stopEndEffector();
 
   void moveScorerToDefaultPosition();
 
@@ -44,6 +50,10 @@ public interface IScorer {
   boolean isAtRemovePosition();
 
   boolean isSecuredToPlaceCoral();
+
+  boolean isElevatorInHighPosition();
+
+  ReefLevel getTargetReefLevel();
 
   void setTargetBranchLevel(ReefLevel reefHeight);
 

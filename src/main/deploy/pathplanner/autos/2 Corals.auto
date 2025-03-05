@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "First Point - Push Robots"
+            "pathName": "First Point - 4 Corals Path"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "First Push - Push Robot"
+            "pathName": "First Collect - 4 Corals Path"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Second Point - 4 Corals Path"
           }
         }
       ]

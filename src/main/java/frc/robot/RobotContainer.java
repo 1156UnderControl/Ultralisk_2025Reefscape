@@ -17,8 +17,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.robot.commands.teleoperated.teleop_states.AutoScoreCoralPosition;
+import frc.robot.commands.teleoperated.teleop_states.ClimbPosition;
 import frc.robot.commands.teleoperated.teleop_states.CollectPosition;
-import frc.robot.commands.teleoperated.teleop_states.DefaultPosition;
+import frc.robot.commands.teleoperated.teleop_states.DefaultPositionWithCoral;
+import frc.robot.commands.teleoperated.teleop_states.DefaultPositionWithoutCoral;
 import frc.robot.commands.teleoperated.teleop_states.RemoveAlgaePosition;
 import frc.robot.commands.teleoperated.teleop_states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
@@ -37,14 +39,16 @@ public class RobotContainer {
 
   private DriverController driverController = DriverController.getInstance();
 
+  public final SuperStructure superStructure = new SuperStructure();
+
   private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
 
-  public final SwerveSubsystem drivetrain = new SwerveSubsystem(TunerConstants.getSwerveDrivetrainConstants(),
+  public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.isElevatorInHighPosition(),
+      () -> superStructure.scorer.getTargetReefLevel(),
+      TunerConstants.getSwerveDrivetrainConstants(),
       modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
-
-  public final SuperStructure superStructure = new SuperStructure();
 
   public final ILed leds = LedSubsystem.getInstance();
 
@@ -52,7 +56,6 @@ public class RobotContainer {
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
-    superStructure.setDefaultCommand(new DefaultPosition(superStructure));
     NamedCommands.registerCommand("Intake Coral", new CollectPosition(superStructure, drivetrain));
     NamedCommands.registerCommand("Score Coral A",
         new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
@@ -87,12 +90,15 @@ public class RobotContainer {
         new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
     NamedCommands.registerCommand("Set Coral Level L4",
         new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
+    superStructure
+        .setDefaultCommand(Commands.either(new DefaultPositionWithCoral(superStructure),
+            new DefaultPositionWithoutCoral(superStructure), () -> superStructure.scorer.hasCoral()));
+    drivetrain.setDefaultCommand(
+        Commands.run(() -> drivetrain.driveAlignAngleJoystick(), drivetrain)
+            .onlyIf(() -> DriverStation.isTeleopEnabled()));
   }
 
   private void configureBindings() {
-
-    drivetrain.setDefaultCommand(
-        Commands.run(() -> drivetrain.driveAlignAngleJoy(), drivetrain).onlyIf(() -> DriverStation.isTeleopEnabled()));
 
     // driverController.rightBumper().onTrue(new
     // AutoIntakeCoralPosition(superStructure, drivetrain));
@@ -125,9 +131,16 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
 
     keyBoard.removeAlgaeFromBranch()
-        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain));
+        .onTrue(new RemoveAlgaePosition(superStructure, drivetrain)
+            .deadlineFor(Commands.run(() -> drivetrain.driveAlignAngleJoystickRemoveAlgae(), drivetrain)));
 
-    keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
+    keyBoard.alignToClimb().onTrue(new ClimbPosition(superStructure)
+        .deadlineFor(Commands.runOnce(() -> drivetrain.setAngleForClimb())
+            .andThen(Commands.run(() -> drivetrain.driveLockedAngleToClimb(), drivetrain)
+                .until(() -> superStructure.robotIsClimbed)
+                .andThen(Commands.run(() -> drivetrain.stopSwerve(), drivetrain)))));
+
+    keyBoard.cancelAction().onTrue(new DefaultPositionWithCoral(superStructure));
 
     keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
 

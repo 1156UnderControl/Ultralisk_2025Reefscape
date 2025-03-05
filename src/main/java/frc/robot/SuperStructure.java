@@ -24,6 +24,8 @@ public class SuperStructure extends SubsystemBase {
 
   private CustomDoubleLogger totalCurrentDrawLogEntry = new CustomDoubleLogger("/Robot/TotalCurrentDraw");
 
+  public boolean robotIsClimbed = false;
+
   public SuperStructure() {
     this.scorer = ScorerSubsystem.getInstance();
     this.intake = IntakeSubsystem.getInstance();

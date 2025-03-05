@@ -22,7 +22,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.VoltageUnit;
 import edu.wpi.first.units.measure.MutDistance;
 import edu.wpi.first.units.measure.MutLinearVelocity;
@@ -102,6 +101,8 @@ public class TalonFXMotor implements IMotor {
 
   private TrapezoidProfile.State trapezoidGoal = new TrapezoidProfile.State();
 
+  private boolean isBrakeMode;
+
   public TalonFXMotor(int id, GravityTypeValue gravityType, String motorName) {
     this.gravityType = gravityType;
     motor = new TalonFX(id);
@@ -155,7 +156,7 @@ public class TalonFXMotor implements IMotor {
   public void updateLogs() {
     this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
     this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
-    this.positionLog.append(Units.rotationsToDegrees(this.motor.getPosition().getValueAsDouble()));
+    this.positionLog.append(this.getPosition());
     this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
     this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
     this.faultsLog.append(this.motor.getFaultField().getValue());
@@ -272,7 +273,7 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void setMotorBrake(boolean isBrakeMode) {
-    talonConfiguration.MotorOutput.NeutralMode = isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast;
+    talonConfiguration.MotorOutput.withNeutralMode(isBrakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
     talonConfigurator.apply(talonConfiguration.MotorOutput);
   }
 
@@ -290,7 +291,7 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void burnFlash() {
-    // do nothing
+
   }
 
   @Override
@@ -325,18 +326,17 @@ public class TalonFXMotor implements IMotor {
   }
 
   public void setPositionReferenceArbFF(double position, double feedforward) {
-    double positionInRotations = Units.degreesToRotations(position);
     targetPosition = position;
     targetOutput = Double.NaN;
     targetVelocity = Double.NaN;
-    motor.setControl(new PositionDutyCycle(positionInRotations).withFeedForward(feedforward));
+    motor.setControl(new PositionDutyCycle(position).withFeedForward(feedforward).withEnableFOC(true));
   }
 
   @Override
   public void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity,
       double maxAcceleration, double positionErrorAllowed) {
     talonConfigurator.refresh(talonConfiguration.Slot0);
-    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D);
+    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withGravityType(gravityType);
     MotionMagicConfigs motionMagicConfigs = talonConfiguration.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
     motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
@@ -348,7 +348,8 @@ public class TalonFXMotor implements IMotor {
       double maxVelocity,
       double maxAcceleration, double jerk) {
     talonConfigurator.refresh(talonConfiguration.Slot0);
-    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withKS(kS).withKV(kV).withKA(kA);
+    talonConfiguration.Slot0.withKP(P).withKI(I).withKD(D).withKS(kS).withKV(kV).withKA(kA)
+        .withGravityType(gravityType);
     var motionMagicConfigs = talonConfiguration.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = maxVelocity;
     motionMagicConfigs.MotionMagicAcceleration = maxAcceleration;
@@ -412,7 +413,7 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public double getPosition() {
-    return Units.rotationsToDegrees(motor.getPosition().getValueAsDouble());
+    return motor.getPosition().getValueAsDouble();
   }
 
   @Override
@@ -420,6 +421,8 @@ public class TalonFXMotor implements IMotor {
     talonConfigurator
         .refresh(talonConfiguration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
             .withSensorToMechanismRatio(factor));
+    talonConfiguration.Feedback.withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
+        .withSensorToMechanismRatio(factor);
     talonConfigurator.apply(talonConfiguration);
   }
 
@@ -433,7 +436,7 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void setPosition(double position) {
-    motor.setPosition(position);
+    motor.setPosition(0);
   }
 
   @Override

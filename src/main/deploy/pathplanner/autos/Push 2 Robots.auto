@@ -19,7 +19,7 @@
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "Match Autos",
+  "resetOdom": false,
+  "folder": null,
   "choreoAuto": false
 }

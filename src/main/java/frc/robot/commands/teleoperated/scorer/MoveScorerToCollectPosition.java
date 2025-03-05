@@ -13,7 +13,6 @@ public class MoveScorerToCollectPosition extends Command {
 
   @Override
   public void initialize() {
-    superStructure.intake.stopIntake();
     superStructure.scorer.intakeFromHP();
   }
 
@@ -24,6 +23,6 @@ public class MoveScorerToCollectPosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return superStructure.scorer.isAtCollectPosition();
+    return superStructure.scorer.hasCoral();
   }
 }

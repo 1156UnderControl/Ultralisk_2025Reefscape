@@ -6,14 +6,14 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
-  public static final double xyStdDevCoefficient = 0.015;
-  public static final double thetaStdDevCoefficient = 0.03;
+  public static final double xyStdDevCoefficient = 0.04;
+  public static final double thetaStdDevCoefficient = 0.08;
 
-  Transform3d robotToCamArducamLeft = new Transform3d(new Translation3d(0.11, -0.2707, 0.2223),
+  public static Transform3d robotToCamArducamLeft = new Transform3d(new Translation3d(0.11, -0.2707, 0.2223),
       new Rotation3d(0, Units.degreesToRadians(-18.234),
           Units.degreesToRadians(7.2367)));
 
-  Transform3d robotToCamArducamRight = new Transform3d(new Translation3d(0.1968, -0.2707, 0.2223),
+  public static Transform3d robotToCamArducamRight = new Transform3d(new Translation3d(0.1968, -0.2707, 0.2223),
       new Rotation3d(0, Units.degreesToRadians(-18.234),
           Units.degreesToRadians(7.2367)));
 }
