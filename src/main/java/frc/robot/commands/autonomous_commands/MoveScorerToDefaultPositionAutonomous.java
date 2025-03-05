@@ -13,13 +13,13 @@ public class MoveScorerToDefaultPositionAutonomous extends Command {
 
   @Override
   public void initialize() {
-    superStructure.scorer.moveScorerToDefaultPositionWithoutCoral();
+    superStructure.scorer.moveScorerToDefaultPosition();
     ;
   }
 
   @Override
   public void execute() {
-    superStructure.scorer.moveScorerToDefaultPositionWithoutCoral();
+    superStructure.scorer.moveScorerToDefaultPosition();
 
   }
 

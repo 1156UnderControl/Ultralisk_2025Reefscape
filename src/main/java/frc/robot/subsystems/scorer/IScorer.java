@@ -11,8 +11,6 @@ public interface IScorer {
 
   void intakeFromHP();
 
-  void moveScorerToDefaultPositionWithoutCoral();
-
   void stopIntakeFromHP();
 
   void prepareToPlaceCoralOnBranch();

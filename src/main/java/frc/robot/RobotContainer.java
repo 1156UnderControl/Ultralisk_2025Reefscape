@@ -22,8 +22,7 @@ import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
-import frc.robot.commands.states.DefaultPositionWithCoral;
-import frc.robot.commands.states.DefaultPositionWithoutCoral;
+import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.AlgaeHeight;
@@ -61,8 +60,7 @@ public class RobotContainer {
     this.autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
     superStructure
-        .setDefaultCommand(Commands.either(new DefaultPositionWithCoral(superStructure),
-            new DefaultPositionWithoutCoral(superStructure), () -> superStructure.scorer.hasCoral()));
+        .setDefaultCommand(new DefaultPosition(superStructure));
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoystick(), drivetrain)
             .onlyIf(() -> DriverStation.isTeleopEnabled()));
@@ -70,7 +68,7 @@ public class RobotContainer {
 
   private void setNamedCommandsForAuto() {
     NamedCommands.registerCommand("Intake Coral",
-        new CollectAutonomous(superStructure).andThen(new DefaultPositionWithCoral(superStructure)));
+        new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure)));
     NamedCommands.registerCommand("Score Coral A",
         new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.A)
             .andThen(new DefaultPositionAutonomous(superStructure)));
@@ -152,7 +150,7 @@ public class RobotContainer {
                 .until(() -> superStructure.robotIsClimbed)
                 .andThen(Commands.run(() -> drivetrain.stopSwerve(), drivetrain)))));
 
-    keyBoard.cancelAction().onTrue(new DefaultPositionWithCoral(superStructure));
+    keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
     keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
 

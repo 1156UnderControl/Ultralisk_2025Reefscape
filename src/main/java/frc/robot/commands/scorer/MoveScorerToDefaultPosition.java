@@ -3,10 +3,10 @@ package frc.robot.commands.scorer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.SuperStructure;
 
-public class MoveScorerToDefaultPositionWithCoral extends Command {
+public class MoveScorerToDefaultPosition extends Command {
   SuperStructure superStructure;
 
-  public MoveScorerToDefaultPositionWithCoral(SuperStructure superStructure) {
+  public MoveScorerToDefaultPosition(SuperStructure superStructure) {
     this.superStructure = superStructure;
     addRequirements(this.superStructure);
   }
