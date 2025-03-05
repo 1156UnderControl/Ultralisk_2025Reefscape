@@ -13,6 +13,7 @@ public class CollectAutonomous extends Command {
 
   @Override
   public void initialize() {
+    this.superStructure.auto_State = "COLLECTING";
     superStructure.scorer.intakeFromHP();
   }
 
@@ -24,5 +25,9 @@ public class CollectAutonomous extends Command {
   @Override
   public boolean isFinished() {
     return superStructure.scorer.hasCoral();
+  }
+
+  @Override
+  public void end(boolean interrupted) {
   }
 }

@@ -184,7 +184,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private void selectPoseEstimator() {
     if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2
-        && state.contains("DRIVE_TO_BRANCH")) {
+        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP"))) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
       poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;

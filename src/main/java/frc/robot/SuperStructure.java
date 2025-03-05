@@ -3,6 +3,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.robot.joysticks.ControlBoard;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.climber.IClimber;
@@ -20,11 +21,15 @@ public class SuperStructure extends SubsystemBase {
 
   private PowerDistribution powerDistributionHub;
 
+  private CustomStringLogger autoStateLogger = new CustomStringLogger("/Robot/AutoState");
+
   private CustomDoubleLogger batteryVoltageLogEntry = new CustomDoubleLogger("/Robot/BatteryVoltage");
 
   private CustomDoubleLogger totalCurrentDrawLogEntry = new CustomDoubleLogger("/Robot/TotalCurrentDraw");
 
   public boolean robotIsClimbed = false;
+
+  public String auto_State = "NONE";
 
   public SuperStructure() {
     this.scorer = ScorerSubsystem.getInstance();
@@ -40,6 +45,7 @@ public class SuperStructure extends SubsystemBase {
     this.scorer.periodic();
     this.intake.periodic();
     this.climber.periodic();
+    this.autoStateLogger.append(this.auto_State);
     this.batteryVoltageLogEntry.append(this.powerDistributionHub.getVoltage());
     this.totalCurrentDrawLogEntry.append(this.powerDistributionHub.getTotalCurrent());
   }
