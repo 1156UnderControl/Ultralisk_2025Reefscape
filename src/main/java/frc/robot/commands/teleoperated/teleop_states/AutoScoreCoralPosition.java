@@ -5,13 +5,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
-<<<<<<< HEAD:src/main/java/frc/robot/commands/teleoperated/teleop_states/AutoScoreCoralPosition.java
-import frc.robot.commands.teleoperated.scorer.MoveScorerToScorePosition;
 import frc.robot.commands.teleoperated.swerve.SwerveGoToBranch;
-=======
-import frc.robot.commands.swerve.SwerveGoToBranch;
 import frc.robot.commands.util.GoAndRaiseElevator;
->>>>>>> main:src/main/java/frc/robot/commands/states/AutoScoreCoralPosition.java
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.IDriverController;
