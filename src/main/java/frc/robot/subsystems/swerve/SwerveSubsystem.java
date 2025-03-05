@@ -86,6 +86,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private PoseEstimatorState poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
 
+  private boolean forceReefPoseEstimation = false;
+
   private Rotation2d bestAngleForClimb = new Rotation2d();
 
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
@@ -183,8 +185,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void selectPoseEstimator() {
-    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2
-        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP"))) {
+    if ((getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2
+        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP")) || this.forceReefPoseEstimation)) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
       poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
@@ -203,6 +205,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         overrideAutonomousPoseEstimator(null);
         break;
     }
+  }
+
+  public void forceReefPoseEstimation(boolean forceReefPoseEstimation) {
+    this.forceReefPoseEstimation = forceReefPoseEstimation;
   }
 
   protected void updateLogs() {
