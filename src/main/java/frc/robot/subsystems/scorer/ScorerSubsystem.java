@@ -31,7 +31,7 @@ public class ScorerSubsystem implements IScorer {
   private double goalElevator = ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND;
   private double goalPivot = 0;
 
-  StabilizeChecker motorNotMoving = new StabilizeChecker(0.4);
+  StabilizeChecker motorNotMoving = new StabilizeChecker(0.2);
 
   CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/Correcting Pivot");
 
@@ -238,6 +238,12 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
+  public void moveScorerToDefaultPositionWithoutCoral() {
+    goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
+    goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
+  }
+
+  @Override
   public void stopIntakeFromHP() {
     endEffectorMotor.set(0);
     state = "START";
@@ -312,7 +318,7 @@ public class ScorerSubsystem implements IScorer {
     endEffectorAccelerated = false;
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
     goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
-    state = "DEFAULT";
+    state = "DEFAULT_WITH_CORAL";
   }
 
   @Override
@@ -455,8 +461,8 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public boolean isAtDefaultPosition() {
     return Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
-        ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE,
+        this.goalElevator, 0.05)
+        && Util.atSetpoint(this.pivotMotor.getPosition(), this.goalPivot,
             2);
   }
 

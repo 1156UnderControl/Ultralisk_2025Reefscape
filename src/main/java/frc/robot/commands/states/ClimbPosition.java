@@ -7,14 +7,14 @@ import frc.robot.SuperStructure;
 import frc.robot.commands.climber.IntakeCageClimber;
 import frc.robot.commands.climber.MoveClimberToClimbedPosition;
 import frc.robot.commands.climber.MoveClimberToIntakePosition;
-import frc.robot.commands.scorer.MoveScorerToDefaultPosition;
+import frc.robot.commands.scorer.MoveScorerToDefaultPositionWithCoral;
 import frc.robot.joysticks.OperatorController;
 
 public class ClimbPosition extends SequentialCommandGroup {
   OperatorController operatorKeyboard = OperatorController.getInstance();
 
   public ClimbPosition(SuperStructure superStructure) {
-    addCommands(new MoveScorerToDefaultPosition(superStructure),
+    addCommands(new MoveScorerToDefaultPositionWithCoral(superStructure),
         new MoveClimberToIntakePosition(superStructure),
         new IntakeCageClimber(superStructure),
         Commands.waitUntil(operatorKeyboard.climb()),
