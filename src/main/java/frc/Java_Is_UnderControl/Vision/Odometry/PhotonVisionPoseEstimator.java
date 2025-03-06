@@ -32,19 +32,19 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
 
   private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
-  CustomBooleanLogger isDetectingLogger;
+  private CustomBooleanLogger isDetectingLogger;
 
-  CustomPose2dLogger detectedPoseLogger;
+  private CustomPose2dLogger detectedPoseLogger;
 
-  CustomDoubleLogger numberOfDetectedTagsLogger;
+  private CustomDoubleLogger numberOfDetectedTagsLogger;
 
-  CustomDoubleLogger distToTag;
+  private CustomDoubleLogger distToTag;
 
   CustomStringLogger stateOfPoseUpdate;
 
   CustomDoubleLogger stdDevXYLogger;
 
-  CustomDoubleLogger stdDevThetaLogger;
+  private CustomDoubleLogger stdDevThetaLogger;
 
   private Boolean useVisionHeadingCorrection = false;
 
@@ -151,6 +151,10 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
         avgTagDist,
         VecBuilder.fill(stdDevXY,
             stdDevXY, stdDevTheta));
+  }
+
+  public String getEstimatorName() {
+    return this.camera.getName();
   }
 
 }

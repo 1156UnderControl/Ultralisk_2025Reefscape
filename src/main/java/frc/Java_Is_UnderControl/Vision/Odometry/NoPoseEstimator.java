@@ -11,4 +11,9 @@ public class NoPoseEstimator implements PoseEstimator {
     return Optional.empty();
   }
 
+  @Override
+  public String getEstimatorName() {
+    return "";
+  }
+
 }

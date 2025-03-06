@@ -125,7 +125,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     listOfEstimators.add(arducamLeftEstimator);
     listOfEstimators.add(limelightReef);
     listOfEstimators.add(limelightSource);
-    PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators);
+    PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators, "Teleop Multi Pose Estimator");
     return estimatorMultiCamera;
   }
 
@@ -172,8 +172,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void periodic() {
-    super.periodic();
     selectPoseEstimator();
+    super.periodic();
     updateLogs();
     reefPoseEstimator.setHeadingMeasurement(getHeading());
     LimelightHelpers.SetRobotOrientation("limelight-reef",
