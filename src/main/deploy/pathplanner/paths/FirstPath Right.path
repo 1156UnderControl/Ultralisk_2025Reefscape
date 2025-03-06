@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.18,
-        "y": 4.73
+        "x": 7.160085523851779,
+        "y": 3.3173821852628746
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.194087560894691,
-        "y": 5.039803481536645
+        "x": 6.430428329138534,
+        "y": 2.567719690700449
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.149692622950819,
-        "y": 5.229764344262294
+        "x": 5.814036885245901,
+        "y": 2.508555327868852
       },
       "prevControl": {
-        "x": 6.954794605329181,
-        "y": 4.9769112513334965
+        "x": 6.275872666427908,
+        "y": 2.889748075187332
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "First Point - 4 Corals Path END"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -41,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0.0,
-    "rotation": -123.02386755579664
+    "velocity": 1.5,
+    "rotation": 123.69006752597986
   },
   "reversed": false,
   "folder": "4 Corals",
