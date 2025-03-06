@@ -1,6 +1,7 @@
 package frc.robot.commands.util;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToScorePosition;
@@ -19,10 +20,14 @@ public class GoAndRaiseElevator extends SequentialCommandGroup {
     this.swerve = swerve;
     this.superStructure = superStructure;
     this.targetBranch = branch;
-    addCommands(Commands.either(
+    addCommands(Commands.either(Commands.either(
         new MoveScorerToScorePosition(superStructure).alongWith(new SwerveGoToBranch(swerve, branch, true)),
+        new InstantCommand(() -> superStructure.scorer.setTargetBranchLevel(ReefLevel.TO_L4)).andThen(
+            new SwerveGoToBranch(swerve, branch, true).alongWith(new MoveScorerToScorePosition(superStructure)))
+            .finallyDo(() -> superStructure.scorer.setTargetBranchLevel(ReefLevel.L4))
+            .andThen(new MoveScorerToScorePosition(superStructure)),
+        () -> superStructure.scorer.getTargetReefLevel() != ReefLevel.L4),
         new SwerveGoToBranch(swerve, branch, true).andThen(new MoveScorerToScorePosition(superStructure)),
-        () -> this.superStructure.scorer.getTargetReefLevel() != ReefLevel.L4
-            && !swerve.swerveIsToCloseToReefForLiftingElevador()));
+        () -> !swerve.swerveIsToCloseToReefForLiftingElevador()));
   }
 }
