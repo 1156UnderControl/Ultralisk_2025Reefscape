@@ -14,7 +14,11 @@ public interface IClimber {
 
   void goToIntakeCagePosition();
 
+  void goToStowPosition();
+
   void intakeCage();
+
+  void stopClimberArm();
 
   void stopIntakingCage();
 

@@ -2,8 +2,6 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.wpilibj.Servo;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
@@ -27,8 +25,9 @@ public class ClimberSubsystem implements IClimber {
 
   double armGoal = ClimberConstants.tunning_values_arm.setpoints.STOW_ANGLE;
 
-  @Logged(name = "State", importance = Importance.CRITICAL)
   private String state = "START";
+
+  private boolean stopClimber = false;
 
   public static ClimberSubsystem getInstance() {
     if (instance == null) {
@@ -55,12 +54,17 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void climb() {
+    stopClimber = false;
     this.armGoal = ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE;
   }
 
   public void moveArmToPosition(double position, double arbFF) {
     double goal = limitGoalArm(position);
     if (climberServoMotor.get() > 0.4 && goal > climberArmMotor.getPosition()) {
+      climberArmMotor.set(0);
+      return;
+    }
+    if (stopClimber) {
       climberArmMotor.set(0);
       return;
     }
@@ -96,6 +100,7 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void goToIntakeCagePosition() {
+    stopClimber = false;
     this.armGoal = ClimberConstants.tunning_values_arm.setpoints.INTAKE_CAGE_ANGLE;
   }
 
@@ -147,5 +152,16 @@ public class ClimberSubsystem implements IClimber {
   @Override
   public void unlockClimber() {
     climberServoMotor.set(0);
+  }
+
+  @Override
+  public void stopClimberArm() {
+    stopClimber = true;
+  }
+
+  @Override
+  public void goToStowPosition() {
+    stopClimber = false;
+    this.armGoal = ClimberConstants.tunning_values_arm.setpoints.STOW_ANGLE;
   }
 }

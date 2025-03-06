@@ -3,22 +3,23 @@ package frc.robot.commands.climber;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.SuperStructure;
 
-public class StopClimberMotor extends Command {
+public class StowClimber extends Command {
   SuperStructure superStructure;
 
-  public StopClimberMotor(SuperStructure superStructure) {
+  public StowClimber(SuperStructure superStructure) {
     this.superStructure = superStructure;
     addRequirements(this.superStructure);
   }
 
   @Override
   public void initialize() {
-    superStructure.climber.setCoastClimber();
+    superStructure.climber.unlockClimber();
+    superStructure.climber.stopIntakingCage();
   }
 
   @Override
   public void execute() {
-    superStructure.climber.stopClimberArm();
+    superStructure.climber.goToStowPosition();
   }
 
   @Override
