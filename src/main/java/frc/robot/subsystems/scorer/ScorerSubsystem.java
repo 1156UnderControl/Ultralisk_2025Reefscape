@@ -151,7 +151,7 @@ public class ScorerSubsystem implements IScorer {
 
   private void setScorerStructureGoals() {
     if (goalElevator > elevatorMotorLeader.getPosition()) {
-      if (pivotSecureForElevator() && !isPivotInternalEncoderLost()) {
+      if (pivotSecureForElevator()) {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition();
@@ -159,10 +159,8 @@ public class ScorerSubsystem implements IScorer {
         elevatorStoppedByPivotLimit.append(false);
       } else {
         pivotStoppedByElevatorLimit.append(false);
-        ;
         elevatorStoppedByPivotLimit.append(true);
-        elevatorMotorLeader.setPositionReference(elevatorMotorLeader.getPosition(),
-            ElevatorConstants.tunning_values_elevator.PID.arbFF);
+        elevatorMotorLeader.set(0);
         setPivotTargetPosition();
       }
     } else {
@@ -269,6 +267,10 @@ public class ScorerSubsystem implements IScorer {
         break;
       case L4:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.L4_HEIGHT;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.L4_ANGLE;
+        break;
+      case TO_L4:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.L3_HEIGHT;
         goalPivot = PivotConstants.tunning_values_pivot.setpoints.L4_ANGLE;
         break;
       default:
@@ -393,7 +395,8 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private boolean pivotSecureForElevator() {
-    return this.pivotMotor.getPosition() > PivotConstants.tunning_values_pivot.setpoints.SECURE_FOR_ELEVATOR_UP;
+    return this.pivotMotor
+        .getPositionExternalEncoder() > PivotConstants.tunning_values_pivot.setpoints.SECURE_FOR_ELEVATOR_UP;
   }
 
   private boolean elevatorSecureForPivot() {
@@ -457,7 +460,8 @@ public class ScorerSubsystem implements IScorer {
   public boolean isAtCollectPosition() {
     return Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPosition(), PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE,
+        && Util.atSetpoint(this.pivotMotor.getPositionExternalEncoder(),
+            PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE,
             2);
   }
 
@@ -505,6 +509,6 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isElevatorInHighPosition() {
-    return this.elevatorMotorLeader.getPosition() > 1.4;
+    return this.elevatorMotorLeader.getPosition() > 1.0;
   }
 }
