@@ -141,4 +141,7 @@ public class LimelightPoseEstimator implements PoseEstimator {
             stdDevXY, stdDevTheta));
   }
 
+  public String getEstimatorName() {
+    return this.limelightName;
+  }
 }
