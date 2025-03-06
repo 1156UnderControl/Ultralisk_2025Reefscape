@@ -68,7 +68,8 @@ public class RobotContainer {
 
   private void setNamedCommandsForAuto() {
     NamedCommands.registerCommand("Intake Coral",
-        new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure)));
+        new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure))
+            .finallyDo(() -> superStructure.scorer.stopEndEffector()));
     NamedCommands.registerCommand("Score Coral A",
         new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.A)
             .andThen(new DefaultPositionAutonomous(superStructure)));
