@@ -154,7 +154,7 @@ public class ScorerSubsystem implements IScorer {
       if (pivotSecureForElevator() && !isPivotInternalEncoderLost()) {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
-        setPivotTargetPosition(goalPivot);
+        setPivotTargetPosition();
         pivotStoppedByElevatorLimit.append(false);
         elevatorStoppedByPivotLimit.append(false);
       } else {
@@ -163,7 +163,7 @@ public class ScorerSubsystem implements IScorer {
         elevatorStoppedByPivotLimit.append(true);
         elevatorMotorLeader.setPositionReference(elevatorMotorLeader.getPosition(),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
-        setPivotTargetPosition(goalPivot);
+        setPivotTargetPosition();
       }
     } else {
       if ((!elevatorSecureForPivot()
@@ -178,7 +178,7 @@ public class ScorerSubsystem implements IScorer {
         elevatorStoppedByPivotLimit.append(false);
         elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
-        setPivotTargetPosition(goalPivot);
+        setPivotTargetPosition();
         pivotStoppedByElevatorLimit.append(false);
       }
     }
@@ -200,7 +200,7 @@ public class ScorerSubsystem implements IScorer {
     return Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalEncoder()) > 5;
   }
 
-  void setPivotTargetPosition(double goal) {
+  void setPivotTargetPosition() {
     pivotMotor.setPositionReferenceTrapezoid(0.02, limitGoalPivot(goalPivot), 0,
         PivotConstants.tunning_values_pivot.PID.arbFF);
   }
