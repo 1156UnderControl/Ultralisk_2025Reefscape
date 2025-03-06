@@ -30,7 +30,7 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
         new ParallelRaceGroup(Commands.idle(superStructure)
             .until(operatorKeyboard.scoreCoral().or(() -> swerve.isAtTargetPosition()).or(() -> hasCancelledAutoMove)),
             Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)),
-        Commands.run(() -> superStructure.scorer.placeCoral()).onlyWhile(() -> !driverController.a().getAsBoolean())
+        Commands.run(() -> superStructure.scorer.placeCoral())
             .alongWith(Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)));
   }
 }
