@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
@@ -46,7 +47,7 @@ import frc.robot.constants.SwerveConstants.PoseEstimatorState;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.constants.VisionConstants;
 import frc.robot.joysticks.DriverController;
-import frc.robot.pose_estimators.ReefPoseEstimator;
+import frc.robot.pose_estimators.ReefPoseEstimatorWithLimelight;
 
 public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements ISwerve {
 
@@ -72,8 +73,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private static PhotonCamera arducamRight = new PhotonCamera("Arducam-right");
 
-  private ReefPoseEstimator reefPoseEstimator = new ReefPoseEstimator(arducamLeft,
-      VisionConstants.robotToCamArducamLeft,
+  private ReefPoseEstimatorWithLimelight reefPoseEstimator = new ReefPoseEstimatorWithLimelight("limelight-reef",
       arducamRight, VisionConstants.robotToCamArducamRight, () -> getTargetBranch());
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
@@ -89,6 +89,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private boolean forceReefPoseEstimation = false;
 
   private Rotation2d bestAngleForClimb = new Rotation2d();
+
+  private double distanceToTargetBranch = Double.POSITIVE_INFINITY;
 
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
       new PIDConstants(5, 0, 0),
@@ -218,13 +220,21 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   @Override
   public void driveToBranch(TargetBranch branch, boolean backupBranch) {
     this.targetBranch = branch;
-    double distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
+    if (DriverStation.isAutonomousEnabled()) {
+      goToBranchAutonomous(branch, backupBranch);
+      return;
+    }
+    goToBranchTeleoperated(branch, backupBranch);
+  }
+
+  private void goToBranchTeleoperated(TargetBranch branch, boolean backupBranch) {
+    this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
         .getDistance(getPose().getTranslation());
     Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
         ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
         : targetBranch.getTargetPoseToScore();
-    if (distanceToTargetBranch < 3) {
-      if (distanceToTargetBranch < 1) {
+    if (this.distanceToTargetBranch < 3) {
+      if (this.distanceToTargetBranch < 1) {
         driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 1);
         this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";
         return;
@@ -234,6 +244,32 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     } else {
       driveAlignAngleJoystick();
     }
+  }
+
+  private void goToBranchAutonomous(TargetBranch branch, boolean backupBranch) {
+    this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
+        .getDistance(getPose().getTranslation());
+    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
+        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
+        : targetBranch.getTargetPoseToScore();
+
+    if (elevatorAtHighPositionSupplier.get()) {
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 0.7);
+      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
+      return;
+    }
+
+    if (this.distanceToTargetBranch < 2) {
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 1.5);
+      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
+      return;
+    }
+    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 3.5);
+    this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
+  }
+
+  public double getDistanceToTargetBranch() {
+    return this.distanceToTargetBranch;
   }
 
   private TargetBranch getTargetBranch() {
