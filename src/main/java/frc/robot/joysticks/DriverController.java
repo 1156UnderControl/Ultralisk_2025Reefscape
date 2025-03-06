@@ -110,6 +110,11 @@ public class DriverController implements IDriverController {
     return driverController.back();
   }
 
+  @Override
+  public Trigger cancelAction() {
+    return driverController.povLeft();
+  }
+
   private double performAllianceInputDirectionCorrection(Double value) {
     Alliance alliance = DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()
         : DriverStation.Alliance.Red;
