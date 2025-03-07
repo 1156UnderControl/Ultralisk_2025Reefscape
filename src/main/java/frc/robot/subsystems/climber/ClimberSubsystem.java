@@ -8,8 +8,6 @@ import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ClimberConstants;
-import frc.robot.constants.EndEffectorConstants;
-import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
@@ -73,9 +71,9 @@ public class ClimberSubsystem implements IClimber {
 
   private double limitGoalArm(double goal) {
     if (goal >= ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE) {
-      return PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE;
+      return ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE;
     } else if (goal <= ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE) {
-      return PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE;
+      return ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE;
     } else {
       return goal;
     }
@@ -106,20 +104,8 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void intakeCage() {
-    cageIntakeMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+    cageIntakeMotor.set(ClimberConstants.tunning_values_intake.setpoints.DUTY_CYCLE_INTAKE);
     state = "INTAKING_CAGE";
-  }
-
-  public void runCageIntakeDetection() {
-    if (this.cageIntakeMotor.getVelocity() >= 3000) {
-      this.cageIntakeAccelerated = true;
-    }
-    if (cageIntakeMotor
-        .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
-        && cageIntakeAccelerated) {
-      isCageCollected = true;
-      cageIntakeAccelerated = false;
-    }
   }
 
   @Override
