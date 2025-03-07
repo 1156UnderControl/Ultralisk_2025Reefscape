@@ -165,11 +165,11 @@ public class ReefPoseEstimatorWithLimelight implements PoseEstimator {
 
     LimelightHelpers.SetFiducialIDFiltersOverride(limelightLeftName, desiredApriltagsIDs);
 
-    if (!LimelightHelpers.getTV(this.limelightLeftName) && isArightBranchTarget
-        && Math.abs(OdometryEnabledSwerveSubsystem.robotAngularVelocity) >= 3) {
+    if (LimelightHelpers.getTV(this.limelightLeftName) && isArightBranchTarget
+        && Math.abs(OdometryEnabledSwerveSubsystem.robotAngularVelocity) <= 3) {
       PoseEstimate limelightPoseEstimateleft = LimelightHelpers
           .getBotPoseEstimate_wpiBlue_MegaTag2(this.limelightLeftName);
-      if (limelightPoseEstimateleft == null) {
+      if (limelightPoseEstimateleft.pose.getX() == 0 && limelightPoseEstimateleft.pose.getY() == 0) {
         isLeftDetectingLogger.append(false);
         stateOfPoseUpdateLeft.append("NO_TARGETS");
       } else {

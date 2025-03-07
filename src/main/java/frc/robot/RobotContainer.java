@@ -8,6 +8,8 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,8 +18,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.LEDs.ILed;
 import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
+import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimized;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
+import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.ClimbPosition;
@@ -67,6 +72,13 @@ public class RobotContainer {
   }
 
   private void setNamedCommandsForAuto() {
+    NamedCommands.registerCommand("ResetOdometry Left",
+        new InstantCommand(
+            () -> drivetrain.resetOdometry(AllianceFlipUtil.apply(new Pose2d(7.18, 4.730, Rotation2d.k180deg)))));
+    NamedCommands.registerCommand("ResetOdometry Right",
+        new InstantCommand(
+            () -> drivetrain.resetOdometry(AllianceFlipUtil.apply(new Pose2d(7.18, 3.317, Rotation2d.k180deg)))));
+    NamedCommands.registerCommand("Intake Coral Optimized", new CollectAutonomousOpitimized(superStructure));
     NamedCommands.registerCommand("Intake Coral",
         new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure))
             .finallyDo(() -> superStructure.scorer.stopEndEffector()));
@@ -105,6 +117,43 @@ public class RobotContainer {
             .andThen(new DefaultPositionAutonomous(superStructure)));
     NamedCommands.registerCommand("Score Coral L",
         new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.L)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+
+    NamedCommands.registerCommand("Score Coral A Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.A)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral B Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.B)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral C Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.C)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral D Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.D)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral E Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.E)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral F Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.F)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral G Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.G)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral H Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.H)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral I Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.I)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral J Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.J)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral K Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.K)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral L Optimized",
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.L)
             .andThen(new DefaultPositionAutonomous(superStructure)));
 
     NamedCommands.registerCommand("Set Coral Level L1",
