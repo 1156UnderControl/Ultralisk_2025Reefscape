@@ -238,7 +238,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
         : targetBranch.getTargetPoseToScore();
 
-    if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.8) {
+    if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.6) {
       driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 0.7);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
       return;
