@@ -14,7 +14,7 @@ public class AutoScoreCoralAutonomousOptimized extends SequentialCommandGroup {
   public AutoScoreCoralAutonomousOptimized(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
     addCommands(new InstantCommand(() -> swerve.forceReefPoseEstimation(true)),
         new SwerveGoToBranchFastAutonomous(swerve, branch, true)
-            .alongWith(new CollectCoralFromHP(superStructure).withTimeout(1.5)
+            .alongWith(new CollectCoralFromHP(superStructure).withTimeout(1)
                 .andThen(Commands.waitUntil(() -> swerve.getDistanceToTargetBranch() < 1.5)
                     .andThen(new MoveScorerToScorePosition(superStructure)))),
         new SwerveGoToBranchFastAutonomous(swerve, branch, false),
