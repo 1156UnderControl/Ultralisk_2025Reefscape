@@ -15,7 +15,8 @@ public class ClimbPosition extends SequentialCommandGroup {
   OperatorController operatorKeyboard = OperatorController.getInstance();
 
   public ClimbPosition(SuperStructure superStructure) {
-    addCommands(new MoveScorerToDefaultPosition(superStructure),
+    addCommands(new InstantCommand(() -> superStructure.robotIsClimbed = false),
+        new MoveScorerToDefaultPosition(superStructure),
         new MoveClimberToIntakePosition(superStructure),
         new IntakeCageClimber(superStructure),
         Commands.waitUntil(operatorKeyboard.climb()),
