@@ -312,15 +312,20 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void moveScorerToDefaultPosition() {
-    endEffectorMotor.set(0);
     endEffectorAccelerated = false;
     if (!this.hasCoral) {
+      endEffectorMotor.set(0);
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
       state = "DEFAULT_WITHOUT_CORAL";
       return;
     }
-
+    if (this.pivotMotor
+        .getPositionExternalEncoder() < (PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE + 10)) {
+      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+    } else {
+      endEffectorMotor.set(0);
+    }
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
     goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
     state = "DEFAULT_WITH_CORAL";
