@@ -7,55 +7,37 @@
         {
           "type": "named",
           "data": {
-            "name": "ResetOdometry Left"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Set Coral Level L4"
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "FirstPath Left"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "Score Coral J Optimized"
+            "name": "Score Coral J"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "FirstCollect 3 Corals Left"
+            "pathName": "FirstCollect Left"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake Coral Optimized"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score Coral K Optimized"
+            "name": "Score Coral L"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SecondCollect 3 Corals Left"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake Coral Optimized"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score Coral L Optimized"
+            "pathName": "Tentativa 2.5 Corals"
           }
         }
       ]
