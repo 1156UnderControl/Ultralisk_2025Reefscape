@@ -74,7 +74,8 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric applyFieldCentricDrive = new SwerveRequest.FieldCentric();
   private final SwerveRequest.PointWheelsAt applyPointWheelsAt = new SwerveRequest.PointWheelsAt();
-  private SwerveRequest.FieldCentricFacingAngle applyFieldCentricDrivePointingAtAngle = new FieldCentricFacingAngle();
+  private SwerveRequest.FieldCentricFacingAngle applyFieldCentricDrivePointingAtAngle = new FieldCentricFacingAngle()
+      .withMaxAbsRotationalRate(this.MaxAngularRate);
   private SwerveRequest.RobotCentric applyRobotCentricDrive = new RobotCentric();
   private SwerveRequest.SwerveDriveBrake applyBrakeSwerveX = new SwerveDriveBrake();
 
