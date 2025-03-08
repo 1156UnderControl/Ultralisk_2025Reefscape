@@ -39,14 +39,28 @@ public class SwerveConstants {
   }
 
   public class CoralStations {
-    public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
-        Units.inchesToMeters(33.526),
-        Units.inchesToMeters(25.824),
-        Rotation2d.fromDegrees(45)).rotateBy(Rotation2d.k180deg);
+    public class RedAliance {
+      public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(25.824),
+          Rotation2d.fromDegrees(45)).rotateBy(Rotation2d.k180deg);
 
-    public static final Pose2d CORAL_STATION_LEFT_POSE_FOR_ROBOT = new Pose2d(
-        Units.inchesToMeters(33.526),
-        Units.inchesToMeters(291.176),
-        Rotation2d.fromDegrees(-45));
+      public static final Pose2d CORAL_STATION_LEFT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(291.176),
+          Rotation2d.fromDegrees(-45));
+    }
+
+    public class BlueAliance {
+      public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(25.824),
+          Rotation2d.fromDegrees(135)).rotateBy(Rotation2d.k180deg);
+
+      public static final Pose2d CORAL_STATION_LEFT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(291.176),
+          Rotation2d.fromDegrees(-135));
+    }
   }
 }

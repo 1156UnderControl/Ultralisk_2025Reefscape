@@ -21,6 +21,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
@@ -303,18 +304,26 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private Pose2d getNearestCoralStationPose() {
-    if (this.getPose().getY() >= 4.0259) {
-      return SwerveConstants.CoralStations.CORAL_STATION_RIGHT_POSE_FOR_ROBOT;
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      if (this.getPose().getY() >= 4.0259) {
+        return SwerveConstants.CoralStations.RedAliance.CORAL_STATION_RIGHT_POSE_FOR_ROBOT;
+      } else {
+        return SwerveConstants.CoralStations.RedAliance.CORAL_STATION_LEFT_POSE_FOR_ROBOT;
+      }
     } else {
-      return SwerveConstants.CoralStations.CORAL_STATION_LEFT_POSE_FOR_ROBOT;
+      if (this.getPose().getY() >= 4.0259) {
+        return SwerveConstants.CoralStations.BlueAliance.CORAL_STATION_RIGHT_POSE_FOR_ROBOT;
+      } else {
+        return SwerveConstants.CoralStations.BlueAliance.CORAL_STATION_LEFT_POSE_FOR_ROBOT;
+      }
     }
   }
 
   public void setAngleForClimb() {
     if (this.getPose().getX() >= FieldConstants.fieldLength / 2) {
-      this.bestAngleForClimb = AllianceFlipUtil.apply(Rotation2d.fromDegrees(-90));
+      this.bestAngleForClimb = Rotation2d.fromDegrees(90);
     } else {
-      this.bestAngleForClimb = AllianceFlipUtil.apply(Rotation2d.fromDegrees(90));
+      this.bestAngleForClimb = Rotation2d.fromDegrees(-90);
     }
   }
 
