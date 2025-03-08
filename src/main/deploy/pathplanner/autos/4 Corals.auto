@@ -5,33 +5,45 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Set Coral Level L4"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "First Point - 4 Corals Path"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "First Collect - 4 Corals Path"
+            "name": "Score Coral J"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Second Point - 4 Corals Path"
+            "pathName": "First Collect, Second Point - 4 Corals Path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral K"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Second Collect - 4 Corals Path"
+            "pathName": "Second Collect, Third Point - 4 Corals Path"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Third Point - 4 Corals Path"
+            "name": "Score Coral L"
           }
         },
         {
@@ -41,9 +53,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Fourth Point - 4 Corals Path"
+            "name": "Score Coral A"
           }
         }
       ]

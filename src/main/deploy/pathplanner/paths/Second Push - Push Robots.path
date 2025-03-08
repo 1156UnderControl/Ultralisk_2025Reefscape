@@ -3,33 +3,47 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.969976426311828,
-        "y": 5.265272761054559
+        "x": 7.143,
+        "y": 5.583
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.294146234788419,
-        "y": 5.657500584259366
+        "x": 7.166464995048416,
+        "y": 4.3060386361135565
       },
       "isLocked": false,
-      "linkedName": "First Point - 4 Corals Path END"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.640969264839,
-        "y": 7.3875457983335
+        "x": 7.144,
+        "y": 3.795880900638204
       },
       "prevControl": {
-        "x": 2.728931143845294,
-        "y": 6.6456499428669815
+        "x": 7.182350695972712,
+        "y": 5.6856005171654935
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "First Collect - 4 Corals Path END"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.519830550098232,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 0.8,
+        "maxAcceleration": 0.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
@@ -42,13 +56,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -52.888917760236374
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "4 Corals",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 180.0
   },
   "useDefaultConstraints": false
 }

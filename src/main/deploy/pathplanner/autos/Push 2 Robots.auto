@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "First Point - Push Robots"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "First Push - Push Robot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Second Push - Push Robots"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}

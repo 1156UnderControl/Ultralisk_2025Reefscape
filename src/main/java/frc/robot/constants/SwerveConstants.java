@@ -11,13 +11,13 @@ import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 
 public class SwerveConstants {
-  public static final PIDConfig MOVE_TO_POSE_TRANSLATION_PID = new PIDConfig(2.5, 0, 0, 0, 0);
+  public static final PIDConfig MOVE_TO_POSE_TRANSLATION_PID = new PIDConfig(5, 0, 0, 0, 0);
   public static final Constraints MOVE_TO_POSE_TRANSLATION_CONSTRAINTS = new Constraints(4, 3);
   public static final Constraints MOVE_TO_POSE_X_CONSTRAINTS = new Constraints(4, 3);
   public static final Constraints MOVE_TO_POSE_Y_CONSTRAINTS = new Constraints(4, 3);
 
   public enum TargetBranch {
-    A(1), B(0), C(11), D(10), E(9), F(9), G(7), H(6), I(5), J(4), K(3), L(2);
+    A(1), B(0), C(11), D(10), E(9), F(8), G(7), H(6), I(5), J(4), K(3), L(2);
 
     private final int branchIndex;
 
@@ -39,14 +39,28 @@ public class SwerveConstants {
   }
 
   public class CoralStations {
-    public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
-        Units.inchesToMeters(33.526),
-        Units.inchesToMeters(25.824),
-        Rotation2d.fromDegrees(45)).rotateBy(Rotation2d.k180deg);
+    public class RedAliance {
+      public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(25.824),
+          Rotation2d.fromDegrees(45)).rotateBy(Rotation2d.k180deg);
 
-    public static final Pose2d CORAL_STATION_LEFT_POSE_FOR_ROBOT = new Pose2d(
-        Units.inchesToMeters(33.526),
-        Units.inchesToMeters(291.176),
-        Rotation2d.fromDegrees(-45));
+      public static final Pose2d CORAL_STATION_LEFT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(291.176),
+          Rotation2d.fromDegrees(-45));
+    }
+
+    public class BlueAliance {
+      public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(25.824),
+          Rotation2d.fromDegrees(135)).rotateBy(Rotation2d.k180deg);
+
+      public static final Pose2d CORAL_STATION_LEFT_POSE_FOR_ROBOT = new Pose2d(
+          Units.inchesToMeters(33.526),
+          Units.inchesToMeters(291.176),
+          Rotation2d.fromDegrees(-135));
+    }
   }
 }

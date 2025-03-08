@@ -435,6 +435,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     applyFieldCentricDrivePointingAtAngle
         .withTargetDirection(Rotation2d.fromDegrees(targetHeadingDegrees))
         .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond);
+
     setControl(applyFieldCentricDrivePointingAtAngle);
   }
 

@@ -54,7 +54,7 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     this.mode = LedMode.SOLID;
     this.color = LedColor.OFF;
     this.led = new AddressableLED(6);
-    this.ledBuffer = new AddressableLEDBuffer(14);
+    this.ledBuffer = new AddressableLEDBuffer(40);
     this.led.setLength(ledBuffer.getLength());
     this.led.setData(ledBuffer);
     this.led.start();

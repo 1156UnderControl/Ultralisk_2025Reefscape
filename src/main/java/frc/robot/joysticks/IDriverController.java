@@ -30,4 +30,6 @@ public interface IDriverController {
   Trigger resetGyro();
 
   Trigger isForcingDriverControl();
+
+  Trigger cancelAction();
 }

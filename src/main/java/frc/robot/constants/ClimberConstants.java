@@ -6,45 +6,24 @@ public class ClimberConstants {
 
   public class tunning_values_intake {
     public static final double VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION = 100;
-    public static final double KS = 0;
-    public static final double KG = 0;
-    public static final double KV = 0;
-    public static final double KA = 0;
-    public static final double MAX_VELOCITY = 0;
-    public static final double MAX_ACCELERATION = 0;
-    public static final double JERK = 0;
 
     public class setpoints {
       public static final double DUTY_CYCLE_INTAKE = 1.0;
       public static final double DUTY_CYCLE_EXPELL = -1.0;
     }
 
-    public class PID {
-      public static final double P = 0;
-      public static final double I = 0;
-      public static final double D = 0;
-      public static final double F = 0;
-      public static final double IZone = 0;
-    }
   }
 
   public class tunning_values_arm {
-    public static final double VELOCITY_FALL_FOR_CAGE_INTAKE_DETECTION = 100;
-    public static final double KS = 0;
-    public static final double KG = 0;
-    public static final double KV = 0;
-    public static final double KA = 0;
-    public static final double MAX_VELOCITY = 0;
-    public static final double MAX_ACCELERATION = 0;
-    public static final double JERK = 0;
-
     public class setpoints {
-      public static final double MAX_ANGLE = 0;
-      public static final double MIN_ANGLE = 0;
+      public static final double MIN_ANGLE = -0.2;
+      public static final double MAX_ANGLE = 0.54;
+      public static final double STOW_ANGLE = 0.05;
+      public static final double INTAKE_CAGE_ANGLE = 0.49;
     }
 
     public class PID {
-      public static final double P = 0;
+      public static final double P = 200;
       public static final double I = 0;
       public static final double D = 0;
       public static final double F = 0;

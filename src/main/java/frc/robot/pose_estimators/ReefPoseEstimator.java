@@ -64,6 +64,8 @@ public class ReefPoseEstimator implements PoseEstimator {
 
   private int[] desiredApriltagsIDs = new int[2];
 
+  private String poseEstimatorName = "ReefPoseEstimator";
+
   public ReefPoseEstimator(PhotonCamera arducamLeft, Transform3d cameraPositionLeft, PhotonCamera arducamRight,
       Transform3d cameraPositionRight, Supplier<TargetBranch> targetBranchSupplier) {
     this.arducamLeft = arducamLeft;
@@ -73,8 +75,9 @@ public class ReefPoseEstimator implements PoseEstimator {
         cameraPositionLeft);
     this.photonPoseEstimatorRight = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.CONSTRAINED_SOLVEPNP,
         cameraPositionRight);
-    this.detectedPoseLogger = new CustomPose2dLogger("/Vision/ReefPoseEstimator/DetectedPose");
-    this.numberOfDetectedTagsLogger = new CustomDoubleLogger("/Vision/ReefPoseEstimator/NumberOfDetectedTags");
+    this.detectedPoseLogger = new CustomPose2dLogger("/Vision/" + this.poseEstimatorName + "/DetectedPose");
+    this.numberOfDetectedTagsLogger = new CustomDoubleLogger(
+        "/Vision/" + this.poseEstimatorName + "/NumberOfDetectedTags");
     this.isLeftDetectingLogger = new CustomBooleanLogger(
         "/Vision/ReefPoseEstimator/" + arducamLeft.getName() + "/IsDetecting");
     this.isRightDetectingLogger = new CustomBooleanLogger(
@@ -85,8 +88,8 @@ public class ReefPoseEstimator implements PoseEstimator {
     this.stateOfPoseUpdateRight = new CustomStringLogger(
         "/Vision/ReefPoseEstimator/" + arducamRight.getName() +
             "/StateOfPoseUpdate");
-    this.stdDevXYLogger = new CustomDoubleLogger("Vision/ReefPoseEstimator/stdDevXY");
-    this.stdDevThetaLogger = new CustomDoubleLogger("Vision/ReefPoseEstimator/stdDevTheta");
+    this.stdDevXYLogger = new CustomDoubleLogger("Vision/" + this.poseEstimatorName + "/stdDevXY");
+    this.stdDevThetaLogger = new CustomDoubleLogger("Vision/" + this.poseEstimatorName + "/stdDevTheta");
     this.isArightTargetLogger = new CustomBooleanLogger(
         "/Vision/ReefPoseEstimator/IsARightTarget");
     this.targetBranchSupplier = targetBranchSupplier;
@@ -254,4 +257,8 @@ public class ReefPoseEstimator implements PoseEstimator {
             stdDevXY, stdDevTheta));
   }
 
+  @Override
+  public String getEstimatorName() {
+    return this.poseEstimatorName;
+  }
 }

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.640969264839,
-        "y": 7.3875457983335
+        "x": 7.16,
+        "y": 3.317
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.191286701850361,
-        "y": 6.2994052320437355
+        "x": 6.430342805286755,
+        "y": 2.5673375054375747
       },
       "isLocked": false,
-      "linkedName": "First Collect - 4 Corals Path END"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.159402436541667,
-        "y": 4.205048177219241
+        "x": 5.814036885245901,
+        "y": 2.508555327868852
       },
       "prevControl": {
-        "x": 2.525479289351196,
-        "y": 5.596237850200827
+        "x": 6.275872666427908,
+        "y": 2.889748075187332
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,22 +33,22 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -0.39822410192514973
+    "velocity": 1.5,
+    "rotation": 123.69006752597986
   },
   "reversed": false,
   "folder": "4 Corals",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -52.888917760236374
+    "rotation": 180.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

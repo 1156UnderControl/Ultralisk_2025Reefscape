@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 4.969976426311828,
-        "y": 5.265272761054559
+        "x": 6.36547131147541,
+        "y": 5.409579918032787
       },
       "prevControl": {
-        "x": 5.77507840869019,
-        "y": 5.012419668125762
+        "x": 7.1705732938537725,
+        "y": 5.1567268251039895
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,16 +33,16 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -119.99999999999999
+    "velocity": 0.0,
+    "rotation": -123.02386755579664
   },
   "reversed": false,
   "folder": "4 Corals",
@@ -50,5 +50,5 @@
     "velocity": 0,
     "rotation": 180.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

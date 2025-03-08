@@ -1,15 +1,16 @@
 package frc.robot.commands.util;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToScorePosition;
+import frc.robot.commands.swerve.SwerveGoToBranch;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class GoAndRaiseElevator extends Command {
+public class GoAndRaiseElevator extends SequentialCommandGroup {
 
   SwerveSubsystem swerve;
   TargetBranch targetBranch;
@@ -19,30 +20,14 @@ public class GoAndRaiseElevator extends Command {
     this.swerve = swerve;
     this.superStructure = superStructure;
     this.targetBranch = branch;
-    addRequirements(swerve);
-  }
-
-  @Override
-  public void initialize() {
-  }
-
-  @Override
-  public void execute() {
-    if (this.superStructure.scorer.getTargetReefLevel() != ReefLevel.L4) {
-      new SequentialCommandGroup(new MoveScorerToScorePosition(superStructure),
-          Commands.run(() -> this.swerve.driveToBranch(this.targetBranch, true)));
-    } else {
-      new SequentialCommandGroup(Commands.run(() -> this.swerve.driveToBranch(this.targetBranch, true)),
-          new MoveScorerToScorePosition(superStructure));
-    }
-  }
-
-  @Override
-  public boolean isFinished() {
-    return this.swerve.isAtTargetPosition() && this.superStructure.scorer.isSecuredToPlaceCoral();
-  }
-
-  @Override
-  public void end(boolean interrupted) {
+    addCommands(Commands.either(Commands.either(
+        new MoveScorerToScorePosition(superStructure).alongWith(new SwerveGoToBranch(swerve, branch, true)),
+        new InstantCommand(() -> superStructure.scorer.setTargetBranchLevel(ReefLevel.TO_L4)).andThen(
+            new SwerveGoToBranch(swerve, branch, true).alongWith(new MoveScorerToScorePosition(superStructure)))
+            .finallyDo(() -> superStructure.scorer.setTargetBranchLevel(ReefLevel.L4))
+            .andThen(new MoveScorerToScorePosition(superStructure)),
+        () -> superStructure.scorer.getTargetReefLevel() != ReefLevel.L4),
+        new SwerveGoToBranch(swerve, branch, true).andThen(new MoveScorerToScorePosition(superStructure)),
+        () -> !swerve.swerveIsToCloseToReefForLiftingElevador()));
   }
 }

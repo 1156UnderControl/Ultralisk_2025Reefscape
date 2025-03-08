@@ -91,6 +91,11 @@ public class ControlBoard implements IDriverController, IOperatorController {
     return mDriverController.isForcingDriverControl();
   }
 
+  @Override
+  public Trigger cancelAction() {
+    return mDriverController.cancelAction();
+  }
+
   public Object getDoNotScore() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getDoNotScore'");
