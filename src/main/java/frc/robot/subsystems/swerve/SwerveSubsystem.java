@@ -240,17 +240,17 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         : targetBranch.getTargetPoseToScore();
 
     if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.6) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 0.7);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 0.9);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
       return;
     }
 
     if (this.distanceToTargetBranch < 1.5) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 2);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 2.5);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
       return;
     }
-    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 3.5);
+    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch), 4);
     this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
   }
 
