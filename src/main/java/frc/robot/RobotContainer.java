@@ -81,12 +81,12 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("ResetOdometry Left XY",
         new InstantCommand(
-            () -> drivetrain
-                .resetOdometry(AllianceFlipUtil.apply(new Pose2d(7.18, 4.730, drivetrain.getState().RawHeading)))));
+            () -> drivetrain.resetOdometry(
+                AllianceFlipUtil.applyOnlyTranslation(new Pose2d(7.18, 4.730, drivetrain.getState().RawHeading)))));
     NamedCommands.registerCommand("ResetOdometry Right XY",
         new InstantCommand(
-            () -> drivetrain
-                .resetOdometry(AllianceFlipUtil.apply(new Pose2d(7.18, 3.317, drivetrain.getState().RawHeading)))));
+            () -> drivetrain.resetOdometry(
+                AllianceFlipUtil.applyOnlyTranslation(new Pose2d(7.18, 3.317, drivetrain.getState().RawHeading)))));
     NamedCommands.registerCommand("Intake Coral Optimized", new CollectAutonomousOpitimized(superStructure));
     NamedCommands.registerCommand("Intake Coral",
         new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure))
