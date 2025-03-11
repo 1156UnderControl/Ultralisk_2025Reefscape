@@ -312,9 +312,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       }
     } else {
       if (this.getPose().getY() >= 4.0259) {
-        return SwerveConstants.CoralStations.BlueAliance.CORAL_STATION_RIGHT_POSE_FOR_ROBOT;
-      } else {
         return SwerveConstants.CoralStations.BlueAliance.CORAL_STATION_LEFT_POSE_FOR_ROBOT;
+      } else {
+        return SwerveConstants.CoralStations.BlueAliance.CORAL_STATION_RIGHT_POSE_FOR_ROBOT;
       }
     }
   }
