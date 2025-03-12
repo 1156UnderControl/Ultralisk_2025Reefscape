@@ -20,14 +20,6 @@ public class GoAndRaiseElevator extends SequentialCommandGroup {
     this.swerve = swerve;
     this.superStructure = superStructure;
     this.targetBranch = branch;
-    addCommands(Commands.either(Commands.either(
-        new MoveScorerToScorePosition(superStructure).alongWith(new SwerveGoToBranch(swerve, branch, true)),
-        new InstantCommand(() -> superStructure.scorer.setTargetBranchLevel(ReefLevel.TO_L4)).andThen(
-            new SwerveGoToBranch(swerve, branch, true).alongWith(new MoveScorerToScorePosition(superStructure)))
-            .finallyDo(() -> superStructure.scorer.setTargetBranchLevel(ReefLevel.L4))
-            .andThen(new MoveScorerToScorePosition(superStructure)),
-        () -> superStructure.scorer.getTargetReefLevel() != ReefLevel.L4),
-        new SwerveGoToBranch(swerve, branch, true).andThen(new MoveScorerToScorePosition(superStructure)),
-        () -> !swerve.swerveIsToCloseToReefForLiftingElevador()));
+    addCommands(new OptimizedMoveScorerToScorePosition(superStructure, swerve).alongWith(new SwerveGoToBranch(swerve, branch, true)));
   }
 }

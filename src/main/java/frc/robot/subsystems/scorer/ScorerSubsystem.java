@@ -67,6 +67,8 @@ public class ScorerSubsystem implements IScorer {
 
   private double lastGoalPivot = goalPivot;
 
+  private Function<void, float> distanceToTargetPoseProvider = this.goStraightToTargetHeightProvider;
+
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
       instance = new ScorerSubsystem();
@@ -150,9 +152,10 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void setScorerStructureGoals() {
-    if (goalElevator > elevatorMotorLeader.getPosition()) {
+    double stabilizedGoalElevator = this.limitTargetToStableHeight(goalElevator);
+    if (stabilizedGoalElevator > elevatorMotorLeader.getPosition()) {
       if (pivotSecureForElevator()) {
-        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(stabilizedGoalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition();
         pivotStoppedByElevatorLimit.append(false);
@@ -167,14 +170,14 @@ public class ScorerSubsystem implements IScorer {
       if ((!elevatorSecureForPivot()
           && goalPivot < PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP)
           || isPivotInternalEncoderLost()) {
-        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(stabilizedGoalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         pivotMotor.set(0);
         elevatorStoppedByPivotLimit.append(false);
         pivotStoppedByElevatorLimit.append(true);
       } else {
         elevatorStoppedByPivotLimit.append(false);
-        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(stabilizedGoalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition();
         pivotStoppedByElevatorLimit.append(false);
@@ -246,6 +249,15 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void prepareToPlaceCoralOnBranch() {
+    this.distanceToTargetPoseProvider = this.goStraightToTargetHeightProvider;
+    assignSetpointsForLevel(this.targetReefLevel);
+    state = "PREPARE_TO_PLACE_CORAL";
+    branchHeightTarget = this.targetReefLevel.name();
+  }
+
+  @Override
+  public void prepareToPlaceCoralOnBranch(Function<void, float> distanceToTargetPoseProvider) {
+    this.distanceToTargetPoseProvider = distanceToTargetPoseProvider;
     assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
     branchHeightTarget = this.targetReefLevel.name();
@@ -515,5 +527,27 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public boolean isElevatorInHighPosition() {
     return this.elevatorMotorLeader.getPosition() > 1.0;
+  }
+
+  private double goStraightToTargetHeightProvider() {
+    return 0;
+  }
+
+  private double limitTargetToStableHeight(double targetHeight) {
+    if(targetHeight < ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT){
+      return targetHeight;
+    }
+    double distanceToTargetPose = this.distanceToTargetPoseProvider();
+    if(distanceToTargetPose < ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT) {
+      return targetHeight;
+    }
+    if(distanceToTargetPose > ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START) {
+      return ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    }
+    double heightToRaise = targetHeight - ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    double distanceNeededToRaise = ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT;
+    double currentProgressInDistanceToRaise = 1 - ((distanceToTargetPose - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT) / distanceNeededToRaise);
+    double currentTargetHeight = (heightToRaise * currentProgressInDistanceToRaise) + ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    return currentTargetHeight;
   }
 }

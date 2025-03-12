@@ -15,6 +15,8 @@ public interface IScorer {
 
   void prepareToPlaceCoralOnBranch();
 
+  void prepareToPlaceCoralOnBranch(Function<void, float> distanceToTargetPoseProvider);
+
   void removeAlgaeFromBranch();
 
   void removeAlgaeEndEffector();
