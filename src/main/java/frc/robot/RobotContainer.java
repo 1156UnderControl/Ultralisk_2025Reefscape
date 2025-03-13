@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -81,12 +82,11 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("ResetOdometry Left XY",
         new InstantCommand(
-            () -> drivetrain.resetOdometry(
-                AllianceFlipUtil.applyOnlyTranslation(new Pose2d(7.18, 4.730, drivetrain.getState().RawHeading)))));
+            () -> drivetrain.resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 4.73)))));
     NamedCommands.registerCommand("ResetOdometry Right XY",
         new InstantCommand(
-            () -> drivetrain.resetOdometry(
-                AllianceFlipUtil.applyOnlyTranslation(new Pose2d(7.18, 3.317, drivetrain.getState().RawHeading)))));
+            () -> drivetrain
+                .resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 3.317)))));
     NamedCommands.registerCommand("Intake Coral Optimized", new CollectAutonomousOpitimized(superStructure));
     NamedCommands.registerCommand("Intake Coral",
         new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure))
