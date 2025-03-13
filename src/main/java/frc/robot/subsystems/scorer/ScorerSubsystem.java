@@ -261,6 +261,7 @@ public class ScorerSubsystem implements IScorer {
     assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
     branchHeightTarget = this.targetReefLevel.name();
+    this.runCoralAntiLockRoutine();
   }
 
   private void assignSetpointsForLevel(ReefLevel level) {
@@ -332,12 +333,7 @@ public class ScorerSubsystem implements IScorer {
       state = "DEFAULT_WITHOUT_CORAL";
       return;
     }
-    if (this.pivotMotor
-        .getPositionExternalEncoder() < (PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE + 10)) {
-      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
-    } else {
-      endEffectorMotor.set(0);
-    }
+    this.runCoralAntiLockRoutine();
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
     goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
     state = "DEFAULT_WITH_CORAL";
@@ -549,5 +545,14 @@ public class ScorerSubsystem implements IScorer {
     double currentProgressInDistanceToRaise = 1 - ((distanceToTargetPose - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT) / distanceNeededToRaise);
     double currentTargetHeight = (heightToRaise * currentProgressInDistanceToRaise) + ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
     return currentTargetHeight;
+  }
+
+  public void runCoralAntiLockRoutine() {
+    if (this.pivotMotor
+        .getPositionExternalEncoder() < (PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE + 10)) {
+      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+    } else {
+      endEffectorMotor.set(0);
+    }
   }
 }

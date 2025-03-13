@@ -43,6 +43,12 @@ public class AllianceFlipUtil {
         : pose;
   }
 
+  public static Pose2d applyOnlyTranslation(Pose2d pose) {
+    return shouldFlip()
+        ? new Pose2d(apply(pose.getTranslation()), pose.getRotation())
+        : pose;
+  }
+
   public static Pose3d apply(Pose3d pose) {
     return shouldFlip()
         ? new Pose3d(apply(pose.getTranslation()), apply(pose.getRotation()))

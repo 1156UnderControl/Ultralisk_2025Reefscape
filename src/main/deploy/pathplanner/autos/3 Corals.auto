@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ResetOdometry Left"
+            "name": "ResetOdometry Left XY"
           }
         },
         {
@@ -61,7 +61,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Match Autos",
   "choreoAuto": false
 }
