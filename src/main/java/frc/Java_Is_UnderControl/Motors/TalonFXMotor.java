@@ -246,13 +246,13 @@ public class TalonFXMotor implements IMotor {
   }
 
   public void setMaxMotorOutput(double maxOutput) {
-    talonConfigurator.refresh(talonConfiguration.Slot0);
-    talonConfigurator.apply(talonConfiguration.MotorOutput.withPeakForwardDutyCycle(maxOutput));
+    talonConfiguration.MotorOutput.withPeakForwardDutyCycle(maxOutput);
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
   }
 
   public void setMinMotorOutput(double minOutput) {
-    talonConfigurator.refresh(talonConfiguration.Slot0);
-    talonConfigurator.apply(talonConfiguration.MotorOutput.withPeakReverseDutyCycle(minOutput));
+    talonConfiguration.MotorOutput.withPeakReverseDutyCycle(minOutput);
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
   }
 
   @Override
