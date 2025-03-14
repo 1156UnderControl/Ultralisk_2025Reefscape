@@ -46,8 +46,6 @@ public class ClimberSubsystem implements IClimber {
         ClimberConstants.tunning_values_arm.PID.I,
         ClimberConstants.tunning_values_arm.PID.D, 0);
     cageIntakeMotor.burnFlash();
-    climberArmMotor.setMaxMotorOutput(0.7);
-    climberArmMotor.setMinMotorOutput(0.7);
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.setPosition(0);
   }
@@ -60,7 +58,7 @@ public class ClimberSubsystem implements IClimber {
 
   public void moveArmToPosition(double position, double arbFF) {
     double goal = limitGoalArm(position);
-    if (climberServoMotor.get() > 0.4 && goal > climberArmMotor.getPosition()) {
+    if (goal > climberArmMotor.getPosition()) {
       climberArmMotor.set(0);
       return;
     }
