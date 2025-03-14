@@ -197,6 +197,14 @@ public class SparkFlexMotor implements IMotor {
   }
 
   @Override
+  public void setMaxMotorOutput(double maxOutput) {
+  }
+
+  @Override
+  public void setMinMotorOutput(double minOutput) {
+  }
+
+  @Override
   public void configurePIDF(double P, double I, double D, double F, double Izone) {
     this.configurePIDF(P, I, D, F);
     config.closedLoop.iZone(Izone);
