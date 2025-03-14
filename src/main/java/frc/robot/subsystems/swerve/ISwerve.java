@@ -19,6 +19,8 @@ public interface ISwerve {
 
   public void stopSwerve();
 
+  public double getDistanceToTargetBranch();
+
   public boolean swerveIsToCloseToReefForLiftingElevador();
 
   public boolean isAtTargetPosition();

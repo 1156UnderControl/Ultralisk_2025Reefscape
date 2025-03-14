@@ -1,5 +1,7 @@
 package frc.robot.subsystems.scorer;
 
+import java.util.function.Supplier;
+
 import frc.robot.constants.FieldConstants.AlgaeHeight;
 import frc.robot.constants.FieldConstants.ReefLevel;
 
@@ -15,7 +17,7 @@ public interface IScorer {
 
   void prepareToPlaceCoralOnBranch();
 
-  void prepareToPlaceCoralOnBranch(Function<void, float> distanceToTargetPoseProvider);
+  void prepareToPlaceCoralOnBranch(Supplier<Double> distanceToTargetPoseProvider);
 
   void removeAlgaeFromBranch();
 

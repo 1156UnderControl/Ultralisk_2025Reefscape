@@ -2,6 +2,8 @@ package frc.robot.subsystems.scorer;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
@@ -67,7 +69,7 @@ public class ScorerSubsystem implements IScorer {
 
   private double lastGoalPivot = goalPivot;
 
-  private Function<void, float> distanceToTargetPoseProvider = this.goStraightToTargetHeightProvider;
+  private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
@@ -249,14 +251,14 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void prepareToPlaceCoralOnBranch() {
-    this.distanceToTargetPoseProvider = this.goStraightToTargetHeightProvider;
+    this.distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
     assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
     branchHeightTarget = this.targetReefLevel.name();
   }
 
   @Override
-  public void prepareToPlaceCoralOnBranch(Function<void, float> distanceToTargetPoseProvider) {
+  public void prepareToPlaceCoralOnBranch(Supplier<Double> distanceToTargetPoseProvider) {
     this.distanceToTargetPoseProvider = distanceToTargetPoseProvider;
     assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
@@ -530,20 +532,25 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private double limitTargetToStableHeight(double targetHeight) {
-    if(targetHeight < ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT){
+    if (targetHeight < ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT) {
       return targetHeight;
     }
-    double distanceToTargetPose = this.distanceToTargetPoseProvider();
-    if(distanceToTargetPose < ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT) {
+    double distanceToTargetPose = this.distanceToTargetPoseProvider.get();
+    if (distanceToTargetPose < ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT) {
       return targetHeight;
     }
-    if(distanceToTargetPose > ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START) {
+    if (distanceToTargetPose > ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START) {
       return ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
     }
-    double heightToRaise = targetHeight - ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
-    double distanceNeededToRaise = ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT;
-    double currentProgressInDistanceToRaise = 1 - ((distanceToTargetPose - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT) / distanceNeededToRaise);
-    double currentTargetHeight = (heightToRaise * currentProgressInDistanceToRaise) + ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    double heightToRaise = targetHeight
+        - ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    double distanceNeededToRaise = ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START
+        - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT;
+    double currentProgressInDistanceToRaise = 1 - ((distanceToTargetPose
+        - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT)
+        / distanceNeededToRaise);
+    double currentTargetHeight = (heightToRaise * currentProgressInDistanceToRaise)
+        + ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
     return currentTargetHeight;
   }
 
