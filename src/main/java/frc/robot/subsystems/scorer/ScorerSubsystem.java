@@ -229,11 +229,11 @@ public class ScorerSubsystem implements IScorer {
     runCoralIntakeDetection();
     if (!hasCoral) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+      goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
     } else {
       endEffectorMotor.set(0);
     }
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
-    goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
     state = "INTAKING_FROM_HP";
   }
 
