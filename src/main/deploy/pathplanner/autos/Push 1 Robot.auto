@@ -11,6 +11,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Score Coral H"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "First Push - Push Robot"
