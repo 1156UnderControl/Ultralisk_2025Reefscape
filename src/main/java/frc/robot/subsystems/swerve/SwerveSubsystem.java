@@ -231,6 +231,30 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
+  public void driveToBranchFastDirect(TargetBranch branch, boolean backupBranch) {
+    this.targetBranch = branch;
+    this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
+        .getDistance(getPose().getTranslation());
+    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
+        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
+        : targetBranch.getTargetPoseToScore();
+
+    if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.6) {
+      driveToPose(getDriveTargetDirect(getPose(), targetBranchScorePose, backupBranch), 0.9);
+      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
+      return;
+    }
+
+    if (this.distanceToTargetBranch < 1.5) {
+      driveToPose(getDriveTargetDirect(getPose(), targetBranchScorePose, backupBranch), 2.5);
+      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
+      return;
+    }
+    driveToPose(getDriveTargetDirect(getPose(), targetBranchScorePose, backupBranch), 4);
+    this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
+  }
+
+  @Override
   public void driveToBranchFast(TargetBranch branch, boolean backupBranch) {
     this.targetBranch = branch;
     this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
@@ -397,6 +421,19 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         GeomUtil.toTransform2d(
             -shiftXT * 1.2,
             Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())));
+  }
+
+  private Pose2d getDriveTargetDirect(Pose2d robot, Pose2d goal, boolean moveBack) {
+    if (moveBack) {
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.25, 0.0));
+      this.goToPoseTranslationDeadband = 0.05;
+      this.goToPoseHeadingDeadband = 10;
+    } else {
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
+      this.goToPoseTranslationDeadband = 0.025;
+      this.goToPoseHeadingDeadband = 3;
+    }
+    return goal;
   }
 
   @Override
