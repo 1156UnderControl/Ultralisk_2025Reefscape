@@ -2,6 +2,7 @@ package frc.robot.subsystems.swerve;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -39,6 +41,7 @@ import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
+import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
@@ -95,6 +98,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private double distanceToTargetBranch = Double.POSITIVE_INFINITY;
 
+  private boolean positionChanged = false;
+
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
       new PIDConstants(5, 0, 0),
       new PIDConstants(5, 0, 0),
@@ -130,6 +135,22 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     listOfEstimators.add(limelightSource);
     PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators, "Teleop Multi Pose Estimator");
     return estimatorMultiCamera;
+  }
+
+  public void resetOdometryLimelight(Translation2d defaultPosition) {
+    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
+    Optional<PoseEstimation> limelightPoseEstimation = limelightReef.getEstimatedPose(this.getPose());
+    if (limelightPoseEstimation.isEmpty()) {
+      resetTranslation(defaultPosition);
+      this.positionChanged = false;
+    } else {
+      resetTranslation(limelightPoseEstimation.get().estimatedPose.getTranslation().toTranslation2d());
+      this.positionChanged = true;
+    }
+  }
+
+  public boolean defaultPositionChanged() {
+    return this.positionChanged;
   }
 
   @Override
