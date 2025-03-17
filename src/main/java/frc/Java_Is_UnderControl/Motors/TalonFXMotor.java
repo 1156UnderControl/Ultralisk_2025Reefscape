@@ -245,6 +245,16 @@ public class TalonFXMotor implements IMotor {
     // https://v5.docs.ctr-electronics.com/en/stable/ch18_CommonAPI.html#setting-status-frame-periods
   }
 
+  public void setMaxMotorOutput(double maxOutput) {
+    talonConfiguration.MotorOutput.withPeakForwardDutyCycle(maxOutput);
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
+  }
+
+  public void setMinMotorOutput(double minOutput) {
+    talonConfiguration.MotorOutput.withPeakReverseDutyCycle(minOutput);
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
+  }
+
   @Override
   public void configurePIDF(double P, double I, double D, double F, double Izone) {
     configurePIDF(P, I, D, F);

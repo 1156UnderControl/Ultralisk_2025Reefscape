@@ -12,6 +12,7 @@ public class CollectAutonomousOpitimized extends Command {
     this.superStructure = superStructure;
     addRequirements(this.superStructure);
     collectTimer = new Timer();
+    collectTimer.reset();
   }
 
   @Override
@@ -28,7 +29,7 @@ public class CollectAutonomousOpitimized extends Command {
 
   @Override
   public boolean isFinished() {
-    if (collectTimer.get() >= 0.3) {
+    if (collectTimer.get() >= 1) {
       return true;
     }
     return superStructure.scorer.hasCoral();
@@ -37,5 +38,6 @@ public class CollectAutonomousOpitimized extends Command {
   @Override
   public void end(boolean interrupted) {
     superStructure.scorer.stopEndEffector();
+    collectTimer.stop();
   }
 }
