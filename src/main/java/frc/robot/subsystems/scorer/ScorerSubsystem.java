@@ -8,6 +8,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkFlexMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
+import frc.Java_Is_UnderControl.Sensors.InfraRed;
 import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
@@ -25,6 +26,7 @@ public class ScorerSubsystem implements IScorer {
 
   private final IMotor pivotMotor = new SparkMAXMotor(PivotConstants.ID_pivotMotor, false, "PIVOT");
   private final IMotor endEffectorMotor = new SparkMAXMotor(EndEffectorConstants.ID_endEffectorMotor, "END_EFFECTOR");
+  private final InfraRed coralInfraRedSensor = new InfraRed(EndEffectorConstants.Port_coralInfraRed, false);
 
   private boolean hasCoral = true;
   private boolean elevatorHasHomed = false;
@@ -66,6 +68,8 @@ public class ScorerSubsystem implements IScorer {
   private boolean endEffectorAccelerated = false;
 
   private double lastGoalPivot = goalPivot;
+
+  private StabilizeChecker stableAtCollectPose = new StabilizeChecker(0.1);
 
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
@@ -211,9 +215,9 @@ public class ScorerSubsystem implements IScorer {
     if (this.endEffectorMotor.getVelocity() >= 3000) {
       this.endEffectorAccelerated = true;
     }
-    if (endEffectorMotor
+    if ((endEffectorMotor
         .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
-        && endEffectorAccelerated) {
+        && endEffectorAccelerated) && !coralInfraRedSensor.getAsBoolean() && stableAtCollectPose.isStableInCondition(() -> this.isAtCollectPosition())) {
       hasCoral = true;
       endEffectorAccelerated = false;
     }
