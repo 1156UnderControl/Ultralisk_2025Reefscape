@@ -151,6 +151,7 @@ public class ScorerSubsystem implements IScorer {
     SmartDashboard.putString("Scorer/TargetLevelName", this.targetReefLevel.name());
     SmartDashboard.putString("Scorer/Target Reef Branch", branchHeightTarget);
     SmartDashboard.putBoolean("Scorer/Has Coral", this.hasCoral());
+    SmartDashboard.putBoolean("Infra Red Has Coral", coralInfraRedSensor.getBoolean());
   }
 
   private void setScorerStructureGoals() {
@@ -217,7 +218,8 @@ public class ScorerSubsystem implements IScorer {
     }
     if ((endEffectorMotor
         .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
-        && endEffectorAccelerated) && !coralInfraRedSensor.getAsBoolean() && stableAtCollectPose.isStableInCondition(() -> this.isAtCollectPosition())) {
+        && endEffectorAccelerated) && coralInfraRedSensor.getAsBoolean()
+        && stableAtCollectPose.isStableInCondition(() -> this.isAtCollectPosition())) {
       hasCoral = true;
       endEffectorAccelerated = false;
     }
