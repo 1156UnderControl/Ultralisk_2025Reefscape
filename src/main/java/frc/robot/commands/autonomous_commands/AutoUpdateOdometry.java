@@ -24,7 +24,7 @@ public class AutoUpdateOdometry extends Command {
 
   @Override
   public boolean isFinished() {
-    return this.swerve.defaultPositionChanged();
+    return this.swerve.positionUpdated();
   }
 
   @Override

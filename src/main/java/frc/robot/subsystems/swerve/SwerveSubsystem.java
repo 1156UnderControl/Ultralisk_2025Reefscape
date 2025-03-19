@@ -98,7 +98,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private double distanceToTargetBranch = Double.POSITIVE_INFINITY;
 
-  private boolean positionChanged = false;
+  private boolean positionUpdated = false;
 
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
       new PIDConstants(5, 0, 0),
@@ -142,15 +142,15 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     Optional<PoseEstimation> limelightPoseEstimation = limelightReef.getEstimatedPose(this.getPose());
     if (limelightPoseEstimation.isEmpty()) {
       resetTranslation(defaultPosition);
-      this.positionChanged = false;
+      this.positionUpdated = true;
     } else {
       resetTranslation(limelightPoseEstimation.get().estimatedPose.getTranslation().toTranslation2d());
-      this.positionChanged = true;
+      this.positionUpdated = true;
     }
   }
 
-  public boolean defaultPositionChanged() {
-    return this.positionChanged;
+  public boolean positionUpdated() {
+    return this.positionUpdated;
   }
 
   @Override
