@@ -13,7 +13,6 @@ public class StopClimberMotor extends Command {
 
   @Override
   public void initialize() {
-    superStructure.climber.setCoastClimber();
   }
 
   @Override

@@ -59,10 +59,6 @@ public class ClimberSubsystem implements IClimber {
 
   public void moveArmToPosition(double position, double arbFF) {
     double goal = limitGoalArm(position);
-    if (climberServoMotor.get() > 0.4 && goal > climberArmMotor.getPosition()) {
-      climberArmMotor.set(0);
-      return;
-    }
     if (stopClimber) {
       climberArmMotor.set(0);
       return;
