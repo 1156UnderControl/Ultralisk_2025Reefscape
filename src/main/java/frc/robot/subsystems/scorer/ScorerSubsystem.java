@@ -2,6 +2,8 @@ package frc.robot.subsystems.scorer;
 
 import static edu.wpi.first.units.Units.Volts;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
@@ -68,6 +70,8 @@ public class ScorerSubsystem implements IScorer {
   private boolean endEffectorAccelerated = false;
 
   private double lastGoalPivot = goalPivot;
+
+  private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
   private StabilizeChecker stableAtCollectPose = new StabilizeChecker(0.1);
 
@@ -155,9 +159,10 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void setScorerStructureGoals() {
-    if (goalElevator > elevatorMotorLeader.getPosition()) {
+    double stabilizedGoalElevator = this.limitTargetToStableHeight(goalElevator);
+    if (stabilizedGoalElevator > elevatorMotorLeader.getPosition()) {
       if (pivotSecureForElevator()) {
-        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(stabilizedGoalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition();
         pivotStoppedByElevatorLimit.append(false);
@@ -172,14 +177,14 @@ public class ScorerSubsystem implements IScorer {
       if ((!elevatorSecureForPivot()
           && goalPivot < PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP)
           || isPivotInternalEncoderLost()) {
-        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(stabilizedGoalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         pivotMotor.set(0);
         elevatorStoppedByPivotLimit.append(false);
         pivotStoppedByElevatorLimit.append(true);
       } else {
         elevatorStoppedByPivotLimit.append(false);
-        elevatorMotorLeader.setPositionReference(limitGoalElevator(goalElevator),
+        elevatorMotorLeader.setPositionReference(limitGoalElevator(stabilizedGoalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         setPivotTargetPosition();
         pivotStoppedByElevatorLimit.append(false);
@@ -252,6 +257,15 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void prepareToPlaceCoralOnBranch() {
+    this.distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
+    assignSetpointsForLevel(this.targetReefLevel);
+    state = "PREPARE_TO_PLACE_CORAL";
+    branchHeightTarget = this.targetReefLevel.name();
+  }
+
+  @Override
+  public void prepareToPlaceCoralOnBranch(Supplier<Double> distanceToTargetPoseProvider) {
+    this.distanceToTargetPoseProvider = distanceToTargetPoseProvider;
     assignSetpointsForLevel(this.targetReefLevel);
     state = "PREPARE_TO_PLACE_CORAL";
     branchHeightTarget = this.targetReefLevel.name();
@@ -517,6 +531,33 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public boolean isElevatorInHighPosition() {
     return this.elevatorMotorLeader.getPosition() > 1.0;
+  }
+
+  private double goStraightToTargetHeightProvider() {
+    return 0;
+  }
+
+  private double limitTargetToStableHeight(double targetHeight) {
+    if (targetHeight < ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT) {
+      return targetHeight;
+    }
+    double distanceToTargetPose = this.distanceToTargetPoseProvider.get();
+    if (distanceToTargetPose < ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT) {
+      return targetHeight;
+    }
+    if (distanceToTargetPose > ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START) {
+      return ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    }
+    double heightToRaise = targetHeight
+        - ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    double distanceNeededToRaise = ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_DEPLOYMENT_START
+        - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT;
+    double currentProgressInDistanceToRaise = 1 - ((distanceToTargetPose
+        - ElevatorConstants.tunning_values_elevator.stable_transition.DISTANCE_FOR_FULL_DEPLOYMENT)
+        / distanceNeededToRaise);
+    double currentTargetHeight = (heightToRaise * currentProgressInDistanceToRaise)
+        + ElevatorConstants.tunning_values_elevator.stable_transition.SAFE_CRUISE_HEIGHT;
+    return currentTargetHeight;
   }
 
   public void runCoralAntiLockRoutine() {

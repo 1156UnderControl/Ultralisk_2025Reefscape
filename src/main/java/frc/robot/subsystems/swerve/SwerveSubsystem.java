@@ -319,6 +319,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
   }
 
+  @Override
   public double getDistanceToTargetBranch() {
     return this.distanceToTargetBranch;
   }
