@@ -18,7 +18,7 @@ public class AutoScoreElevator extends SequentialCommandGroup {
                 superStructure).unless(() -> swerve.getDistanceToTargetBranch() < 1.5)
                 .andThen(new ConditionalCommand(new AutoScoreElevator(superStructure, swerve, branch),
                     Commands.none(), () -> superStructure.scorer.hasCoral()))),
-        new SwerveGoToBranchFastAutonomous(swerve, branch, false),
+        new SwerveGoToBranchFastAutonomous(swerve, branch, false, false),
         Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.3),
         new InstantCommand(() -> swerve.forceReefPoseEstimation(false)));
   }
