@@ -353,6 +353,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void driveLockedAngleToNearestCoralStation() {
+    if (controller.leftBumper().getAsBoolean()) {
+      driveRotating(false);
+      return;
+    }
+    if (controller.rightBumper().getAsBoolean()) {
+      driveRotating(true);
+      return;
+    }
     if (!controller.notUsingJoystick()) {
       this.driveAlignAngleJoystick();
       return;

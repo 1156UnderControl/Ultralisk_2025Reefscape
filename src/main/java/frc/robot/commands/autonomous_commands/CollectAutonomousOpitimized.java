@@ -12,14 +12,13 @@ public class CollectAutonomousOpitimized extends Command {
     this.superStructure = superStructure;
     addRequirements(this.superStructure);
     collectTimer = new Timer();
-    collectTimer.reset();
   }
 
   @Override
   public void initialize() {
     this.superStructure.auto_State = "COLLECTING";
     superStructure.scorer.intakeFromHP();
-    collectTimer.start();
+    collectTimer.restart();
   }
 
   @Override
@@ -37,7 +36,8 @@ public class CollectAutonomousOpitimized extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    superStructure.scorer.stopEndEffector();
     collectTimer.stop();
+    collectTimer.reset();
+    // superStructure.scorer.stopEndEffector();
   }
 }
