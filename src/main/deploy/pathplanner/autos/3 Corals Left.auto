@@ -71,6 +71,12 @@
               }
             ]
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SecondCollect 3 Corals Left"
+          }
         }
       ]
     }
