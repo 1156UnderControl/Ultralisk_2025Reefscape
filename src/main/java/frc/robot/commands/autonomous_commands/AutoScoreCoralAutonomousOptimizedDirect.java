@@ -9,11 +9,12 @@ import frc.robot.commands.scorer.OptimizedMoveScorerToScorePosition;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class AutoScoreCoralAutonomousOptimized extends SequentialCommandGroup {
+public class AutoScoreCoralAutonomousOptimizedDirect extends SequentialCommandGroup {
 
-  public AutoScoreCoralAutonomousOptimized(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
+  public AutoScoreCoralAutonomousOptimizedDirect(SuperStructure superStructure, SwerveSubsystem swerve,
+      TargetBranch branch) {
     addCommands(new InstantCommand(() -> swerve.forceReefPoseEstimation(true)),
-        new SwerveGoToBranchFastAutonomous(swerve, branch, true, false)
+        new SwerveGoToBranchFastAutonomous(swerve, branch, true, true)
             .alongWith(new CollectCoralFromHP(superStructure)
                 .andThen(new OptimizedMoveScorerToScorePosition(superStructure, swerve))),
         new SwerveGoToBranchFastAutonomous(swerve, branch, false, true),

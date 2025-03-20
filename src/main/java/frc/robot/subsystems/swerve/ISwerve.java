@@ -11,6 +11,8 @@ public interface ISwerve {
 
   public void driveToBranch(TargetBranch branch, boolean backupBranch);
 
+  public void driveToBranchFastDirect(TargetBranch branch, boolean backupBranch);
+
   public void driveToBranchFast(TargetBranch branch, boolean backupBranch);
 
   public void driveAlignAngleJoystick();
@@ -18,6 +20,8 @@ public interface ISwerve {
   public void driveAlignAngleJoystickSuperSlow();
 
   public void stopSwerve();
+
+  public double getDistanceToTargetBranch();
 
   public boolean swerveIsToCloseToReefForLiftingElevador();
 
