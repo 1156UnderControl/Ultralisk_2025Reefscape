@@ -45,6 +45,7 @@ public class ClimberSubsystem implements IClimber {
         ClimberConstants.tunning_values_arm.PID.P,
         ClimberConstants.tunning_values_arm.PID.I,
         ClimberConstants.tunning_values_arm.PID.D, 0);
+    climberArmMotor.setMinMotorOutput(-0.7);
     cageIntakeMotor.burnFlash();
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.setPosition(0);
