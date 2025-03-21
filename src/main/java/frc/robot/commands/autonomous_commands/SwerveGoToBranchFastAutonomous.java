@@ -27,7 +27,7 @@ public class SwerveGoToBranchFastAutonomous extends Command {
   @Override
   public void execute() {
     if (goDirect) {
-      this.swerve.driveToBranchFastDirect(targetBranch, goDirect);
+      this.swerve.driveToBranchFastDirect(targetBranch, isSpacedToBranch);
     } else {
       this.swerve.driveToBranchFast(targetBranch, isSpacedToBranch);
     }
