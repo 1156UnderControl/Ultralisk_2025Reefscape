@@ -10,8 +10,8 @@ public class EndEffectorConstants {
 
     public class setpoints {
       public static final double DUTY_CYCLE_INTAKE = 1.0;
-      public static final double DUTY_CYCLE_EXPELL = -1.0;
-      public static final double DUTY_CYCLE_EXPELL_L1 = -0.245;
+      public static final double DUTY_CYCLE_EXPELL = -0.8;
+      public static final double DUTY_CYCLE_EXPELL_L1 = -0.275;
     }
   }
 }
