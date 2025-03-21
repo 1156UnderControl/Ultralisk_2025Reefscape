@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ResetOdometry Left XY"
+            "name": "ResetOdometry Left XY With Vision"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Coral J Optimized"
+            "name": "Score Coral J Optimized Direct"
           }
         },
         {
@@ -70,6 +70,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SecondCollect 3 Corals Left"
           }
         }
       ]

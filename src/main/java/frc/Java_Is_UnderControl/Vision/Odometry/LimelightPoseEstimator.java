@@ -81,46 +81,50 @@ public class LimelightPoseEstimator implements PoseEstimator {
   }
 
   public Optional<PoseEstimation> getEstimatedPose(Pose2d referencePose) {
-    if (!LimelightHelpers.getTV(this.limelightName)
-        || Math.abs(OdometryEnabledSwerveSubsystem.robotAngularVelocity) >= limitAngVelForUpdating) {
-      this.isDetectingLogger.append(false);
-      this.numberOfDetectedTagsLogger.append(0);
-      this.stateOfPoseUpdate.append("WITHOUT_TARGET_OR_HIGH_ANGULAR_VELOCITY");
-      return Optional.empty();
-    }
-    PoseEstimate limelightPoseEstimate;
-    if (useMegaTag1) {
-      limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(this.limelightName);
-      this.stateOfPoseUpdate.append("GETTING_MEGATAG_1");
-    } else {
-      limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(this.limelightName);
-      this.stateOfPoseUpdate.append("GETTING_MEGATAG_2");
-    }
-    if (limelightPoseEstimate == null) {
-      return Optional.empty();
-    }
+    try {
+      if (!LimelightHelpers.getTV(this.limelightName)
+          || Math.abs(OdometryEnabledSwerveSubsystem.robotAngularVelocity) >= limitAngVelForUpdating) {
+        this.isDetectingLogger.append(false);
+        this.numberOfDetectedTagsLogger.append(0);
+        this.stateOfPoseUpdate.append("WITHOUT_TARGET_OR_HIGH_ANGULAR_VELOCITY");
+        return Optional.empty();
+      }
+      PoseEstimate limelightPoseEstimate;
+      if (useMegaTag1) {
+        limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(this.limelightName);
+        this.stateOfPoseUpdate.append("GETTING_MEGATAG_1");
+      } else {
+        limelightPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(this.limelightName);
+        this.stateOfPoseUpdate.append("GETTING_MEGATAG_2");
+      }
+      if (limelightPoseEstimate == null) {
+        return Optional.empty();
+      }
 
-    if (limelightPoseEstimate.tagCount == 1) {
-      useVisionHeadingCorrection = false;
-    } else {
-      useVisionHeadingCorrection = false;
-    }
+      if (limelightPoseEstimate.tagCount == 1) {
+        useVisionHeadingCorrection = false;
+      } else {
+        useVisionHeadingCorrection = false;
+      }
 
-    PoseEstimation poseEstimation = convertPoseEstimate(limelightPoseEstimate);
-    this.isDetectingLogger.append(true);
-    this.detectedPoseLogger.appendRadians(poseEstimation.estimatedPose.toPose2d());
-    this.numberOfDetectedTagsLogger.append(poseEstimation.numberOfTargetsUsed);
-    this.distToTag.append(poseEstimation.distanceToTag);
-    if (poseOutOfField(poseEstimation)) {
-      this.stateOfPoseUpdate.append("REJECTED_BY_OUT_OF_THE_FIELD_ESTIMATION");
+      PoseEstimation poseEstimation = convertPoseEstimate(limelightPoseEstimate);
+      this.isDetectingLogger.append(true);
+      this.detectedPoseLogger.appendRadians(poseEstimation.estimatedPose.toPose2d());
+      this.numberOfDetectedTagsLogger.append(poseEstimation.numberOfTargetsUsed);
+      this.distToTag.append(poseEstimation.distanceToTag);
+      if (poseOutOfField(poseEstimation)) {
+        this.stateOfPoseUpdate.append("REJECTED_BY_OUT_OF_THE_FIELD_ESTIMATION");
+        return Optional.empty();
+      }
+      if (only2TagsMeasurements && poseEstimation.numberOfTargetsUsed < 2) {
+        this.stateOfPoseUpdate.append("REJECTED_BY_ONLY_2_TAGS_MEASUREMENTS");
+        return Optional.empty();
+      }
+
+      return Optional.of(poseEstimation);
+    } catch (Exception e) {
       return Optional.empty();
     }
-    if (only2TagsMeasurements && poseEstimation.numberOfTargetsUsed < 2) {
-      this.stateOfPoseUpdate.append("REJECTED_BY_ONLY_2_TAGS_MEASUREMENTS");
-      return Optional.empty();
-    }
-
-    return Optional.of(poseEstimation);
   }
 
   private boolean poseOutOfField(PoseEstimation pose2D) {

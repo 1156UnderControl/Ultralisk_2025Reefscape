@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ResetOdometry Right XY"
+            "name": "ResetOdometry Right XY With Vision"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Coral E Optimized"
+            "name": "Score Coral E Optimized Direct"
           }
         },
         {
@@ -70,6 +70,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SecondCollect 3 Corals Right"
           }
         }
       ]
