@@ -223,8 +223,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         overrideAutonomousPoseEstimator(null);
         break;
       case REEF_ESTIMATION:
-        overrideTeleOpPoseEstimator(reefPoseEstimator);
-        overrideAutonomousPoseEstimator(reefPoseEstimator);
+        // overrideTeleOpPoseEstimator(reefPoseEstimator);
+        // overrideAutonomousPoseEstimator(reefPoseEstimator);
+        overrideTeleOpPoseEstimator(null);
+        overrideAutonomousPoseEstimator(null);
         break;
       default:
         overrideTeleOpPoseEstimator(null);
