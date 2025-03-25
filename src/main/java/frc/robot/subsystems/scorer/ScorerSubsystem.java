@@ -73,7 +73,7 @@ public class ScorerSubsystem implements IScorer {
 
   private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
-  private StabilizeChecker stableAtCollectPose = new StabilizeChecker(0.1);
+  private StabilizeChecker stableSensors = new StabilizeChecker(0.2);
 
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
@@ -223,8 +223,8 @@ public class ScorerSubsystem implements IScorer {
     }
     if ((endEffectorMotor
         .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
-        && endEffectorAccelerated) && coralInfraRedSensor.getAsBoolean()
-        && stableAtCollectPose.isStableInCondition(() -> this.isAtCollectPosition())) {
+        && endEffectorAccelerated)
+        && stableSensors.isStableInCondition(() -> this.isAtCollectPosition() && coralInfraRedSensor.getAsBoolean())) {
       hasCoral = true;
       endEffectorAccelerated = false;
     }
