@@ -263,17 +263,21 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         : targetBranch.getTargetPoseToScore();
 
     if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.6) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true), 0.9);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true, false), 0.9);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
       return;
     }
 
     if (this.distanceToTargetBranch < 1.5) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true), 2.5);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true, false), 2.5);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
+      if (this.distanceToTargetBranch < 0.2) {
+        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, true), 1);
+        return;
+      }
       return;
     }
-    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true), 4);
+    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true, false), 4);
     this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
   }
 
@@ -287,17 +291,25 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         : targetBranch.getTargetPoseToScore();
 
     if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.6) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 0.9);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, true), 0.9);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
+      if (this.distanceToTargetBranch < 0.2) {
+        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, true), 1);
+        return;
+      }
       return;
     }
 
     if (this.distanceToTargetBranch < 1.5) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 2.5);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 2.5);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
+      if (this.distanceToTargetBranch < 0.2) {
+        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, true), 1);
+        return;
+      }
       return;
     }
-    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 4);
+    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 4);
     this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
   }
 
@@ -309,11 +321,15 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         : targetBranch.getTargetPoseToScore();
     if (this.distanceToTargetBranch < 3) {
       if (this.distanceToTargetBranch < 1) {
-        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 1);
+        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 1);
         this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";
+        if (this.distanceToTargetBranch < 0.2) {
+          driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, true), 1);
+          return;
+        }
         return;
       }
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 2);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 2);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR";
     } else {
       driveAlignAngleJoystick();
@@ -327,18 +343,32 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
         : targetBranch.getTargetPoseToScore();
 
-    if (elevatorAtHighPositionSupplier.get()) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 0.7);
+    if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 1) {
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, true), 0.7);
+      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
+      return;
+    } else if (elevatorAtHighPositionSupplier.get()) {
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 0.7);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
       return;
     }
 
     if (this.distanceToTargetBranch < 2) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 1.5);
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 1.5);
       this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
       return;
     }
-    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 3.5);
+    if (this.distanceToTargetBranch < 1) {
+      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 1.5);
+      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
+      if (this.distanceToTargetBranch < 0.2) {
+        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, true), 1);
+        return;
+      }
+      return;
+    }
+
+    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false, false), 3.5);
     this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
   }
 
@@ -429,7 +459,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     driveToPose(new Pose2d(15, 2, new Rotation2d(Units.degreesToRadians(180))));
   }
 
-  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack, boolean goDirect) {
+  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack, boolean goDirect, boolean lockedAngle) {
     if (moveBack) {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.25, 0.0));
       this.goToPoseTranslationDeadband = 0.05;
@@ -442,22 +472,29 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     if (goDirect) {
       return goal;
     }
-    return this.calculateReefAvoidenceTarget(robot, goal);
+    return this.calculateReefAvoidenceTarget(robot, goal, lockedAngle);
   }
 
-  private Pose2d calculateReefAvoidenceTarget(Pose2d robot, Pose2d goal) {
+  private Pose2d calculateReefAvoidenceTarget(Pose2d robot, Pose2d goal, boolean lockedAngle) {
     var offset = robot.relativeTo(goal);
     double yDistance = Math.abs(offset.getY());
     double xDistance = Math.abs(offset.getX());
+    double xRotation = offset.getRotation().getDegrees();
     double shiftXT = MathUtil.clamp(
         (yDistance / (Reef.faceLength * 2)) + ((xDistance - 0.3) / (Reef.faceLength * 3)),
         0.0,
         1.0);
     double shiftYT = MathUtil.clamp(offset.getX() / Reef.faceLength, 0.0, 1.0);
-    return goal.transformBy(
-        GeomUtil.toTransform2d(
-            -shiftXT * 1.2,
-            Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())));
+    if (lockedAngle) {
+      return goal.transformBy(
+          GeomUtil.toTransform2d(new Pose2d(new Translation2d(-shiftXT * 1.2,
+              Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())), new Rotation2d(xRotation))));
+    } else {
+      return goal.transformBy(
+          GeomUtil.toTransform2d(
+              -shiftXT * 1.2,
+              Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())));
+    }
   }
 
   @Override
