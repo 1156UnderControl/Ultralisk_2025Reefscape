@@ -177,7 +177,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   public void driveRotating(boolean rotateRight) {
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
-        controller.getXtranslation(), rotateRight ? -1 : 1);
+        controller.getXtranslation(), rotateRight ? -1.5 : 1.5);
     this.state = "DRIVE_ALIGN_ANGLE_ROTATING_RIGHT?:" + Boolean.toString(rotateRight);
     this.driveFieldOriented(desiredSpeeds);
   }
