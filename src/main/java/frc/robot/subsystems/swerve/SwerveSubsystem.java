@@ -479,7 +479,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     var offset = robot.relativeTo(goal);
     double yDistance = Math.abs(offset.getY());
     double xDistance = Math.abs(offset.getX());
-    double xRotation = offset.getRotation().getDegrees();
+    double xRotation = Math.atan(offset.getX() / offset.getY());
     double shiftXT = MathUtil.clamp(
         (yDistance / (Reef.faceLength * 2)) + ((xDistance - 0.3) / (Reef.faceLength * 3)),
         0.0,
