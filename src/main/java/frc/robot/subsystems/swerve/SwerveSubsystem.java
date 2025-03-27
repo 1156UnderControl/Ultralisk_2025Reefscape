@@ -432,7 +432,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack, boolean goDirect) {
     if (moveBack) {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.25, 0.0));
-      this.goToPoseTranslationDeadband = 0.05;
+      this.goToPoseTranslationDeadband = 0.1;
       this.goToPoseHeadingDeadband = 10;
     } else {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
