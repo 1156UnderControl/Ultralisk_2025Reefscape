@@ -530,7 +530,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isElevatorInHighPosition() {
-    return this.elevatorMotorLeader.getPosition() > 1.0;
+    return this.elevatorMotorLeader.getPosition() > 0.9;
   }
 
   private double goStraightToTargetHeightProvider() {
