@@ -13,6 +13,6 @@ public class AutoIntakeCoralPosition extends SequentialCommandGroup {
   public AutoIntakeCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(new MoveScorerToCollectPosition(superStructure),
         Commands.race(new CollectCoralFromHP(superStructure), new SwerveAlignWithCoralStation(swerve)),
-        Commands.waitSeconds(0.2));
+        Commands.waitSeconds(0.35));
   }
 }

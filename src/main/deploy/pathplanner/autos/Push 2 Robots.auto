@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "First Point - Push Robots"
+            "name": "ResetOdometry Right XY"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Coral Level L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral H"
           }
         },
         {

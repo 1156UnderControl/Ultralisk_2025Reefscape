@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Second Point - 4 Corals Path"
+            "pathName": null
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Third Point - 4 Corals Path"
+            "pathName": null
           }
         },
         {
@@ -79,7 +79,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Fourth Point - 4 Corals Path"
+            "pathName": null
           }
         }
       ]

@@ -32,19 +32,19 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
 
   private AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
-  CustomBooleanLogger isDetectingLogger;
+  private CustomBooleanLogger isDetectingLogger;
 
-  CustomPose2dLogger detectedPoseLogger;
+  private CustomPose2dLogger detectedPoseLogger;
 
-  CustomDoubleLogger numberOfDetectedTagsLogger;
+  private CustomDoubleLogger numberOfDetectedTagsLogger;
 
-  CustomDoubleLogger distToTag;
+  private CustomDoubleLogger distToTag;
 
   CustomStringLogger stateOfPoseUpdate;
 
   CustomDoubleLogger stdDevXYLogger;
 
-  CustomDoubleLogger stdDevThetaLogger;
+  private CustomDoubleLogger stdDevThetaLogger;
 
   private Boolean useVisionHeadingCorrection = false;
 
@@ -96,42 +96,46 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
   }
 
   public Optional<PoseEstimation> getEstimatedPose(Pose2d referencePose) {
-    this.photonPoseEstimator.setReferencePose(referencePose);
-    this.photonPoseEstimator.addHeadingData(Timer.getFPGATimestamp(), referencePose.getRotation());
-    List<PhotonPipelineResult> results = camera.getAllUnreadResults();
-    if (results.isEmpty()) {
-      return Optional.empty();
-    }
-    Optional<EstimatedRobotPose> photonPoseEstimation = this.photonPoseEstimator
-        .update(results.get(results.size() - 1));
-    if (!photonPoseEstimation.isPresent()) {
-      isDetectingLogger.append(false);
-      stateOfPoseUpdate.append("NO_TARGETS");
-      return Optional.empty();
-    }
-    isDetectingLogger.append(true);
-
-    PoseEstimation poseEstimation = convertPhotonPoseEstimation(photonPoseEstimation.get());
-    if (only2TagsMeasurements && poseEstimation.numberOfTargetsUsed < 2) {
-      stateOfPoseUpdate.append("LESS_THAN_2_TARGETS");
-      return Optional.empty();
-    }
-    if (poseEstimation.numberOfTargetsUsed == 1) {
-      if (photonPoseEstimation.get().targetsUsed.get(0).getPoseAmbiguity() > 0.35) {
-        stateOfPoseUpdate.append("HIGH_AMBIGUITY");
+    try {
+      this.photonPoseEstimator.setReferencePose(referencePose);
+      this.photonPoseEstimator.addHeadingData(Timer.getFPGATimestamp(), referencePose.getRotation());
+      List<PhotonPipelineResult> results = camera.getAllUnreadResults();
+      if (results.isEmpty()) {
         return Optional.empty();
       }
-
-      if (poseEstimation.distanceToTag > 2.7) {
-        stateOfPoseUpdate.append("TOO_FAR_FROM_ONE_TAG");
+      Optional<EstimatedRobotPose> photonPoseEstimation = this.photonPoseEstimator
+          .update(results.get(results.size() - 1));
+      if (!photonPoseEstimation.isPresent()) {
+        isDetectingLogger.append(false);
+        stateOfPoseUpdate.append("NO_TARGETS");
         return Optional.empty();
       }
+      isDetectingLogger.append(true);
+
+      PoseEstimation poseEstimation = convertPhotonPoseEstimation(photonPoseEstimation.get());
+      if (only2TagsMeasurements && poseEstimation.numberOfTargetsUsed < 2) {
+        stateOfPoseUpdate.append("LESS_THAN_2_TARGETS");
+        return Optional.empty();
+      }
+      if (poseEstimation.numberOfTargetsUsed == 1) {
+        if (photonPoseEstimation.get().targetsUsed.get(0).getPoseAmbiguity() > 0.35) {
+          stateOfPoseUpdate.append("HIGH_AMBIGUITY");
+          return Optional.empty();
+        }
+
+        if (poseEstimation.distanceToTag > 2.7) {
+          stateOfPoseUpdate.append("TOO_FAR_FROM_ONE_TAG");
+          return Optional.empty();
+        }
+      }
+      distToTag.append(poseEstimation.distanceToTag);
+      numberOfDetectedTagsLogger.append(poseEstimation.numberOfTargetsUsed);
+      detectedPoseLogger.appendRadians(poseEstimation.estimatedPose.toPose2d());
+      stateOfPoseUpdate.append("UPDATING_POSE");
+      return Optional.of(poseEstimation);
+    } catch (Exception e) {
+      return Optional.empty();
     }
-    distToTag.append(poseEstimation.distanceToTag);
-    numberOfDetectedTagsLogger.append(poseEstimation.numberOfTargetsUsed);
-    detectedPoseLogger.appendRadians(poseEstimation.estimatedPose.toPose2d());
-    stateOfPoseUpdate.append("UPDATING_POSE");
-    return Optional.of(poseEstimation);
   }
 
   private PoseEstimation convertPhotonPoseEstimation(EstimatedRobotPose photonPoseEstimation) {
@@ -151,6 +155,10 @@ public class PhotonVisionPoseEstimator implements PoseEstimator {
         avgTagDist,
         VecBuilder.fill(stdDevXY,
             stdDevXY, stdDevTheta));
+  }
+
+  public String getEstimatorName() {
+    return this.camera.getName();
   }
 
 }

@@ -283,6 +283,10 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     this.resetPose(initialHolonomicPose);
   }
 
+  public void resetTranslation(Pose2d translationToReset) {
+    this.resetTranslation(translationToReset.getTranslation());
+  }
+
   public void zeroGyro() {
     super.getPigeon2().setYaw(0);
   }
@@ -435,6 +439,7 @@ public abstract class BaseSwerveSubsystem extends TunerSwerveDrivetrain implemen
     applyFieldCentricDrivePointingAtAngle
         .withTargetDirection(Rotation2d.fromDegrees(targetHeadingDegrees))
         .withVelocityX(speeds.vxMetersPerSecond).withVelocityY(speeds.vyMetersPerSecond);
+
     setControl(applyFieldCentricDrivePointingAtAngle);
   }
 

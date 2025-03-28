@@ -150,15 +150,15 @@ public class SparkFlexMotor implements IMotor {
 
   @Override
   public void updateLogs() {
-    this.appliedOutputLog.append(this.motor.getAppliedOutput());
-    this.targetOutputLog.append(this.targetPercentage);
-    this.currentLog.append(this.motor.getOutputCurrent());
-    this.positionLog.append(this.motor.getEncoder().getPosition());
-    this.velocityLog.append(this.motor.getEncoder().getVelocity());
-    this.temperatureLog.append(this.motor.getMotorTemperature());
-    // this.faultsLog.append(this.motor.getFaults());
-    this.targetPositionLog.append(this.targetPosition);
-    this.targetSpeedLog.append(this.targetVelocity);
+    // this.appliedOutputLog.append(this.motor.getAppliedOutput());
+    // this.targetOutputLog.append(this.targetPercentage);
+    // this.currentLog.append(this.motor.getOutputCurrent());
+    // this.positionLog.append(this.motor.getEncoder().getPosition());
+    // this.velocityLog.append(this.motor.getEncoder().getVelocity());
+    // this.temperatureLog.append(this.motor.getMotorTemperature());
+    // // this.faultsLog.append(this.motor.getFaults());
+    // this.targetPositionLog.append(this.targetPosition);
+    // this.targetSpeedLog.append(this.targetVelocity);
   }
 
   private void configureSparkFlex(Supplier<REVLibError> config) {
@@ -194,6 +194,14 @@ public class SparkFlexMotor implements IMotor {
   @Override
   public void configureFeedForward(double Kg, double Ks, double Kv) {
     config.closedLoop.velocityFF(Kg);
+  }
+
+  @Override
+  public void setMaxMotorOutput(double maxOutput) {
+  }
+
+  @Override
+  public void setMinMotorOutput(double minOutput) {
   }
 
   @Override

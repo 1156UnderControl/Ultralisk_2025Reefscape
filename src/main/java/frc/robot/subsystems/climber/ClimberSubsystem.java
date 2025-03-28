@@ -2,16 +2,12 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
-import edu.wpi.first.epilogue.Logged;
-import edu.wpi.first.epilogue.Logged.Importance;
 import edu.wpi.first.wpilibj.Servo;
 import frc.Java_Is_UnderControl.Motors.IMotor;
 import frc.Java_Is_UnderControl.Motors.SparkMAXMotor;
 import frc.Java_Is_UnderControl.Motors.TalonFXMotor;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ClimberConstants;
-import frc.robot.constants.EndEffectorConstants;
-import frc.robot.constants.PivotConstants;
 
 public class ClimberSubsystem implements IClimber {
   private static ClimberSubsystem instance;
@@ -27,8 +23,9 @@ public class ClimberSubsystem implements IClimber {
 
   double armGoal = ClimberConstants.tunning_values_arm.setpoints.STOW_ANGLE;
 
-  @Logged(name = "State", importance = Importance.CRITICAL)
   private String state = "START";
+
+  private boolean stopClimber = false;
 
   public static ClimberSubsystem getInstance() {
     if (instance == null) {
@@ -48,6 +45,7 @@ public class ClimberSubsystem implements IClimber {
         ClimberConstants.tunning_values_arm.PID.P,
         ClimberConstants.tunning_values_arm.PID.I,
         ClimberConstants.tunning_values_arm.PID.D, 0);
+    climberArmMotor.setMinMotorOutput(-0.75);
     cageIntakeMotor.burnFlash();
     climberArmMotor.setMotorBrake(true);
     climberArmMotor.setPosition(0);
@@ -55,12 +53,13 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void climb() {
+    stopClimber = false;
     this.armGoal = ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE;
   }
 
   public void moveArmToPosition(double position, double arbFF) {
     double goal = limitGoalArm(position);
-    if (climberServoMotor.get() > 0.4 && goal > climberArmMotor.getPosition()) {
+    if (stopClimber) {
       climberArmMotor.set(0);
       return;
     }
@@ -69,9 +68,9 @@ public class ClimberSubsystem implements IClimber {
 
   private double limitGoalArm(double goal) {
     if (goal >= ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE) {
-      return PivotConstants.tunning_values_pivot.setpoints.MAX_ANGLE;
+      return ClimberConstants.tunning_values_arm.setpoints.MAX_ANGLE;
     } else if (goal <= ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE) {
-      return PivotConstants.tunning_values_pivot.setpoints.MIN_ANGLE;
+      return ClimberConstants.tunning_values_arm.setpoints.MIN_ANGLE;
     } else {
       return goal;
     }
@@ -96,25 +95,14 @@ public class ClimberSubsystem implements IClimber {
 
   @Override
   public void goToIntakeCagePosition() {
+    stopClimber = false;
     this.armGoal = ClimberConstants.tunning_values_arm.setpoints.INTAKE_CAGE_ANGLE;
   }
 
   @Override
   public void intakeCage() {
-    cageIntakeMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+    cageIntakeMotor.set(ClimberConstants.tunning_values_intake.setpoints.DUTY_CYCLE_INTAKE);
     state = "INTAKING_CAGE";
-  }
-
-  public void runCageIntakeDetection() {
-    if (this.cageIntakeMotor.getVelocity() >= 3000) {
-      this.cageIntakeAccelerated = true;
-    }
-    if (cageIntakeMotor
-        .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
-        && cageIntakeAccelerated) {
-      isCageCollected = true;
-      cageIntakeAccelerated = false;
-    }
   }
 
   @Override
@@ -147,5 +135,16 @@ public class ClimberSubsystem implements IClimber {
   @Override
   public void unlockClimber() {
     climberServoMotor.set(0);
+  }
+
+  @Override
+  public void stopClimberArm() {
+    stopClimber = true;
+  }
+
+  @Override
+  public void goToStowPosition() {
+    stopClimber = false;
+    this.armGoal = ClimberConstants.tunning_values_arm.setpoints.STOW_ANGLE;
   }
 }

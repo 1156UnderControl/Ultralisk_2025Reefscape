@@ -18,7 +18,6 @@ public class MoveScorerToScorePosition extends Command {
 
   @Override
   public void initialize() {
-    superStructure.intake.stopIntake();
     superStructure.scorer.prepareToPlaceCoralOnBranch();
     led.setSolidColor(LedColor.RED);
   }
