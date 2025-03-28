@@ -38,6 +38,44 @@ public class SwerveConstants {
     REEF_ESTIMATION, GLOBAL_POSE_ESTIMATION, AUTO_POSE_ESTIMATION;
   }
 
+  public class AutoAlignConstants {
+    public class PoseDeadBand {
+
+      public class Fast {
+        public static final double MAX_ERROR_AUTO_ALIGN_FAST = 4;
+        public static final double MID_ERROR_AUTO_ALIGN_FAST = 2.5;
+        public static final double MIN_ERROR_AUTO_ALIGN_FAST = 1.5;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.2;
+      }
+
+      public class Autonomous {
+        public static final double MAX_ERROR_AUTO_ALIGN_AUTO = 2;
+        public static final double MID_ERROR_AUTO_ALIGN_FAST = 0;
+        public static final double MIN_ERROR_AUTO_ALIGN_AUTO = 1.0;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.2;
+      }
+
+      public class Teleoperated {
+        public static final double MAX_ERROR_AUTO_ALIGN_AUTO = 3;
+        public static final double MID_ERROR_AUTO_ALIGN_FAST = 0;
+        public static final double MIN_ERROR_AUTO_ALIGN_AUTO = 1.0;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.2;
+      }
+
+      public static final double POSE_TRANSLATION_DEADBAND = 0.025;
+      public static final double POSE_HEADING_DEADBAND = 3;
+      public static final double POSE_TRANSLATION_DEADBAND_BACKUP = 0.05;
+      public static final double POSE_HEADING_DEADBAND_BACKUP = 10;
+
+    }
+
+    public class VelocitiesRelatedToDistance {
+      public static final double MAX_VELOCITY_POSITION = 2;
+      public static final double MIN_VELOCITY_POSITION = 1;
+      public static final double ELEVATOR_RAISED_VELOCITY_POSITION = 0.7;
+    }
+  }
+
   public class CoralStations {
     public class RedAliance {
       public static final Pose2d CORAL_STATION_RIGHT_POSE_FOR_ROBOT = new Pose2d(
