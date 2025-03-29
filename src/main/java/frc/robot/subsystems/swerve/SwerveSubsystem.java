@@ -150,16 +150,13 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         AutoAlignConstants.PoseDeadBand.FastDirect.MAX_ERROR_AUTO_ALIGN_FAST_DIRECT,
         AutoAlignConstants.PoseDeadBand.FastDirect.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST_DIRECT, "FAST_DIRECT",
         AutoAlignConstants.VelocitiesRelatedToDistance.FastDirect.MIN_VELOCITY_POSITION,
-        AutoAlignConstants.VelocitiesRelatedToDistance.FastDirect.MID_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.FastDirect.MAX_VELOCITY_POSITION);
 
     this.goToBranchConfigurationFast = new GoToBranchConfiguration(
         AutoAlignConstants.PoseDeadBand.Fast.MIN_ERROR_AUTO_ALIGN_FAST,
         AutoAlignConstants.PoseDeadBand.Fast.MAX_ERROR_AUTO_ALIGN_FAST,
-        AutoAlignConstants.PoseDeadBand.Fast.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST,
-        AutoAlignConstants.PoseDeadBand.Fast.ERROR_FOR_ELEVATOR_RAISED_FAST, "FAST",
+        AutoAlignConstants.PoseDeadBand.Fast.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST, "FAST",
         AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MIN_VELOCITY_POSITION,
-        AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MID_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MAX_VELOCITY_POSITION);
 
     this.goToBranchConfigurationAutonomous = new GoToBranchConfiguration(
@@ -167,7 +164,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         AutoAlignConstants.PoseDeadBand.Autonomous.MAX_ERROR_AUTO_ALIGN_AUTO,
         AutoAlignConstants.PoseDeadBand.Autonomous.MIN_ERROR_AUTO_ALIGN_AUTO, "AUTONOMOUS",
         AutoAlignConstants.VelocitiesRelatedToDistance.Autonomous.MIN_VELOCITY_POSITION,
-        AutoAlignConstants.VelocitiesRelatedToDistance.Autonomous.MID_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.Autonomous.MAX_VELOCITY_POSITION);
 
     this.goToBranchConfigurationTeleoperated = new GoToBranchConfiguration(
@@ -175,7 +171,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         AutoAlignConstants.PoseDeadBand.Teleoperated.MAX_ERROR_AUTO_ALIGN_TELEOPERATED,
         AutoAlignConstants.PoseDeadBand.Teleoperated.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED, "TELEOPERATED",
         AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MIN_VELOCITY_POSITION,
-        AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MAX_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MAX_VELOCITY_POSITION);
   }
 
@@ -297,7 +292,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void driveToBranchFastDirect(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationFastDirect.setBranch(branch, backupBranch);
+    this.goToBranchConfigurationFastDirect.setBranch(branch, backupBranch, true);
     this.goToBranchConfigurationFastDirect.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
     if (this.goToBranchConfigurationFastDirect.canDriveAimingAtPose()) {
@@ -311,7 +306,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void driveToBranchFast(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationFast.setBranch(branch, backupBranch);
+    this.goToBranchConfigurationFast.setBranch(branch, backupBranch, false);
     this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
     if (this.goToBranchConfigurationFast.canDriveAimingAtPose()) {
@@ -324,7 +319,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void goToBranchTeleoperated(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationTeleoperated.setBranch(branch, backupBranch);
+    this.goToBranchConfigurationTeleoperated.setBranch(branch, backupBranch, false);
     this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
     if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3) {
@@ -342,7 +337,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void goToBranchAutonomous(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationFast.setBranch(branch, backupBranch);
+    this.goToBranchConfigurationFast.setBranch(branch, backupBranch, false);
     this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
     if (this.goToBranchConfigurationFast.canDriveAimingAtPose()) {
