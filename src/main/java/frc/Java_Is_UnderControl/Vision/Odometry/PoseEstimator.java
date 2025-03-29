@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 
 public interface PoseEstimator {
 
+  public String getEstimatorName();
+
   public Optional<PoseEstimation> getEstimatedPose(Pose2d referencePose);
 
 }

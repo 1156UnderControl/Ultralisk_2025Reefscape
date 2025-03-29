@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 
@@ -66,6 +67,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
   private CustomBooleanLogger isAtTargetPoseLogger = new CustomBooleanLogger("/SwerveSubsystem/IsAtTargetPose");
 
   private CustomPose2dLogger poseVisionLogger = new CustomPose2dLogger("/SwerveSubsystem/PoseVision");
+
+  private CustomStringLogger poseEstimatorNameLogger = new CustomStringLogger("/SwerveSubsystem/PoseEstimatorName");
 
   // Create the constraints to use while pathfinding. The constraints defined in
   // the path will only be used for the path.
@@ -136,6 +139,7 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
       this.poseVisionLogger.appendRadians(poseVision);
       this.setVisionStdDev(estimatedPose.visionStdDev);
       this.addVisionMeasurement(poseVision, estimatedPose.timestampSeconds);
+      this.poseEstimatorNameLogger.append(poseEstimator.getEstimatorName());
     }
   }
 

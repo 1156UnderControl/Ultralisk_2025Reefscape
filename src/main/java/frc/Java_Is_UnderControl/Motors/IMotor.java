@@ -16,6 +16,10 @@ public interface IMotor {
 
   void configureFeedForward(double Kg, double Ks, double Kv);
 
+  void setMaxMotorOutput(double maxOutput);
+
+  void setMinMotorOutput(double minOutput);
+
   void configurePIDF(double P, double I, double D, double F, double Izone);
 
   void configurePIDF(double P, double I, double D, double F);

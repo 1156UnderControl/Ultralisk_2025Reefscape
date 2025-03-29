@@ -22,8 +22,11 @@ public class MultiCameraPoseEstimator implements PoseEstimator {
 
   CustomDoubleLogger stdDevThetaLogger;
 
-  public MultiCameraPoseEstimator(List<PoseEstimator> poseEstimators) {
+  String multiPoseEstimatorName;
+
+  public MultiCameraPoseEstimator(List<PoseEstimator> poseEstimators, String multiPoseEstimatorName) {
     this.poseEstimatorsList = poseEstimators;
+    this.multiPoseEstimatorName = multiPoseEstimatorName;
     this.detectedPoseLogger = new CustomPose2dLogger("/Vision/MultiCameraEstimator/DetectedPose");
     this.numberOfDetectedTagsLogger = new CustomDoubleLogger("/Vision/MultiCameraEstimator/NumberOfDetectedTags");
   }
@@ -68,4 +71,8 @@ public class MultiCameraPoseEstimator implements PoseEstimator {
     return Optional.of(poseEstimation);
   }
 
+  @Override
+  public String getEstimatorName() {
+    return this.multiPoseEstimatorName;
+  }
 }

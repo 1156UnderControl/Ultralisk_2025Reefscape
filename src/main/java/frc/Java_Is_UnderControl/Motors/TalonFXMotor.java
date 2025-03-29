@@ -154,14 +154,14 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void updateLogs() {
-    this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
-    this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
-    this.positionLog.append(this.getPosition());
-    this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
-    this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
-    this.faultsLog.append(this.motor.getFaultField().getValue());
-    this.targetPositionLog.append(this.targetPosition);
-    this.targetSpeedLog.append(this.targetVelocity);
+    // this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
+    // this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
+    // this.positionLog.append(this.getPosition());
+    // this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
+    // this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
+    // this.faultsLog.append(this.motor.getFaultField().getValue());
+    // this.targetPositionLog.append(this.targetPosition);
+    // this.targetSpeedLog.append(this.targetVelocity);
   }
 
   @Override
@@ -243,6 +243,16 @@ public class TalonFXMotor implements IMotor {
 
     // TODO: Configure Status Frame 2 thru 21 if necessary
     // https://v5.docs.ctr-electronics.com/en/stable/ch18_CommonAPI.html#setting-status-frame-periods
+  }
+
+  public void setMaxMotorOutput(double maxOutput) {
+    talonConfiguration.MotorOutput.withPeakForwardDutyCycle(maxOutput);
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
+  }
+
+  public void setMinMotorOutput(double minOutput) {
+    talonConfiguration.MotorOutput.withPeakReverseDutyCycle(minOutput);
+    talonConfigurator.apply(talonConfiguration.MotorOutput);
   }
 
   @Override

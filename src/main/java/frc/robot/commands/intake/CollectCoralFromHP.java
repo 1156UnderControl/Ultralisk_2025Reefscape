@@ -16,7 +16,6 @@ public class CollectCoralFromHP extends Command {
 
   @Override
   public void initialize() {
-    superStructure.intake.intake();
     superStructure.scorer.intakeFromHP();
     superStructure.led.setSolidColor(LedColor.RED);
   }

@@ -13,6 +13,6 @@ public class CollectPosition extends SequentialCommandGroup {
   public CollectPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(Commands.race(new MoveScorerToCollectPosition(superStructure), new SwerveAngleWithCoralStation(swerve)),
         Commands.runOnce(() -> superStructure.led.setSolidColor(LedColor.BLUE)),
-        Commands.waitSeconds(0.35));
+        Commands.waitSeconds(0.6));
   }
 }

@@ -15,6 +15,6 @@ public class AutoIntakeCoralPosition extends SequentialCommandGroup {
     addCommands(new MoveScorerToCollectPosition(superStructure),
         Commands.race(new CollectCoralFromHP(superStructure), new SwerveAlignWithCoralStation(swerve)),
         Commands.runOnce(() -> superStructure.led.setSolidColor(LedColor.WHITE)),
-        Commands.waitSeconds(0.2));
+        Commands.waitSeconds(0.35));
   }
 }

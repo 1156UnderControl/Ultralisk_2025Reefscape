@@ -29,10 +29,16 @@ public class ElevatorConstants {
       public static final double L2_HEIGHT = 0.8;
       public static final double L3_HEIGHT = 1.19;
       public static final double L4_HEIGHT = 2.1;
-      public static final double ALGAE_REMOVAL_MID = 1.14;
+      public static final double ALGAE_REMOVAL_MID = 1.17;
       public static final double ALGAE_REMOVAL_LOW = 0.78;
       public static final double SECURE_FOR_PIVOT_ROTATION = 0.60;
       public static final double COLLECT_HEIGHT = MIN_HEIGHT;
+    }
+
+    public class stable_transition {
+      public static final double DISTANCE_FOR_FULL_DEPLOYMENT = 0.2;
+      public static final double DISTANCE_FOR_DEPLOYMENT_START = 1.3;
+      public static final double SAFE_CRUISE_HEIGHT = 1.1;
     }
   }
 }

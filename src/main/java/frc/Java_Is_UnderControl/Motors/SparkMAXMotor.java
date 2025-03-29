@@ -146,17 +146,17 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void updateLogs() {
-    this.appliedOutputLog.append(this.getAppliedOutput());
-    this.targetOutputLog.append(this.targetPercentage);
-    this.currentLog.append(this.getVoltage());
-    this.positionLog.append(this.getPosition());
-    this.velocityLog.append(this.getVelocity());
-    this.temperatureLog.append(this.motor.getMotorTemperature());
-    // this.faultsLog.append(this.motor.getFaults());
-    this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
-    this.targetPositionLog.append(this.targetPosition);
-    this.targetSpeedLog.append(this.targetVelocity);
-    this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
+    // this.appliedOutputLog.append(this.getAppliedOutput());
+    // this.targetOutputLog.append(this.targetPercentage);
+    // this.currentLog.append(this.getVoltage());
+    // this.positionLog.append(this.getPosition());
+    // this.velocityLog.append(this.getVelocity());
+    // this.temperatureLog.append(this.motor.getMotorTemperature());
+    // // this.faultsLog.append(this.motor.getFaults());
+    // this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
+    // this.targetPositionLog.append(this.targetPosition);
+    // this.targetSpeedLog.append(this.targetVelocity);
+    // this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
   }
 
   private void configureSparkMax(Supplier<REVLibError> config) {
@@ -201,6 +201,14 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public void configureFeedForward(double Kg, double Ks, double Kv) {
     config.closedLoop.velocityFF(Kg);
+  }
+
+  @Override
+  public void setMaxMotorOutput(double maxOutput) {
+  }
+
+  @Override
+  public void setMinMotorOutput(double minOutput) {
   }
 
   @Override

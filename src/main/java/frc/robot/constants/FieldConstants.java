@@ -147,6 +147,7 @@ public class FieldConstants {
   public enum ReefLevel {
     L4(Units.inchesToMeters(72), -90),
     L3(Units.inchesToMeters(47.625), -35),
+    TO_L4(Units.inchesToMeters(47.625), -35),
     L2(Units.inchesToMeters(31.875), -35),
     L1(Units.inchesToMeters(18), 0);
 
