@@ -32,6 +32,14 @@ public class SwerveConstants {
           Rotation2d.k180deg);
       return transformedPose;
     }
+
+    public Pose2d getDefaultPoseToScore() {
+      Pose2d transformedPose = CoordinatesTransform.applyRotationToPoseAngle(
+          CoordinatesTransform
+              .getRetreatPose(AllianceFlipUtil.apply(Reef.branchPositions2d.get(branchIndex).get(ReefLevel.L4)), 0),
+          Rotation2d.k180deg);
+      return transformedPose;
+    }
   }
 
   public enum PoseEstimatorState {
@@ -41,25 +49,29 @@ public class SwerveConstants {
   public class AutoAlignConstants {
     public class PoseDeadBand {
 
+      public class FastDirect {
+        public static final double MAX_ERROR_AUTO_ALIGN_FAST_DIRECT = 1.5;
+        public static final double MIN_ERROR_AUTO_ALIGN_FAST_DIRECT = 0.6;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST_DIRECT = 0.2;
+      }
+
       public class Fast {
-        public static final double MAX_ERROR_AUTO_ALIGN_FAST = 4;
-        public static final double MID_ERROR_AUTO_ALIGN_FAST = 2.5;
-        public static final double MIN_ERROR_AUTO_ALIGN_FAST = 1.5;
+        public static final double MAX_ERROR_AUTO_ALIGN_FAST = 1.5;
+        public static final double MIN_ERROR_AUTO_ALIGN_FAST = 0.6;
         public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.2;
+        public static final double ERROR_FOR_ELEVATOR_RAISED_FAST = 0.6;
       }
 
       public class Autonomous {
         public static final double MAX_ERROR_AUTO_ALIGN_AUTO = 2;
-        public static final double MID_ERROR_AUTO_ALIGN_FAST = 0;
         public static final double MIN_ERROR_AUTO_ALIGN_AUTO = 1.0;
-        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.2;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_AUTO = 0.2;
       }
 
       public class Teleoperated {
-        public static final double MAX_ERROR_AUTO_ALIGN_AUTO = 3;
-        public static final double MID_ERROR_AUTO_ALIGN_FAST = 0;
-        public static final double MIN_ERROR_AUTO_ALIGN_AUTO = 1.0;
-        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.2;
+        public static final double MAX_ERROR_AUTO_ALIGN_TELEOPERATED = 3;
+        public static final double MIN_ERROR_AUTO_ALIGN_TELEOPERATED = 1.0;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED = 0.2;
       }
 
       public static final double POSE_TRANSLATION_DEADBAND = 0.025;
@@ -70,6 +82,29 @@ public class SwerveConstants {
     }
 
     public class VelocitiesRelatedToDistance {
+      public class FastDirect {
+        public static final double MIN_VELOCITY_POSITION = 0.9;
+        public static final double MID_VELOCITY_POSITION = 2.5;
+        public static final double MAX_VELOCITY_POSITION = 4;
+      }
+
+      public class Fast {
+        public static final double MIN_VELOCITY_POSITION = 0.9;
+        public static final double MID_VELOCITY_POSITION = 2.5;
+        public static final double MAX_VELOCITY_POSITION = 4;
+      }
+
+      public class Autonomous {
+        public static final double MIN_VELOCITY_POSITION = 0.7;
+        public static final double MID_VELOCITY_POSITION = 1.5;
+        public static final double MAX_VELOCITY_POSITION = 3.5;
+      }
+
+      public class Teleoperated {
+        public static final double MIN_VELOCITY_POSITION = 1.0;
+        public static final double MAX_VELOCITY_POSITION = 2.0;
+      }
+
       public static final double MAX_VELOCITY_POSITION = 2;
       public static final double MIN_VELOCITY_POSITION = 1;
       public static final double ELEVATOR_RAISED_VELOCITY_POSITION = 0.7;
