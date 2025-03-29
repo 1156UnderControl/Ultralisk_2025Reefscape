@@ -27,10 +27,12 @@ public class PivotConstants {
       public static final double MAX_ANGLE = 220;
       public static final double MIN_ANGLE = 0;
       public static final double DEFAULT_ANGLE = 100;
+      public static final double DEFAULT_ALGAE_ANGLE = 100;
       public static final double L1_ANGLE = 129;
       public static final double L2_ANGLE = 170.5;
       public static final double L3_ANGLE = 170.5;
       public static final double L4_ANGLE = 210;
+      public static final double NET_ANGLE = 210;
       public static final double ALGAE_MID_REMOVAL = 173;
       public static final double ALGAE_LOW_REMOVAL = 173;
       public static final double SECURE_FOR_ELEVATOR_UP = 95;

@@ -11,6 +11,10 @@ public interface IScorer {
 
   boolean hasCoral();
 
+  boolean hasAlgae();
+
+  void prepareToPlaceAlgaeOnNet();
+
   void intakeFromHP();
 
   void stopIntakeFromHP();
@@ -26,6 +30,8 @@ public interface IScorer {
   void stopEndEffector();
 
   void moveScorerToDefaultPosition();
+
+  void moveScorerToAlgaeDefaultPosition();
 
   void placeCoral();
 
