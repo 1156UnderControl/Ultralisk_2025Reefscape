@@ -33,7 +33,7 @@ public interface IScorer {
 
   void moveScorerToAlgaeDefaultPosition();
 
-  void placeCoral();
+  void placeObject();
 
   void homeElevator();
 
@@ -64,8 +64,6 @@ public interface IScorer {
   void setTargetBranchLevel(ReefLevel reefHeight);
 
   void setTargetAlgaeHeight(AlgaeHeight algaeHeight);
-
-  boolean hasPlaced();
 
   void setCoastScorer();
 

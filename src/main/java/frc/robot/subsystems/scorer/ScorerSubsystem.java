@@ -54,6 +54,8 @@ public class ScorerSubsystem implements IScorer {
 
   CustomBooleanLogger hasCoralLog = new CustomBooleanLogger("/ScorerSubsystem/hasCoral");
 
+  CustomBooleanLogger hasAlgaeLog = new CustomBooleanLogger("/ScorerSubsystem/hasAlgae");
+
   CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
 
   CustomStringLogger targetReefLevelLog = new CustomStringLogger("/ScorerSubsystem/targetReefLevel");
@@ -152,6 +154,7 @@ public class ScorerSubsystem implements IScorer {
     pivotMotor.updateLogs();
     endEffectorMotor.updateLogs();
     hasCoralLog.append(this.hasCoral);
+    hasAlgaeLog.append(this.hasAlgae);
     hasAcceleratedLog.append(this.endEffectorAccelerated);
     scorerStateLogger.append(this.state);
     targetBranchLevelLogger.append(this.targetReefLevel.name());
@@ -159,6 +162,7 @@ public class ScorerSubsystem implements IScorer {
     targetReefLevelLog.append(this.targetReefLevel.name());
     SmartDashboard.putString("Scorer/TargetLevelName", this.targetReefLevel.name());
     SmartDashboard.putString("Scorer/Target Reef Branch", branchHeightTarget);
+    SmartDashboard.putBoolean("Scorer/Has Algae", this.hasAlgae());
     SmartDashboard.putBoolean("Scorer/Has Coral", this.hasCoral());
     SmartDashboard.putBoolean("Infra Red Has Coral", coralInfraRedSensor.getBoolean());
   }
@@ -374,25 +378,21 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void placeCoral() {
+  public void placeObject() {
     if (targetReefLevel == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
     }
     this.hasCoral = false;
+    this.hasAlgae = false;
     this.elevatorHasHomed = false;
-    this.state = "PLACING_CORAL";
+    this.state = "PLACING_OBJECT";
   }
 
   @Override
   public boolean isSecuredToPlaceCoral() {
     return isPivotAndElevatorAtSetpoint();
-  }
-
-  @Override
-  public boolean hasPlaced() {
-    return !hasCoral;
   }
 
   private double limitGoalElevator(double goal) {
