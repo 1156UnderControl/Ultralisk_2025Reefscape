@@ -26,7 +26,7 @@ public class MoveScorerToDefaultPosition extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    led.setSolidColor(LedColor.PURPLE);
+    led.setSolidColor(LedColor.GREEN);
   }
 
   @Override

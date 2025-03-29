@@ -18,7 +18,7 @@ public class CollectCoralFromHP extends Command {
   public void initialize() {
     superStructure.intake.intake();
     superStructure.scorer.intakeFromHP();
-    led.setSolidColor(LedColor.RED);
+    superStructure.led.setSolidColor(LedColor.RED);
   }
 
   @Override
@@ -28,7 +28,7 @@ public class CollectCoralFromHP extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    led.setSolidColor(LedColor.GREEN);
+    superStructure.led.setSolidColor(LedColor.GREEN);
   }
 
   @Override

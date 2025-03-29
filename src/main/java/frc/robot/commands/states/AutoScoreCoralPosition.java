@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.Java_Is_UnderControl.LEDs.LedColor;
 import frc.robot.SuperStructure;
 import frc.robot.commands.swerve.SwerveGoToBranch;
 import frc.robot.commands.util.GoAndRaiseElevator;
@@ -21,6 +22,7 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
   public AutoScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
     addCommands(new InstantCommand(() -> hasCancelledAutoMove = false),
         new GoAndRaiseElevator(swerve, superStructure, branch),
+        Commands.runOnce(() -> superStructure.led.setSolidColor(LedColor.PURPLE)),
         new SwerveGoToBranch(swerve, branch, false).until(driverController.isForcingDriverControl().or(() -> {
           if (operatorKeyboard.scoreCoral().getAsBoolean()) {
             hasCancelledAutoMove = true;

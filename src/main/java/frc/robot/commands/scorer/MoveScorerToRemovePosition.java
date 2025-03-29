@@ -17,7 +17,7 @@ public class MoveScorerToRemovePosition extends Command {
   @Override
   public void initialize() {
     superStructure.scorer.removeAlgaeFromBranch();
-    led.setSolidColor(LedColor.RED);
+    superStructure.led.setSolidColor(LedColor.RED);
   }
 
   @Override
@@ -32,7 +32,7 @@ public class MoveScorerToRemovePosition extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    led.setSolidColor(LedColor.GREEN);
+    superStructure.led.setSolidColor(LedColor.GREEN);
   }
 
   @Override

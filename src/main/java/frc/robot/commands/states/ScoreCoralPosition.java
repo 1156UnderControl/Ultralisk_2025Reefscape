@@ -17,7 +17,7 @@ public class ScoreCoralPosition extends SequentialCommandGroup {
     addCommands(new MoveScorerToScorePosition(superStructure),
         Commands.waitUntil(operatorKeyboard.scoreCoral()),
         Commands.run(() -> superStructure.scorer.placeCoral(), superStructure).withTimeout(Seconds.of(1)),
-        Commands.runOnce(() -> led.setSolidColor(LedColor.GREEN)),
+        Commands.runOnce(() -> superStructure.led.setSolidColor(LedColor.GREEN)),
         withTimeout(Seconds.of(1)),
         Commands.idle(superStructure));
   }
