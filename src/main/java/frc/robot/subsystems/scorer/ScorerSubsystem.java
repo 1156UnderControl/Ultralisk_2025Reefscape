@@ -348,19 +348,6 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void homeElevator() {
-    if (!elevatorHasHomed) {
-      elevatorMotorLeader.set(0.1);
-      this.state = "HOMING_ELEVATOR";
-    } else if (Math.abs(elevatorMotorLeader.getVelocity()) < 0.1) {
-      this.state = "ELEVATOR_HOMED";
-      elevatorMotorLeader.set(0);
-      elevatorMotorLeader.setPosition(ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND);
-      elevatorHasHomed = true;
-    }
-  }
-
-  @Override
   public void placeCoral() {
     if (targetReefLevel == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);

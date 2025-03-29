@@ -60,7 +60,6 @@ public interface IMotor {
    *                        is rotations)
    *                        </ul>
    */
-
   void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration,
       double positionErrorAllowed);
 
