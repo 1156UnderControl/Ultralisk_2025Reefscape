@@ -25,5 +25,7 @@ public interface ISwerve {
 
   public boolean swerveIsToCloseToReefForLiftingElevador();
 
-  public boolean isAtTargetPosition();
+  public boolean isAtTargetPositionWithHeading();
+
+  public boolean isAtTargetPositionWithoutHeading();
 }

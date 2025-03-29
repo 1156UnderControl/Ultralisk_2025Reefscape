@@ -28,7 +28,7 @@ public class SwerveGoToBranch extends Command {
 
   @Override
   public boolean isFinished() {
-    return this.swerve.isAtTargetPosition();
+    return this.swerve.isAtTargetPositionWithoutHeading();
   }
 
   @Override

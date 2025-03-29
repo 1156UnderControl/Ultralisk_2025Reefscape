@@ -432,9 +432,15 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public boolean isAtTargetPosition() {
+  public boolean isAtTargetPositionWithHeading() {
     return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(this.goToPoseTranslationDeadband,
         this.goToPoseTranslationDeadband, this.goToPoseHeadingDeadband));
+  }
+
+  @Override
+  public boolean isAtTargetPositionWithoutHeading() {
+    return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(this.goToPoseTranslationDeadband,
+        this.goToPoseTranslationDeadband));
   }
 
   public void driveToPoseTest() {

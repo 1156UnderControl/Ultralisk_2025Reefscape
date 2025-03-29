@@ -224,6 +224,18 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     return isAtTargetPose;
   }
 
+  protected boolean isAtTargetPose(double xAxisToleranceMeters, double yAxisToleranceMeters) {
+    double xAxisDistance = Math.abs(this.getPose().getX() - this.targetPose.getX());
+    double yAxisDistance = Math.abs(this.getPose().getY() - this.targetPose.getY());
+    boolean isAtXAxis = xAxisDistance <= xAxisToleranceMeters;
+    boolean isAtYAxis = yAxisDistance <= yAxisToleranceMeters;
+    boolean isAtTargetPose = isAtXAxis && isAtYAxis;
+    this.isAtTargetXAxisLogger.append(isAtXAxis);
+    this.isAtTargetYAxisLogger.append(isAtYAxis);
+    this.isAtTargetPoseLogger.append(isAtTargetPose);
+    return isAtTargetPose;
+  }
+
   @Override
   protected void driveFieldOriented(ChassisSpeeds targetSpeeds) {
     super.driveFieldOriented(targetSpeeds);
