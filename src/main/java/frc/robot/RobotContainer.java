@@ -22,8 +22,8 @@ import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimized;
-import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimizedDirect;
+import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
@@ -33,7 +33,7 @@ import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
-import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
@@ -227,13 +227,15 @@ public class RobotContainer {
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.LOW);
+          this.superStructure.scorer.setAlgaeManualControl(true);
         }));
 
     keyBoard.reefL2()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.MID);
+          this.superStructure.scorer.setAlgaeManualControl(true);
         }));
 
     keyBoard.reefL3()

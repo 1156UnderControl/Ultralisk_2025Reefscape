@@ -15,9 +15,11 @@ import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Util.Util;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.EndEffectorConstants;
-import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightScore;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.PivotConstants;
+import frc.robot.constants.SwerveConstants.TargetBranch;
 
 public class ScorerSubsystem implements IScorer {
 
@@ -43,6 +45,8 @@ public class ScorerSubsystem implements IScorer {
   private String state = "START";
 
   private String branchHeightTarget = "NONE";
+
+  private String algaeHeightTarget = "NONE";
 
   private String netHeightTarget = "NONE";
 
@@ -70,7 +74,11 @@ public class ScorerSubsystem implements IScorer {
 
   private ReefLevel netHeightLevel = ReefLevel.L1;
 
-  private AlgaeHeight targetAlgaeHeight = AlgaeHeight.LOW;
+  private ReefLevel netHeightLevel = ReefLevel.L1;
+
+  private AlgaeHeightReef algaeReefHeight = AlgaeHeightReef.LOW;
+
+  private AlgaeHeightScore algaeScoreHeight = AlgaeHeightScore.PROCESSOR;
 
   private boolean manualControl = false;
 
@@ -158,7 +166,7 @@ public class ScorerSubsystem implements IScorer {
     hasAcceleratedLog.append(this.endEffectorAccelerated);
     scorerStateLogger.append(this.state);
     targetBranchLevelLogger.append(this.targetReefLevel.name());
-    targetAlgaeLevelLogger.append(this.targetAlgaeHeight.name());
+    targetAlgaeLevelLogger.append(this.algaeScoreHeight.name());
     targetReefLevelLog.append(this.targetReefLevel.name());
     SmartDashboard.putString("Scorer/TargetLevelName", this.targetReefLevel.name());
     SmartDashboard.putString("Scorer/Target Reef Branch", branchHeightTarget);
@@ -309,6 +317,70 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
+  public void setAutoAlgaeLevel(TargetBranch targetBranch) {
+    setTargetAlgaeHeight(this.getAutoAlgaeLevel(targetBranch));
+  }
+
+  private AlgaeHeightReef getAutoAlgaeLevel(TargetBranch targetBranch) {
+    AlgaeHeightReef algaeHeight;
+    this.setAlgaeManualControl(false);
+
+    switch (targetBranch) {
+      case A:
+        algaeHeight = AlgaeHeightReef.MID;
+        break;
+      case B:
+        algaeHeight = AlgaeHeightReef.MID;
+        break;
+      case C:
+        algaeHeight = AlgaeHeightReef.LOW;
+        break;
+      case D:
+        algaeHeight = AlgaeHeightReef.LOW;
+        break;
+      case E:
+        algaeHeight = AlgaeHeightReef.MID;
+        break;
+      case F:
+        algaeHeight = AlgaeHeightReef.MID;
+        break;
+      case G:
+        algaeHeight = AlgaeHeightReef.LOW;
+        break;
+      case H:
+        algaeHeight = AlgaeHeightReef.LOW;
+        break;
+      case I:
+        algaeHeight = AlgaeHeightReef.MID;
+        break;
+      case J:
+        algaeHeight = AlgaeHeightReef.MID;
+        break;
+      case K:
+        algaeHeight = AlgaeHeightReef.LOW;
+        break;
+      case L:
+        algaeHeight = AlgaeHeightReef.LOW;
+        break;
+      default:
+        algaeHeight = AlgaeHeightReef.MID;
+        break;
+    }
+
+    return algaeHeight;
+  }
+
+  @Override
+  public void setAlgaeManualControl(boolean manualControl) {
+    this.manualAlgaeControl = manualControl;
+  }
+
+  @Override
+  public boolean isAlgaeControlManual() {
+    return this.manualAlgaeControl;
+  }
+
+  @Override
   public void removeAlgaeFromBranch() {
     assignAlgaeRemovalSetpointsForAlgaeHeight();
     runAlgaeIntakeDetection();
@@ -334,7 +406,7 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void assignAlgaeRemovalSetpointsForAlgaeHeight() {
-    switch (targetAlgaeHeight) {
+    switch (algaeReefHeight) {
       case LOW:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.ALGAE_REMOVAL_LOW;
         goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_LOW_REMOVAL;
@@ -346,6 +418,28 @@ public class ScorerSubsystem implements IScorer {
       default:
         break;
     }
+  }
+
+  private void assignSetpointsForAlgaeScore(AlgaeHeightScore levelAlgae) {
+    switch (algaeScoreHeight) {
+      case PROCESSOR:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.PROCESSOR_HEIGHT;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_LOW_REMOVAL;
+        break;
+      case NET:
+        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.NET_HEIGHT;
+        goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_MID_REMOVAL;
+        break;
+      default:
+        break;
+    }
+  }
+
+  @Override
+  public void preprareToScoreAlgae() {
+    assignSetpointsForAlgaeScore(this.algaeScoreHeight);
+    state = "PREPARE_TO_PLACE_CORAL";
+    algaeHeightTarget = this.targetReefLevel.name();
   }
 
   @Override
@@ -532,8 +626,8 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void setTargetAlgaeHeight(AlgaeHeight algaeHeight) {
-    this.targetAlgaeHeight = algaeHeight;
+  public void setTargetAlgaeHeight(AlgaeHeightReef algaeHeight) {
+    this.algaeReefHeight = algaeHeight;
   }
 
   @Override

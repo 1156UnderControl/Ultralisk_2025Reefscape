@@ -160,15 +160,28 @@ public class FieldConstants {
     public final double pitch;
   }
 
-  public enum AlgaeHeight {
-    MID(Units.inchesToMeters(72)),
-    LOW(Units.inchesToMeters(47.625));
+  public class Algae {
+    public enum AlgaeHeightReef {
+      MID(Units.inchesToMeters(72)),
+      LOW(Units.inchesToMeters(47.625));
 
-    AlgaeHeight(double height) {
-      this.height = height;
+      AlgaeHeightReef(double height) {
+        this.height = height;
+      }
+
+      public final double height;
     }
 
-    public final double height;
+    public enum AlgaeHeightScore {
+      NET(Units.inchesToMeters(72)),
+      PROCESSOR(Units.inchesToMeters(47.625));
+
+      AlgaeHeightScore(double height) {
+        this.height = height;
+      }
+
+      public final double height;
+    }
   }
 
 }
