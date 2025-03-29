@@ -284,7 +284,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   public void driveToBranch(TargetBranch branch, boolean backupBranch) {
     this.targetBranch = branch;
     if (DriverStation.isAutonomousEnabled()) {
-      goToBranchAutonomous(branch, backupBranch);
+      driveToBranchFast(branch, backupBranch);
       return;
     }
     goToBranchTeleoperated(branch, backupBranch);
@@ -333,19 +333,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       }
     } else {
       driveAlignAngleJoystick();
-    }
-  }
-
-  private void goToBranchAutonomous(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationFast.setBranch(branch, backupBranch, false);
-    this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
-        elevatorAtHighPositionSupplier);
-    if (this.goToBranchConfigurationFast.canDriveAimingAtPose()) {
-      driveToPoseAimingAtPosition(0, this.goToBranchConfigurationFast.getFinalPose(),
-          branch.getDefaultPoseToScore().getTranslation(), this.goToBranchConfigurationFast.getFinalVelocity());
-    } else {
-      driveToPose(this.goToBranchConfigurationFast.getFinalPose(),
-          this.goToBranchConfigurationFast.getFinalVelocity());
     }
   }
 
