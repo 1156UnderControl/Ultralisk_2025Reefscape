@@ -28,7 +28,8 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
           return hasCancelledAutoMove;
         })),
         new ParallelRaceGroup(Commands.idle(superStructure)
-            .until(operatorKeyboard.scoreCoral().or(() -> swerve.isAtTargetPosition()).or(() -> hasCancelledAutoMove)),
+            .until(operatorKeyboard.scoreCoral().or(() -> swerve.isAtTargetPositionWithoutHeading())
+                .or(() -> hasCancelledAutoMove)),
             Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)),
         Commands.run(() -> superStructure.scorer.placeCoral())
             .alongWith(Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)));
