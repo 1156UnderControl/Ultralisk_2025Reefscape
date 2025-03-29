@@ -19,12 +19,17 @@ public class MoveScorerToCollectPosition extends Command {
 
   @Override
   public void execute() {
+    if (superStructure.scorer.isAtCollectPosition()) {
+      superStructure.led.setSolidColor(LedColor.GREEN);
+    } else {
+      superStructure.led.setSolidColor(LedColor.RED);
+
+    }
     superStructure.scorer.intakeFromHP();
   }
 
   @Override
   public boolean isFinished() {
-    superStructure.led.setSolidColor(LedColor.RED);
     return superStructure.scorer.hasCoral();
   }
 }

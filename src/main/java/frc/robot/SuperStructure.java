@@ -49,14 +49,13 @@ public class SuperStructure extends SubsystemBase {
     this.totalCurrentDrawLogEntry.append(this.powerDistributionHub.getTotalCurrent());
   }
 
-    publi boolean scorerHasCoral() {
+  public boolean scorerHasCoral() {
     return this.scorer.hasCoral();
   }
 
   public void setCoastToRobot() {
     this.scorer.setCoastScorer();
-    thi
-
+    this.climber.setCoastClimber();
   }
 
   public void setBrakeToRobot() {
@@ -64,4 +63,12 @@ public class SuperStructure extends SubsystemBase {
     this.climber.setBrakeClimber();
   }
 
+  public boolean isRobotAbleToScore() {
+    // if (this.controlBoard.getDoNotScore()) {
+    return false;
+    // }
+    // return this.scorer.isPivotAtSetPointForAutoScore()
+    // && this.scorer.isElevatorAtSetPointForScoring();
+    // }
+  }
 }
