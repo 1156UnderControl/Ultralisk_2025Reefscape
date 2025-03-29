@@ -12,42 +12,39 @@ import frc.robot.constants.SwerveConstants.AutoAlignConstants;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 
 public class GoToBranchConfiguration {
-  TargetBranch branch;
-  boolean backupBranch;
-  double minErrorPose;
-  double midErrorPose;
-  double maxErrorPose;
-  double errorForRotationAlignPose;
-  double errorElevatorRaisedPose;
+  private TargetBranch branch;
+  private boolean backupBranch;
+  private double minErrorPose;
+  private double midErrorPose;
+  private double maxErrorPose;
+  private double errorForRotationAlignPose;
+  private double errorElevatorRaisedPose;
+  private double maxVelocity;
+  private double midVelocity;
+  private double minVelocity;
+  private double ultraVelocity;
+  private String goToBranchMode;
+  private boolean useMidError;
+  private boolean useRotationAlignPose;
+  private boolean useErrorElevatorRaisedPose;
 
-  double maxVelocity;
-  double midVelocity;
-  double minVelocity;
-  double ultraVelocity;
+  private double goToPoseTranslationDeadband = AutoAlignConstants.PoseDeadBand.POSE_TRANSLATION_DEADBAND_BACKUP;;
+  private double goToPoseHeadingDeadband = AutoAlignConstants.PoseDeadBand.POSE_HEADING_DEADBAND_BACKUP;
 
-  String goToBranchMode;
+  private Pose2d finalTargetPose;
 
-  boolean useMidError;
-  boolean useRotationAlignPose;
-  boolean useErrorElevatorRaisedPose;
+  private double finalVelocity;
 
-  double goToPoseTranslationDeadband = AutoAlignConstants.PoseDeadBand.POSE_TRANSLATION_DEADBAND_BACKUP;;
-  double goToPoseHeadingDeadband = AutoAlignConstants.PoseDeadBand.POSE_HEADING_DEADBAND_BACKUP;
+  private boolean canDriveAimingAtPose = false;
 
-  Pose2d finalTargetPose;
+  private String state;
 
-  double finalVelocity;
+  double distanceToTargetBranch;
 
-  boolean canDriveAimingAtPose = false;
-
-  String state;
-
-  public GoToBranchConfiguration(TargetBranch branch, boolean backupBranch, double minErrorPose, double maxErrorPose,
+  public GoToBranchConfiguration(double minErrorPose, double maxErrorPose,
       double errorForRotationAlignPose, double errorElevatorRaisedPose, String goToBranchMode, double minVelocity,
       double midVelocity, double maxVelocity) {
     this(false, true, true);
-    this.branch = branch;
-    this.backupBranch = backupBranch;
     this.minErrorPose = minErrorPose;
     this.maxErrorPose = maxErrorPose;
     this.errorElevatorRaisedPose = errorElevatorRaisedPose;
@@ -57,12 +54,10 @@ public class GoToBranchConfiguration {
     this.maxVelocity = maxVelocity;
   }
 
-  public GoToBranchConfiguration(double errorForRotationAlignPose, TargetBranch branch, boolean backupBranch,
+  public GoToBranchConfiguration(double errorForRotationAlignPose,
       double minErrorPose, double midErrorPose, double maxErrorPose, String goToBranchMode, double minVelocity,
       double midVelocity, double maxVelocity, double ultraVelocity) {
     this(true, true, false);
-    this.branch = branch;
-    this.backupBranch = backupBranch;
     this.minErrorPose = minErrorPose;
     this.maxErrorPose = maxErrorPose;
     this.errorForRotationAlignPose = errorForRotationAlignPose;
@@ -73,12 +68,10 @@ public class GoToBranchConfiguration {
     this.ultraVelocity = ultraVelocity;
   }
 
-  public GoToBranchConfiguration(TargetBranch branch, boolean backupBranch, double minErrorPose, double maxErrorPose,
+  public GoToBranchConfiguration(double minErrorPose, double maxErrorPose,
       double errorForRotationAlignPose, String goToBranchMode, double minVelocity, double midVelocity,
       double maxVelocity) {
     this(false, true, false);
-    this.branch = branch;
-    this.backupBranch = backupBranch;
     this.minErrorPose = minErrorPose;
     this.maxErrorPose = maxErrorPose;
     this.errorForRotationAlignPose = errorForRotationAlignPose;
@@ -88,12 +81,10 @@ public class GoToBranchConfiguration {
     this.maxVelocity = maxVelocity;
   }
 
-  public GoToBranchConfiguration(TargetBranch branch, boolean backupBranch, double minErrorPose, double midErrorPose,
+  public GoToBranchConfiguration(double minErrorPose, double midErrorPose,
       double maxErrorPose, double errorForRotationAlignPose, double errorElevatorRaisedPose, String goToBranchMode,
       double elevatorRaisedVelocity, double minVelocity, double midVelocity, double maxVelocity, double ultraVelocity) {
     this(true, true, true);
-    this.branch = branch;
-    this.backupBranch = backupBranch;
     this.minErrorPose = minErrorPose;
     this.midErrorPose = midErrorPose;
     this.maxErrorPose = maxErrorPose;
@@ -113,10 +104,9 @@ public class GoToBranchConfiguration {
     this.useErrorElevatorRaisedPose = useErrorElevatorRaisedPose;
   }
 
-  public void goToBranch(Pose2d robotPose, Pose2d driveTarget, Supplier<ReefLevel> scorerTargetReefLevelSupplier,
-      Supplier<Boolean> elevatorAtHighPositionSupplier, double goToPoseTranslationDeadband,
-      double goToPoseHeadingDeadband) {
-    double distanceToTargetBranch = branch.getTargetPoseToScore().getTranslation()
+  public void updateBranchData(Pose2d robotPose, Supplier<ReefLevel> scorerTargetReefLevelSupplier,
+      Supplier<Boolean> elevatorAtHighPositionSupplier) {
+    this.distanceToTargetBranch = branch.getTargetPoseToScore().getTranslation()
         .getDistance(robotPose.getTranslation());
     Pose2d targetBranchScorePose = scorerTargetReefLevelSupplier.get() == ReefLevel.L4
         ? CoordinatesTransform.getRetreatPose(branch.getTargetPoseToScore(), 0.05)
@@ -126,7 +116,7 @@ public class GoToBranchConfiguration {
       if (elevatorAtHighPositionSupplier.get() && distanceToTargetBranch < this.errorElevatorRaisedPose) {
         this.finalTargetPose = getDriveTarget(robotPose, targetBranchScorePose, this.backupBranch, this.backupBranch);
         this.finalVelocity = this.minVelocity;
-        this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
+        this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
         if (useRotationAlignPose) {
           if (distanceToTargetBranch < errorForRotationAlignPose) {
             this.canDriveAimingAtPose = true;
@@ -143,16 +133,20 @@ public class GoToBranchConfiguration {
       if (distanceToTargetBranch < this.maxErrorPose) {
         this.finalTargetPose = getDriveTarget(robotPose, targetBranchScorePose, backupBranch, false);
         this.finalVelocity = this.maxVelocity;
-        this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
+        this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_CLOSE_AUTONOMOUS";
         if (distanceToTargetBranch < this.midErrorPose) {
           this.finalTargetPose = getDriveTarget(robotPose, targetBranchScorePose, backupBranch, false);
           this.finalVelocity = this.midVelocity;
-          this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
-          if (distanceToTargetBranch < this.errorForRotationAlignPose) {
-            this.canDriveAimingAtPose = true;
+          this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_CLOSE_AUTONOMOUS";
+          if (distanceToTargetBranch < this.minErrorPose) {
             this.finalTargetPose = getDriveTarget(robotPose, targetBranchScorePose, backupBranch, false);
             this.finalVelocity = this.minVelocity;
-            return;
+            if (distanceToTargetBranch < this.errorForRotationAlignPose) {
+              this.canDriveAimingAtPose = true;
+              this.finalTargetPose = getDriveTarget(robotPose, targetBranchScorePose, backupBranch, false);
+              this.finalVelocity = this.minVelocity;
+              return;
+            }
           }
         }
         return;
@@ -161,7 +155,7 @@ public class GoToBranchConfiguration {
       if (distanceToTargetBranch < this.maxErrorPose) {
         this.finalTargetPose = getDriveTarget(robotPose, targetBranchScorePose, backupBranch, false);
         this.finalVelocity = this.midVelocity;
-        this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
+        this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_CLOSE_AUTONOMOUS";
 
         if (distanceToTargetBranch < this.errorForRotationAlignPose) {
           this.canDriveAimingAtPose = true;
@@ -174,8 +168,8 @@ public class GoToBranchConfiguration {
       this.finalVelocity = this.maxVelocity;
     }
     this.finalTargetPose = getDriveTarget(robotPose, targetBranchScorePose, backupBranch, false);
-    this.finalVelocity = this.maxVelocity;
-    this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
+    this.finalVelocity = this.ultraVelocity;
+    this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_FAR_AUTONOMOUS";
   }
 
   private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack, boolean goDirect) {
@@ -228,4 +222,18 @@ public class GoToBranchConfiguration {
   public double getFinalVelocity() {
     return this.finalVelocity;
   }
+
+  public boolean canDriveAimingAtPose() {
+    return this.canDriveAimingAtPose;
+  }
+
+  public void setBranch(TargetBranch targetBranch, boolean backupBranch) {
+    this.branch = targetBranch;
+    this.backupBranch = backupBranch;
+  }
+
+  public double getDistanceToTargetBranch() {
+    return this.distanceToTargetBranch;
+  }
+
 }
