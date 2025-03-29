@@ -44,47 +44,38 @@ public class GoToBranchConfiguration {
   public GoToBranchConfiguration(double minErrorPose, double maxErrorPose,
       double errorForRotationAlignPose, double errorElevatorRaisedPose, String goToBranchMode, double minVelocity,
       double midVelocity, double maxVelocity) {
-    this(false, true, true);
-    this.minErrorPose = minErrorPose;
-    this.maxErrorPose = maxErrorPose;
-    this.errorElevatorRaisedPose = errorElevatorRaisedPose;
-    this.goToBranchMode = goToBranchMode;
-    this.midVelocity = midVelocity;
-    this.minVelocity = minVelocity;
-    this.maxVelocity = maxVelocity;
+    this(minErrorPose, Double.NaN, maxErrorPose, errorForRotationAlignPose, errorElevatorRaisedPose, goToBranchMode,
+        minVelocity, midVelocity, maxVelocity, Double.NaN);
   }
 
   public GoToBranchConfiguration(double errorForRotationAlignPose,
       double minErrorPose, double midErrorPose, double maxErrorPose, String goToBranchMode, double minVelocity,
       double midVelocity, double maxVelocity, double ultraVelocity) {
-    this(true, true, false);
-    this.minErrorPose = minErrorPose;
-    this.maxErrorPose = maxErrorPose;
-    this.errorForRotationAlignPose = errorForRotationAlignPose;
-    this.goToBranchMode = goToBranchMode;
-    this.midVelocity = midVelocity;
-    this.minVelocity = minVelocity;
-    this.maxVelocity = maxVelocity;
-    this.ultraVelocity = ultraVelocity;
+    this(minErrorPose, midErrorPose, maxErrorPose, errorForRotationAlignPose, Double.NaN, goToBranchMode, minVelocity,
+        midVelocity, maxVelocity, ultraVelocity);
   }
 
   public GoToBranchConfiguration(double minErrorPose, double maxErrorPose,
       double errorForRotationAlignPose, String goToBranchMode, double minVelocity, double midVelocity,
       double maxVelocity) {
-    this(false, true, false);
-    this.minErrorPose = minErrorPose;
-    this.maxErrorPose = maxErrorPose;
-    this.errorForRotationAlignPose = errorForRotationAlignPose;
-    this.goToBranchMode = goToBranchMode;
-    this.midVelocity = midVelocity;
-    this.minVelocity = minVelocity;
-    this.maxVelocity = maxVelocity;
+    this(minErrorPose, Double.NaN, maxErrorPose, errorForRotationAlignPose, Double.NaN, goToBranchMode, minVelocity,
+        midVelocity, maxVelocity, Double.NaN);
   }
 
   public GoToBranchConfiguration(double minErrorPose, double midErrorPose,
       double maxErrorPose, double errorForRotationAlignPose, double errorElevatorRaisedPose, String goToBranchMode,
-      double elevatorRaisedVelocity, double minVelocity, double midVelocity, double maxVelocity, double ultraVelocity) {
-    this(true, true, true);
+      double minVelocity, double midVelocity, double maxVelocity, double ultraVelocity) {
+    this.useMidError = true;
+    this.useRotationAlignPose = true;
+    this.useErrorElevatorRaisedPose = true;
+    if (Double.isNaN(midErrorPose) && Double.isNaN(ultraVelocity) && Double.isNaN(errorElevatorRaisedPose)) {
+      this.useMidError = false;
+      this.useErrorElevatorRaisedPose = false;
+    } else if (Double.isNaN(midErrorPose) && Double.isNaN(ultraVelocity)) {
+      this.useMidError = false;
+    } else if (Double.isNaN(errorElevatorRaisedPose)) {
+      this.useErrorElevatorRaisedPose = false;
+    }
     this.minErrorPose = minErrorPose;
     this.midErrorPose = midErrorPose;
     this.maxErrorPose = maxErrorPose;
@@ -95,13 +86,6 @@ public class GoToBranchConfiguration {
     this.minVelocity = minVelocity;
     this.maxVelocity = maxVelocity;
     this.ultraVelocity = ultraVelocity;
-  }
-
-  private GoToBranchConfiguration(boolean useMidError, boolean useRotationAlignPose,
-      boolean useErrorElevatorRaisedPose) {
-    this.useMidError = useMidError;
-    this.useRotationAlignPose = useRotationAlignPose;
-    this.useErrorElevatorRaisedPose = useErrorElevatorRaisedPose;
   }
 
   public void updateBranchData(Pose2d robotPose, Supplier<ReefLevel> scorerTargetReefLevelSupplier,
