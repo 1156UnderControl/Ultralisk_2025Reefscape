@@ -27,8 +27,12 @@ import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
+import frc.robot.commands.states.AutoScoreCoralPosition;
+import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
+import frc.robot.commands.states.RemoveAlgaePosition;
+import frc.robot.commands.states.ScoreAlgaeNetPosition;
 import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.ReefLevel;
@@ -243,11 +247,8 @@ public class RobotContainer {
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain)
             .deadlineFor(Commands.run(() -> drivetrain.driveAlignAngleJoystickRemoveAlgae(), drivetrain)));
 
-            keyBoard.scoreAlgae()
-            .onTrue(new ScoreAlgaeNetPosition(superStructure, drivetrain))
-
-
-
+    keyBoard.scoreAlgae()
+        .onTrue(new ScoreAlgaeNetPosition(superStructure, drivetrain));
 
     keyBoard.alignToClimb().onTrue(new ClimbPosition(superStructure)
         .deadlineFor(Commands.runOnce(() -> drivetrain.setAngleForClimb())

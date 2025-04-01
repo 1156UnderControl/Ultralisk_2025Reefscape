@@ -15,7 +15,7 @@ public class ScoreAlgaeNetPosition extends SequentialCommandGroup {
   public ScoreAlgaeNetPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(new MoveScorerToScoreAlgaePosition(superStructure),
         Commands.waitUntil(operatorKeyboard.scoreAlgae()),
-        Commands.run(() -> superStructure.scorer.placeCoral(), superStructure).withTimeout(Seconds.of(1)),
+        Commands.run(() -> superStructure.scorer.placeAlgae(), superStructure).withTimeout(Seconds.of(1)),
         Commands.idle(superStructure));
   }
 }
