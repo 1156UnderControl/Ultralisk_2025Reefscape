@@ -22,8 +22,8 @@ import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimized;
-import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimizedDirect;
+import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
@@ -87,8 +87,11 @@ public class RobotContainer {
             () -> drivetrain.resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 4.73)))));
     NamedCommands.registerCommand("ResetOdometry Right XY",
         new InstantCommand(
-            () -> drivetrain
-                .resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 3.317)))));
+            () -> drivetrain.resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 3.317)))));
+
+    NamedCommands.registerCommand("ResetOdometry Center XY With Vision",
+        new AutoUpdateOdometry(drivetrain, new Translation2d(7.18, 4)));
+
     NamedCommands.registerCommand("ResetOdometry Right XY With Vision",
         new AutoUpdateOdometry(drivetrain, new Translation2d(7.18, 3.317)));
     NamedCommands.registerCommand("ResetOdometry Left XY With Vision",
