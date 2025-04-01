@@ -32,6 +32,7 @@ public class ScorerSubsystem implements IScorer {
   private final IMotor endEffectorMotor = new SparkMAXMotor(EndEffectorConstants.ID_endEffectorMotor, "END_EFFECTOR");
   private final InfraRed coralInfraRedSensor = new InfraRed(EndEffectorConstants.Port_coralInfraRed, false);
 
+  private boolean collectingAlgae = false;
   private boolean hasCoral = true;
   private boolean hasAlgae = false;
   private boolean elevatorHasHomed = false;
@@ -44,7 +45,7 @@ public class ScorerSubsystem implements IScorer {
 
   private String state = "START";
 
-  private String branchHeightTarget = "NONE";
+  private String branchHeightTarget = "NONEd";
 
   private String algaeHeightTarget = "NONE";
 
@@ -71,10 +72,6 @@ public class ScorerSubsystem implements IScorer {
       "/ScorerSubsystem/pivotStoppedByElevatorLimit");
 
   private ReefLevel targetReefLevel = ReefLevel.L1;
-
-  private ReefLevel netHeightLevel = ReefLevel.L1;
-
-  private ReefLevel netHeightLevel = ReefLevel.L1;
 
   private AlgaeHeightReef algaeReefHeight = AlgaeHeightReef.LOW;
 
@@ -252,8 +249,13 @@ public class ScorerSubsystem implements IScorer {
     return hasCoral;
   }
 
+  public boolean hasAlgae() {
+    return collectingAlgae && hasCoral;
+  }
+
   @Override
   public void intakeFromHP() {
+    collectingAlgae = false;
     runCoralIntakeDetection();
     if (!hasCoral) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
@@ -270,6 +272,24 @@ public class ScorerSubsystem implements IScorer {
     endEffectorMotor.set(0);
     state = "START";
     this.endEffectorAccelerated = false;
+  }
+
+  public void collectAlgaeFromGround() {
+    collectingAlgae = true;
+    runCoralIntakeDetection();
+    if (!hasAlgae) {
+      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+      goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_MID_REMOVAL;
+    } else {
+      endEffectorMotor.set(0);
+    }
+    goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_ALGAE_GROUND;
+    state = "COLLECTING_FROM_GROUND";
+  }
+
+  public void collectAlgaeFromReef() {
+    collectingAlgae = true;
+    runCoralIntakeDetection();
   }
 
   @Override
@@ -316,14 +336,8 @@ public class ScorerSubsystem implements IScorer {
     }
   }
 
-  @Override
-  public void setAutoAlgaeLevel(TargetBranch targetBranch) {
-    setTargetAlgaeHeight(this.getAutoAlgaeLevel(targetBranch));
-  }
-
   private AlgaeHeightReef getAutoAlgaeLevel(TargetBranch targetBranch) {
     AlgaeHeightReef algaeHeight;
-    this.setAlgaeManualControl(false);
 
     switch (targetBranch) {
       case A:
@@ -368,16 +382,6 @@ public class ScorerSubsystem implements IScorer {
     }
 
     return algaeHeight;
-  }
-
-  @Override
-  public void setAlgaeManualControl(boolean manualControl) {
-    this.manualAlgaeControl = manualControl;
-  }
-
-  @Override
-  public boolean isAlgaeControlManual() {
-    return this.manualAlgaeControl;
   }
 
   @Override
@@ -436,10 +440,10 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void preprareToScoreAlgae() {
+  public void preparetoScoreAlgae() {
     assignSetpointsForAlgaeScore(this.algaeScoreHeight);
     state = "PREPARE_TO_PLACE_CORAL";
-    algaeHeightTarget = this.targetReefLevel.name();
+    algaeHeightTarget = this.algaeScoreHeight.name();
   }
 
   @Override
@@ -472,16 +476,23 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public void placeObject() {
+  public void placeCoral() {
     if (targetReefLevel == ReefLevel.L1) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL_L1);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
     }
     this.hasCoral = false;
-    this.hasAlgae = false;
     this.elevatorHasHomed = false;
-    this.state = "PLACING_OBJECT";
+    this.state = "PLACING_CORAL";
+  }
+
+  @Override
+  public void placeAlgae() {
+    endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
+    this.hasCoral = false;
+    this.elevatorHasHomed = false;
+    this.state = "PLACING_ALGAE";
   }
 
   @Override
@@ -631,6 +642,11 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
+  public void setTargetAlgaeScoreHeight(AlgaeHeightScore algaeHeightScore) {
+    this.algaeScoreHeight = algaeHeightScore;
+  }
+
+  @Override
   public ReefLevel getTargetReefLevel() {
     return this.targetReefLevel;
   }
@@ -685,20 +701,6 @@ public class ScorerSubsystem implements IScorer {
         && endEffectorAccelerated)
       hasAlgae = true;
     endEffectorAccelerated = false;
-  }
-
-  @Override
-  public boolean hasAlgae() {
-    return hasAlgae;
-  }
-
-  @Override
-  public void prepareToPlaceAlgaeOnNet() {
-    this.distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
-    goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT;
-    goalPivot = PivotConstants.tunning_values_pivot.setpoints.NET_ANGLE;
-    state = "PREPARE_TO_PLACE_ALGAE";
-    netHeightTarget = this.targetAlgaeHeight.name();
   }
 
   @Override

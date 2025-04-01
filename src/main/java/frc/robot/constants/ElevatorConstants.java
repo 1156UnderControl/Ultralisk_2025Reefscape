@@ -25,8 +25,8 @@ public class ElevatorConstants {
     public class setpoints {
       public static final double MAX_HEIGHT = 2.35;
       public static final double MIN_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
-      public static final double NET_HEIGHT = 72;
-      public static final double PROCESSOR_HEIGHT = 0;
+      public static final double NET_HEIGHT = 2.1;
+      public static final double PROCESSOR_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
       public static final double L1_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
       public static final double L2_HEIGHT = 0.8;
       public static final double L3_HEIGHT = 1.19;
@@ -35,8 +35,10 @@ public class ElevatorConstants {
       public static final double ALGAE_REMOVAL_LOW = 0.78;
       public static final double SECURE_FOR_PIVOT_ROTATION = 0.60;
       public static final double COLLECT_HEIGHT = MIN_HEIGHT;
-      public static final double NET_HEIGHT = 2.1;
-      public static final double PROCESSOR_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
+      public static final double COLLECT_ALGAE_REEF_MID = 1.19;
+      public static final double COLLECT_ALGAE_REEF_LOW = 0.82;
+      public static final double COLLECT_ALGAE_GROUND = ZERO_POSITION_IN_METERS_FROM_GROUND;
+
     }
 
     public class stable_transition {

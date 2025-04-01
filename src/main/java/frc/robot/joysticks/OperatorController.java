@@ -111,4 +111,8 @@ public class OperatorController implements IOperatorController {
   public Trigger removeAlgaeFromBranch() {
     return keyboard.getVTrigger();
   }
+
+  public Trigger scoreAlgae() {
+    return keyboard.get0Trigger();
+  }
 }

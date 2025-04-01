@@ -3,6 +3,7 @@ package frc.robot.subsystems.scorer;
 import java.util.function.Supplier;
 
 import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightScore;
 import frc.robot.constants.FieldConstants.ReefLevel;
 
 public interface IScorer {
@@ -13,11 +14,15 @@ public interface IScorer {
 
   boolean hasAlgae();
 
-  void prepareToPlaceAlgaeOnNet();
-
   void intakeFromHP();
 
   void stopIntakeFromHP();
+
+  void placeCoral();
+
+  void placeAlgae();
+
+  void preparetoScoreAlgae();
 
   void prepareToPlaceCoralOnBranch();
 
@@ -31,9 +36,7 @@ public interface IScorer {
 
   void moveScorerToDefaultPosition();
 
-  void preprareToScoreAlgae();
-
-  void placeObject();
+  void moveScorerToAlgaeDefaultPosition();
 
   void homeElevator();
 
@@ -64,6 +67,12 @@ public interface IScorer {
   void setTargetBranchLevel(ReefLevel reefHeight);
 
   void setTargetAlgaeHeight(AlgaeHeightReef algaeHeight);
+
+  void setTargetAlgaeScoreHeight(AlgaeHeightScore algaeHeightScore);
+
+  void collectAlgaeFromReef();
+
+  void collectAlgaeFromGround();
 
   void setCoastScorer();
 

@@ -27,11 +27,8 @@ import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
-import frc.robot.commands.states.AutoScoreCoralPosition;
-import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
-import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreCoralPosition;
 import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.ReefLevel;
@@ -228,14 +225,12 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
           this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.LOW);
-          this.superStructure.scorer.setAlgaeManualControl(true);
         }));
 
     keyBoard.reefL2()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
           this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.MID);
-          this.superStructure.scorer.setAlgaeManualControl(true);
         }));
 
     keyBoard.reefL3()
@@ -247,6 +242,12 @@ public class RobotContainer {
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain)
             .deadlineFor(Commands.run(() -> drivetrain.driveAlignAngleJoystickRemoveAlgae(), drivetrain)));
+
+            keyBoard.scoreAlgae()
+            .onTrue(new ScoreAlgaeNetPosition(superStructure, drivetrain))
+
+
+
 
     keyBoard.alignToClimb().onTrue(new ClimbPosition(superStructure)
         .deadlineFor(Commands.runOnce(() -> drivetrain.setAngleForClimb())

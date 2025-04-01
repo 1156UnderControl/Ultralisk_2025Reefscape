@@ -8,19 +8,19 @@ public class MoveScorerToScoreAlgaePosition extends Command {
   SuperStructure superStructure;
   OperatorController operatorController = OperatorController.getInstance();
 
-  public MoveScorerToScoreAlgaePositio(SuperStructure superStructure) {
+  public MoveScorerToScoreAlgaePosition(SuperStructure superStructure) {
     this.superStructure = superStructure;
     addRequirements(this.superStructure);
   }
 
   @Override
   public void initialize() {
-    superStructure.scorer.prepareToPlaceCoralOnBranch();
+    superStructure.scorer.preparetoScoreAlgae();
   }
 
   @Override
   public void execute() {
-    superStructure.scorer.prepareToPlaceCoralOnBranch();
+    superStructure.scorer.preparetoScoreAlgae();
   }
 
   @Override
