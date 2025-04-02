@@ -75,8 +75,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   int[] apriltagsIDs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
 
-  // private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
-
   private static PhotonCamera arducamRight = new PhotonCamera("Arducam-right");
 
   private ReefPoseEstimatorWithLimelight reefPoseEstimator = new ReefPoseEstimatorWithLimelight("limelight-reef",
