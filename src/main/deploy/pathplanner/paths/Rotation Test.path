@@ -66,7 +66,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "TEST",
+  "folder": "Odometry Tests",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

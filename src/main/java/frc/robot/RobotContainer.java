@@ -88,8 +88,11 @@ public class RobotContainer {
             () -> drivetrain.resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 4.73)))));
     NamedCommands.registerCommand("ResetOdometry Right XY",
         new InstantCommand(
-            () -> drivetrain
-                .resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 3.317)))));
+            () -> drivetrain.resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 3.317)))));
+
+    NamedCommands.registerCommand("ResetOdometry Center XY With Vision",
+        new AutoUpdateOdometry(drivetrain, new Translation2d(7.18, 4)));
+
     NamedCommands.registerCommand("ResetOdometry Right XY With Vision",
         new AutoUpdateOdometry(drivetrain, new Translation2d(7.18, 3.317)));
     NamedCommands.registerCommand("ResetOdometry Left XY With Vision",

@@ -1,0 +1,87 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ResetOdometry Center XY With Vision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Set Coral Level L4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Coral G Optimized Direct"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FirstCollect 3 Corals Center-Left"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Coral Optimized"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score Coral H Optimized"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FirstCollect 3 Corals Center-Left"
+          }
+        },
+        {
+          "type": "sequential",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake Coral Optimized"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Score Coral I Optimized"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SecondCollect 3 Corals Center-Left"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Match Autos",
+  "choreoAuto": false
+}

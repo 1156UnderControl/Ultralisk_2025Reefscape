@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.0,
-        "y": 0.0
+        "x": 6.113250000000001,
+        "y": 4.97075
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.0187392965671265,
-        "y": -0.03324014662120615
+        "x": 5.17725,
+        "y": 5.4095
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.0,
-        "y": 0.0
+        "x": 1.533,
+        "y": 7.384
       },
       "prevControl": {
-        "x": 2.0859330793696222,
-        "y": -0.020697172928242667
+        "x": 2.4277499999999996,
+        "y": 6.871999999999999
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 6.0,
+    "maxVelocity": 3.5,
+    "maxAcceleration": 2.5,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -52.853
   },
   "reversed": false,
-  "folder": "Odometry Tests",
+  "folder": "3 Corals Center",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

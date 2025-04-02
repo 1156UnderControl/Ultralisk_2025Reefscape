@@ -20,8 +20,8 @@
         "y": 0.723
       },
       "prevControl": {
-        "x": 2.6843195091786893,
-        "y": 1.5357815559351802
+        "x": 2.6843195091786898,
+        "y": 1.5357815559351804
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,7 +57,7 @@
     "rotation": 53.501
   },
   "reversed": false,
-  "folder": "4 Corals",
+  "folder": "3 Corals Sides",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 59.80704123566238

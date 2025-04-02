@@ -154,14 +154,14 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void updateLogs() {
-    // this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
-    // this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
-    // this.positionLog.append(this.getPosition());
-    // this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
-    // this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
-    // this.faultsLog.append(this.motor.getFaultField().getValue());
-    // this.targetPositionLog.append(this.targetPosition);
-    // this.targetSpeedLog.append(this.targetVelocity);
+    this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
+    this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
+    this.positionLog.append(this.getPosition());
+    this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
+    this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
+    this.faultsLog.append(this.motor.getFaultField().getValue());
+    this.targetPositionLog.append(this.targetPosition);
+    this.targetSpeedLog.append(this.targetVelocity);
   }
 
   @Override
@@ -545,6 +545,11 @@ public class TalonFXMotor implements IMotor {
   @Override
   public double getPositionExternalEncoder() {
     throw new UnsupportedOperationException("Unimplemented method 'getPositionExternalEncoder'");
+  }
+
+  @Override
+  public double getPositionExternalAbsoluteEncoder() {
+    return 0;
   }
 
   @Override
