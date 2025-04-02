@@ -62,4 +62,8 @@ public interface IScorer {
   void setCoastScorer();
 
   void setBrakeScorer();
+
+  void setAngle180();
+
+  void setAngle10();
 }
