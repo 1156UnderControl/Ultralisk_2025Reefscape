@@ -32,6 +32,5 @@ public class SwerveGoToBranch extends Command {
   @Override
   public void end(boolean interrupted) {
     this.swerve.stopSwerve();
-    System.out.println("TERMINEEEEI");
   }
 }
