@@ -1,6 +1,5 @@
 package frc.robot.commands.states;
 
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToRemovePosition;
@@ -11,6 +10,6 @@ public class RemoveAlgaePosition extends SequentialCommandGroup {
   ControlBoard controlBoard = ControlBoard.getInstance();
 
   public RemoveAlgaePosition(SuperStructure superStructure, SwerveSubsystem swerve) {
-    addCommands(new MoveScorerToRemovePosition(superStructure), Commands.waitSeconds(0.6));
+    addCommands(new MoveScorerToRemovePosition(superStructure));
   }
 }
