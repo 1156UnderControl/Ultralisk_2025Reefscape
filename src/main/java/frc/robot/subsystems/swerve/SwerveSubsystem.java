@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
@@ -85,6 +87,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private String state = "NULL";
 
   CustomStringLogger poseEstimatorStateLogger = new CustomStringLogger("SwerveSubsystem/State_PoseEstimator");
+
+  CustomBooleanLogger isUsingAngleCorrection = new CustomBooleanLogger("SwerveSubsystem/UsingAngleCorrection");
+
+  CustomDoubleLogger targetVelocity = new CustomDoubleLogger("SwerveSubsystem/TargetVelocity");
 
   private PoseEstimatorState poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
 
@@ -291,10 +297,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.goToBranchConfigurationFastDirect.setBranch(branch, true);
     this.goToBranchConfigurationFastDirect.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
+    this.distanceToTargetBranch = goToBranchConfigurationFastDirect.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchConfigurationFastDirect.getFinalVelocity());
     if (this.goToBranchConfigurationFastDirect.canDriveAimingAtPose()) {
+      this.isUsingAngleCorrection.append(true);
       driveToPoseAimingAtPosition(0, this.goToBranchConfigurationFastDirect.getFinalPose(),
           branch.getDefaultPoseToScore().getTranslation(), this.goToBranchConfigurationFastDirect.getFinalVelocity());
     } else {
+      this.isUsingAngleCorrection.append(false);
       driveToPose(this.goToBranchConfigurationFastDirect.getFinalPose(),
           this.goToBranchConfigurationFastDirect.getFinalVelocity());
     }
@@ -305,10 +315,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.goToBranchConfigurationFast.setBranch(branch, false);
     this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
+    this.distanceToTargetBranch = goToBranchConfigurationFast.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchConfigurationFast.getFinalVelocity());
     if (this.goToBranchConfigurationFast.canDriveAimingAtPose()) {
+      this.isUsingAngleCorrection.append(true);
       driveToPoseAimingAtPosition(0, this.goToBranchConfigurationFast.getFinalPose(),
           branch.getDefaultPoseToScore().getTranslation(), this.goToBranchConfigurationFast.getFinalVelocity());
     } else {
+      this.isUsingAngleCorrection.append(false);
       driveToPose(this.goToBranchConfigurationFast.getFinalPose(),
           this.goToBranchConfigurationFast.getFinalVelocity());
     }
@@ -318,12 +332,16 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.goToBranchConfigurationTeleoperated.setBranch(branch, false);
     this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
+    this.distanceToTargetBranch = goToBranchConfigurationTeleoperated.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
     if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3) {
-      if (this.goToBranchConfigurationTeleoperated.canDriveAimingAtPose()) {
+      if (false) {
+        this.isUsingAngleCorrection.append(true);
         driveToPoseAimingAtPosition(0, this.goToBranchConfigurationTeleoperated.getFinalPose(),
             branch.getDefaultPoseToScore().getTranslation(),
             this.goToBranchConfigurationTeleoperated.getFinalVelocity());
       } else {
+        this.isUsingAngleCorrection.append(false);
         driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
             this.goToBranchConfigurationTeleoperated.getFinalVelocity());
       }

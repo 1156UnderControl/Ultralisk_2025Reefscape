@@ -27,6 +27,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 
@@ -187,7 +188,8 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
       Translation2d targetTranslationToAim, double maxSpeed, double offset) {
     Rotation2d targetAngle = this.getHeadingAimingAtPosition(dt, targetTranslationToAim,
         Rotation2d.fromDegrees(offset));
-    Pose2d targetPoseWithLockedAngle = targetPose.rotateBy(targetAngle);
+    targetAngle = AllianceFlipUtil.apply(targetAngle);
+    Pose2d targetPoseWithLockedAngle = new Pose2d(targetPose.getX(), targetPose.getY(), targetAngle);
     this.driveToPose(targetPoseWithLockedAngle, maxSpeed);
   }
 

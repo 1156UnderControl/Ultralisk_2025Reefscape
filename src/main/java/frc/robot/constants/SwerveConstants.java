@@ -52,29 +52,29 @@ public class SwerveConstants {
       public class FastDirect {
         public static final double MAX_ERROR_AUTO_ALIGN_FAST_DIRECT = 1.5;
         public static final double MIN_ERROR_AUTO_ALIGN_FAST_DIRECT = 0.6;
-        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST_DIRECT = 0.2;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST_DIRECT = 0.3;
       }
 
       public class Fast {
         public static final double MAX_ERROR_AUTO_ALIGN_FAST = 1.5;
         public static final double MIN_ERROR_AUTO_ALIGN_FAST = 0.6;
-        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.2;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.3;
         public static final double ERROR_FOR_ELEVATOR_RAISED_FAST = 0.6;
       }
 
       public class Autonomous {
         public static final double MAX_ERROR_AUTO_ALIGN_AUTO = 2;
         public static final double MIN_ERROR_AUTO_ALIGN_AUTO = 1.0;
-        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_AUTO = 0.2;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_AUTO = 0.3;
       }
 
       public class Teleoperated {
         public static final double MAX_ERROR_AUTO_ALIGN_TELEOPERATED = 3;
         public static final double MIN_ERROR_AUTO_ALIGN_TELEOPERATED = 1.0;
-        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED = 0.2;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED = 0.3;
       }
 
-      public static final double POSE_TRANSLATION_DEADBAND = 0.025;
+      public static final double POSE_TRANSLATION_DEADBAND = 0.03;
       public static final double POSE_HEADING_DEADBAND = 3;
       public static final double POSE_TRANSLATION_DEADBAND_BACKUP = 0.05;
       public static final double POSE_HEADING_DEADBAND_BACKUP = 10;
@@ -102,7 +102,7 @@ public class SwerveConstants {
 
       public class Teleoperated {
         public static final double MIN_VELOCITY_POSITION = 1.0;
-        public static final double MAX_VELOCITY_POSITION = 2.0;
+        public static final double MAX_VELOCITY_POSITION = 3.0;
       }
 
       public static final double MAX_VELOCITY_POSITION = 2;

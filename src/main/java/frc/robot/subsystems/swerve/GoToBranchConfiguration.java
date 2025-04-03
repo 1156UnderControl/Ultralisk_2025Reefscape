@@ -60,11 +60,9 @@ public class GoToBranchConfiguration {
         : branch.getTargetPoseToScore();
     this.distanceToTarget = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect)
         .getTranslation().getDistance(robotPose.getTranslation());
-
     finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetBranch, this.maxVelocity, this.minVelocity,
         this.maxErrorPose, minErrorPose);
     finalTargetPose = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect);
-
     if (distanceToTargetBranch <= this.errorForRotationAlignPose) {
       this.canDriveAimingAtPose = true;
     } else {
@@ -112,10 +110,15 @@ public class GoToBranchConfiguration {
   private double calculateRobotMaxVelocity(double distanceToTarget, double maxVelocity, double minVelocity,
       double maxDistance, double minDistance) {
     this.deltaVelocity = maxVelocity - minVelocity;
-    this.deltaVelocity = maxVelocity - minVelocity;
     this.deltaDistance = maxDistance - minDistance;
     this.relationDeltas = deltaVelocity / deltaDistance;
     this.targetVelocity = minVelocity + relationDeltas * (distanceToTarget - minDistance);
+    if (distanceToTarget > maxDistance) {
+      return maxVelocity;
+    }
+    if (distanceToTarget < minDistance) {
+      return minVelocity;
+    }
     return targetVelocity;
   }
 
