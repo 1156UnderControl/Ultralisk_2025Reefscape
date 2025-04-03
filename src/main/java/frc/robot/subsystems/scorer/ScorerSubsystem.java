@@ -80,11 +80,13 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean endEffectorAccelerated = false;
 
+  private boolean endEffectorDisaccelerated = false;
+
   private double lastGoalPivot = goalPivot;
 
   private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
-  private StabilizeChecker stableCoral = new StabilizeChecker(0.2);
+  private StabilizeChecker stablePosition = new StabilizeChecker(0.2);
 
   private StabilizeChecker stableAlgae = new StabilizeChecker(3);
 
@@ -238,7 +240,7 @@ public class ScorerSubsystem implements IScorer {
     if ((endEffectorMotor
         .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
         && endEffectorAccelerated)
-        && stableCoral
+        && stablePosition
             .isStableInCondition(() -> this.isAtCollectCoralPosition() && coralInfraRedSensor.getAsBoolean())) {
       hasCoral = true;
       endEffectorAccelerated = false;
@@ -249,10 +251,15 @@ public class ScorerSubsystem implements IScorer {
     if (this.endEffectorMotor.getVelocity() >= 3000) {
       this.endEffectorAccelerated = true;
     }
+    if (this.endEffectorMotor.getVelocity() <= 300) {
+      this.endEffectorDisaccelerated = true;
+    } else {
+      this.endEffectorDisaccelerated = false;
+    }
     if ((endEffectorMotor
         .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
-        && endEffectorAccelerated)
-        && stableAlgae.isStableInCondition(() -> this.isAtCollectAlgaePosition())) {
+        && endEffectorAccelerated && stableAlgae.isStableInCondition(() -> this.endEffectorDisaccelerated))
+        && stablePosition.isStableInCondition(() -> this.isAtCollectAlgaePosition())) {
       hasAlgae = true;
       endEffectorAccelerated = false;
     }
@@ -463,13 +470,13 @@ public class ScorerSubsystem implements IScorer {
       this.runCoralAntiLockRoutine();
       return;
     } else if (!this.hasCoral) {
-      endEffectorMotor.set(0);
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
       state = "DEFAULT_WITHOUT_CORAL";
       this.runCoralAntiLockRoutine();
       return;
     } else if (this.hasCoral) {
+      endEffectorMotor.set(0);
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
       state = "DEFAULT_WITH_CORAL";
