@@ -256,12 +256,14 @@ public class ScorerSubsystem implements IScorer {
         .getVelocity() >= EndEffectorConstants.tunning_values_endeffector.MIN_VELOCITY_FOR_INTAKE_DETECTION_INITIALIZE) {
       this.endEffectorAccelerated = true;
     }
+
     if (this.endEffectorMotor
         .getVelocity() <= EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION) {
       this.endEffectorDisaccelerated = true;
     } else {
       this.endEffectorDisaccelerated = false;
     }
+
     if ((endEffectorMotor
         .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
         && endEffectorAccelerated && stableAlgae.isStableInCondition(() -> this.endEffectorDisaccelerated))
@@ -394,8 +396,8 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void collectAlgae() {
-    runAlgaeIntakeDetection();
     assignAlgaeCollectSetpointsForAlgaeHeight();
+    runAlgaeIntakeDetection();
     if (!hasAlgae) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
     } else {
@@ -471,13 +473,11 @@ public class ScorerSubsystem implements IScorer {
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.PROCESSOR_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_PROCESSOR_SCORE_ANGLE;
       state = "DEFAULT_WITH_ALGAE";
-      this.runCoralAntiLockRoutine();
       return;
     } else if (!this.hasCoral) {
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
       state = "DEFAULT_WITHOUT_CORAL";
-      this.runCoralAntiLockRoutine();
       return;
     } else if (this.hasCoral) {
       endEffectorMotor.set(0);
