@@ -18,13 +18,13 @@ public class CustomChassisSpeedsLogger extends ChassisSpeedsLogEntry {
     super(DataLogManager.getLog(), name);
     this.name = name;
     CustomChassisSpeedsLogger.isFmsMatch = DriverStation.getMatchNumber() > 0;
-    this.loggedValue = new ChassisSpeeds(1,1,1); // Set to something different than default for initial logging
+    this.loggedValue = new ChassisSpeeds(1, 1, 1); // Set to something different than default for initial logging
     this.append(new ChassisSpeeds());
   }
 
   @Override
   public void append(ChassisSpeeds chassisSpeeds) {
-    if(!chassisSpeeds.equals(this.loggedValue)){
+    if (DriverStation.isEnabled() && !chassisSpeeds.equals(this.loggedValue)) {
       this.loggedValue = chassisSpeeds;
       super.append(chassisSpeeds);
       if (!CustomChassisSpeedsLogger.isFmsMatch) {

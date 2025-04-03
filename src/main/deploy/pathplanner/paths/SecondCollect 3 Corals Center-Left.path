@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.148320243727993,
-        "y": 2.5422634930677814
+        "x": 5.2376715069152775,
+        "y": 5.49049348475187
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.348480826364437,
-        "y": 1.2195683868838025
+        "x": 2.5892924654762717,
+        "y": 6.718765428203797
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.432,
-        "y": 0.7231906084947184
+        "x": 1.5325312962433286,
+        "y": 7.384208974245828
       },
       "prevControl": {
-        "x": 2.8708438050176053,
-        "y": 1.4708148795114435
+        "x": 1.7425009284704134,
+        "y": 7.248515372545443
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.5253112033194987,
-      "rotationDegrees": 58.85040390600508
+      "rotationDegrees": -54.225
+    },
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -54.225
     }
   ],
   "constraintZones": [],
@@ -59,13 +63,13 @@
   },
   "goalEndState": {
     "velocity": 0.0,
-    "rotation": 53.501
+    "rotation": -52.853
   },
   "reversed": false,
-  "folder": "3 Corals Sides",
+  "folder": "3 Corals Center",
   "idealStartingState": {
     "velocity": 0.0,
-    "rotation": 119.90573115485977
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

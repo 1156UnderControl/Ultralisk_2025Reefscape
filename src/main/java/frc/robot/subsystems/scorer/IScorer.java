@@ -29,8 +29,6 @@ public interface IScorer {
 
   void placeCoral();
 
-  void homeElevator();
-
   void setElevatorTestPosition(double testPosition);
 
   void setPivotTestPosition(double testPosition);
@@ -64,4 +62,8 @@ public interface IScorer {
   void setCoastScorer();
 
   void setBrakeScorer();
+
+  void setAngle180();
+
+  void setAngle10();
 }

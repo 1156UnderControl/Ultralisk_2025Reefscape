@@ -23,7 +23,7 @@ public class CustomIntegerLogger extends IntegerLogEntry {
 
   @Override
   public void append(long value) {
-    if(value != this.loggedValue){
+    if (value != this.loggedValue) {
       this.loggedValue = value;
       super.append(value);
       if (!CustomIntegerLogger.isFmsMatch) {
