@@ -11,11 +11,10 @@ public class SwerveGoToBranchFastAutonomous extends Command {
   boolean isSpacedToBranch;
   boolean goDirect;
 
-  public SwerveGoToBranchFastAutonomous(SwerveSubsystem swerve, TargetBranch branch, boolean isSpacedToBranch,
+  public SwerveGoToBranchFastAutonomous(SwerveSubsystem swerve, TargetBranch branch,
       boolean goDirect) {
     this.swerve = swerve;
     this.targetBranch = branch;
-    this.isSpacedToBranch = isSpacedToBranch;
     this.goDirect = goDirect;
     addRequirements(swerve);
   }
@@ -27,9 +26,9 @@ public class SwerveGoToBranchFastAutonomous extends Command {
   @Override
   public void execute() {
     if (goDirect) {
-      this.swerve.driveToBranchFastDirect(targetBranch, isSpacedToBranch);
+      this.swerve.driveToBranchFastDirect(targetBranch);
     } else {
-      this.swerve.driveToBranchFast(targetBranch, isSpacedToBranch);
+      this.swerve.driveToBranchFast(targetBranch);
     }
   }
 

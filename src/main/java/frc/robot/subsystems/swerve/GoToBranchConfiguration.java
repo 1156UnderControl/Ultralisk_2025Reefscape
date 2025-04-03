@@ -19,7 +19,6 @@ public class GoToBranchConfiguration {
   private double maxVelocity;
   private double minVelocity;
   private String goToBranchMode;
-  private boolean backupBranch;
   private boolean goDirect;
 
   private double goToPoseTranslationDeadband = AutoAlignConstants.PoseDeadBand.POSE_TRANSLATION_DEADBAND_BACKUP;;
@@ -34,6 +33,7 @@ public class GoToBranchConfiguration {
   private String state;
 
   double distanceToTargetBranch;
+  double distanceToTarget;
 
   double deltaVelocity;
   double deltaDistance;
@@ -58,10 +58,12 @@ public class GoToBranchConfiguration {
     Pose2d targetBranchScorePose = scorerTargetReefLevelSupplier.get() == ReefLevel.L4
         ? CoordinatesTransform.getRetreatPose(branch.getTargetPoseToScore(), 0.05)
         : branch.getTargetPoseToScore();
+    this.distanceToTarget = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect)
+        .getTranslation().getDistance(robotPose.getTranslation());
 
     finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetBranch, this.maxVelocity, this.minVelocity,
         this.maxErrorPose, minErrorPose);
-    finalTargetPose = this.getDriveTarget(robotPose, targetBranchScorePose, this.backupBranch, this.goDirect);
+    finalTargetPose = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect);
 
     if (distanceToTargetBranch <= this.errorForRotationAlignPose) {
       this.canDriveAimingAtPose = true;
@@ -81,20 +83,15 @@ public class GoToBranchConfiguration {
     }
   }
 
-  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack, boolean goDirect) {
-    if (moveBack) {
-      goal = goal.transformBy(GeomUtil.toTransform2d(-0.25, 0.0));
-      this.goToPoseTranslationDeadband = AutoAlignConstants.PoseDeadBand.POSE_TRANSLATION_DEADBAND_BACKUP;
-      this.goToPoseHeadingDeadband = AutoAlignConstants.PoseDeadBand.POSE_HEADING_DEADBAND_BACKUP;
+  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean goDirect) {
+    if (goDirect) {
+      return goal;
     } else {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
       this.goToPoseTranslationDeadband = AutoAlignConstants.PoseDeadBand.POSE_TRANSLATION_DEADBAND;
       this.goToPoseHeadingDeadband = AutoAlignConstants.PoseDeadBand.POSE_HEADING_DEADBAND;
+      return this.calculateReefAvoidenceTarget(robot, goal);
     }
-    if (goDirect) {
-      return goal;
-    }
-    return this.calculateReefAvoidenceTarget(robot, goal);
   }
 
   private Pose2d calculateReefAvoidenceTarget(Pose2d robot, Pose2d goal) {
@@ -146,9 +143,8 @@ public class GoToBranchConfiguration {
     return this.canDriveAimingAtPose;
   }
 
-  public void setBranch(TargetBranch targetBranch, boolean backupBranch, boolean goDirect) {
+  public void setBranch(TargetBranch targetBranch, boolean goDirect) {
     this.branch = targetBranch;
-    this.backupBranch = backupBranch;
     this.goDirect = goDirect;
   }
 

@@ -21,7 +21,7 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
   public AutoScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
     addCommands(new InstantCommand(() -> hasCancelledAutoMove = false),
         new GoAndRaiseElevator(swerve, superStructure, branch),
-        new SwerveGoToBranch(swerve, branch, false).until(driverController.isForcingDriverControl().or(() -> {
+        new SwerveGoToBranch(swerve, branch).until(driverController.isForcingDriverControl().or(() -> {
           if (operatorKeyboard.scoreCoral().getAsBoolean()) {
             hasCancelledAutoMove = true;
           }

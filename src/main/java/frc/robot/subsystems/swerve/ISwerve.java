@@ -9,11 +9,11 @@ public interface ISwerve {
 
   public void driveToNearestCoralStation();
 
-  public void driveToBranch(TargetBranch branch, boolean backupBranch);
+  public void driveToBranch(TargetBranch branch);
 
-  public void driveToBranchFastDirect(TargetBranch branch, boolean backupBranch);
+  public void driveToBranchFastDirect(TargetBranch branch);
 
-  public void driveToBranchFast(TargetBranch branch, boolean backupBranch);
+  public void driveToBranchFast(TargetBranch branch);
 
   public void driveAlignAngleJoystick();
 

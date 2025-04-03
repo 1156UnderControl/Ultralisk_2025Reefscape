@@ -279,18 +279,18 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void driveToBranch(TargetBranch branch, boolean backupBranch) {
+  public void driveToBranch(TargetBranch branch) {
     this.targetBranch = branch;
     if (DriverStation.isAutonomousEnabled()) {
-      driveToBranchFast(branch, backupBranch);
+      driveToBranchFast(branch);
       return;
     }
-    goToBranchTeleoperated(branch, backupBranch);
+    goToBranchTeleoperated(branch);
   }
 
   @Override
-  public void driveToBranchFastDirect(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationFastDirect.setBranch(branch, backupBranch, true);
+  public void driveToBranchFastDirect(TargetBranch branch) {
+    this.goToBranchConfigurationFastDirect.setBranch(branch, true);
     this.goToBranchConfigurationFastDirect.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
     if (this.goToBranchConfigurationFastDirect.canDriveAimingAtPose()) {
@@ -303,8 +303,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void driveToBranchFast(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationFast.setBranch(branch, backupBranch, false);
+  public void driveToBranchFast(TargetBranch branch) {
+    this.goToBranchConfigurationFast.setBranch(branch, false);
     this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
     if (this.goToBranchConfigurationFast.canDriveAimingAtPose()) {
@@ -316,8 +316,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     }
   }
 
-  private void goToBranchTeleoperated(TargetBranch branch, boolean backupBranch) {
-    this.goToBranchConfigurationTeleoperated.setBranch(branch, backupBranch, false);
+  private void goToBranchTeleoperated(TargetBranch branch) {
+    this.goToBranchConfigurationTeleoperated.setBranch(branch, false);
     this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier);
     if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3) {
