@@ -231,17 +231,20 @@ public class RobotContainer {
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.LOW);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.GROUND);
         }));
 
     keyBoard.reefL2()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.MID);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.LOW);
         }));
 
     keyBoard.reefL3()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.MID);
+        }));
 
     keyBoard.reefL4()
         .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));

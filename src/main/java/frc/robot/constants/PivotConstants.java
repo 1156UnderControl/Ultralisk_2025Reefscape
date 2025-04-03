@@ -31,12 +31,13 @@ public class PivotConstants {
       public static final double L2_ANGLE = 170.5;
       public static final double L3_ANGLE = 170.5;
       public static final double L4_ANGLE = 210;
-      public static final double NET_ANGLE = 210;
-      public static final double ALGAE_MID_REMOVAL = 173;
-      public static final double ALGAE_LOW_REMOVAL = 173;
+      public static final double ALGAE_NET_SCORE_ANGLE = 210;
+      public static final double ALGAE_PROCESSOR_SCORE_ANGLE = 173;
+      public static final double ALGAE_REEF_REMOVAL_ANGLE = 173;
       public static final double SECURE_FOR_ELEVATOR_UP = 142;
       public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 160;
       public static final double COLLECT_ANGLE = 14.06;
+      public static final double COLLECT_ANGLE_ALGAE_GROUND = 215;
     }
   }
 }

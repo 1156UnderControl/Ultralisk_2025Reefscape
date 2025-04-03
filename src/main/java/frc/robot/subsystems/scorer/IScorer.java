@@ -28,15 +28,13 @@ public interface IScorer {
 
   void prepareToPlaceCoralOnBranch(Supplier<Double> distanceToTargetPoseProvider);
 
-  void removeAlgaeFromBranch();
+  void collectAlgae();
 
-  void removeAlgaeEndEffector();
+  void holdAlgae();
 
   void stopEndEffector();
 
   void moveScorerToDefaultPosition();
-
-  void moveScorerToAlgaeDefaultPosition();
 
   void setElevatorTestPosition(double testPosition);
 
@@ -50,7 +48,9 @@ public interface IScorer {
 
   void setEndEffectorDutyCycle(double dutyCycle);
 
-  boolean isAtCollectPosition();
+  boolean isAtCollectAlgaePosition();
+
+  boolean isAtCollectCoralPosition();
 
   boolean isAtDefaultPosition();
 
@@ -68,15 +68,7 @@ public interface IScorer {
 
   void setTargetAlgaeScoreHeight(AlgaeHeightScore algaeHeightScore);
 
-  void collectAlgaeFromReef();
-
-  void collectAlgaeFromGround();
-
   void setCoastScorer();
 
   void setBrakeScorer();
-
-  void setAngle180();
-
-  void setAngle10();
 }

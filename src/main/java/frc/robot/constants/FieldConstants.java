@@ -163,7 +163,8 @@ public class FieldConstants {
   public class Algae {
     public enum AlgaeHeightReef {
       MID(Units.inchesToMeters(72)),
-      LOW(Units.inchesToMeters(47.625));
+      LOW(Units.inchesToMeters(47.625)),
+      GROUND(Units.inchesToMeters(ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT));
 
       AlgaeHeightReef(double height) {
         this.height = height;
