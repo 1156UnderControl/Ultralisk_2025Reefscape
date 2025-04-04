@@ -22,13 +22,13 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
     addCommands(new InstantCommand(() -> hasCancelledAutoMove = false),
         new GoAndRaiseElevator(swerve, superStructure, branch),
         new SwerveGoToBranch(swerve, branch, false).until(driverController.isForcingDriverControl().or(() -> {
-          if (operatorKeyboard.scoreCoral().getAsBoolean()) {
+          if (operatorKeyboard.scoreObject().getAsBoolean()) {
             hasCancelledAutoMove = true;
           }
           return hasCancelledAutoMove;
         })),
         new ParallelRaceGroup(Commands.idle(superStructure)
-            .until(operatorKeyboard.scoreCoral().or(() -> swerve.isAtTargetPosition()).or(() -> hasCancelledAutoMove)),
+            .until(operatorKeyboard.scoreObject().or(() -> swerve.isAtTargetPosition()).or(() -> hasCancelledAutoMove)),
             Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)),
         Commands.run(() -> superStructure.scorer.placeCoral())
             .alongWith(Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)));

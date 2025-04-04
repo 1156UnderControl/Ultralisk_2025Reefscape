@@ -22,7 +22,7 @@ public interface IScorer {
 
   void placeAlgae();
 
-  void preparetoScoreAlgae();
+  void prepareToScoreAlgae();
 
   void prepareToPlaceCoralOnBranch();
 

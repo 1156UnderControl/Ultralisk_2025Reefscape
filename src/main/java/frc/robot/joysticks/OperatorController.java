@@ -1,6 +1,5 @@
 package frc.robot.joysticks;
 
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class OperatorController implements IOperatorController {
@@ -92,11 +91,11 @@ public class OperatorController implements IOperatorController {
     return keyboard.get9Trigger();
   }
 
-  public Trigger prepareToScoreCoral() {
+  public Trigger prepareToScore() {
     return keyboard.get0Trigger();
   }
 
-  public Trigger scoreCoral() {
+  public Trigger scoreObject() {
     return keyboard.getPTrigger();
   }
 

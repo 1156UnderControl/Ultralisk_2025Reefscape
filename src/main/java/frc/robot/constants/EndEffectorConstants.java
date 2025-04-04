@@ -14,7 +14,7 @@ public class EndEffectorConstants {
       public static final double DUTY_CYCLE_INTAKE = 1.0;
       public static final double DUTY_CYCLE_EXPELL = -0.8;
       public static final double DUTY_CYCLE_EXPELL_L1 = -0.275;
-      public static final double DUTY_CYCLE_HOLDING_ALGAE = 0.5;
+      public static final double DUTY_CYCLE_HOLDING_ALGAE = 0.3;
     }
   }
 }

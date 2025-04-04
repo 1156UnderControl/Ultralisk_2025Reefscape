@@ -32,8 +32,7 @@ import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
-import frc.robot.commands.states.ScoreAlgaeNetPosition;
-import frc.robot.commands.states.ScoreCoralPosition;
+import frc.robot.commands.states.ScoreObjectPosition;
 import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -226,7 +225,7 @@ public class RobotContainer {
 
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
-    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    keyBoard.prepareToScore().onTrue(new ScoreObjectPosition(superStructure, drivetrain));
 
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
@@ -252,9 +251,6 @@ public class RobotContainer {
     keyBoard.removeAlgaeFromBranch()
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain)
             .deadlineFor(Commands.run(() -> drivetrain.driveAlignAngleJoystickRemoveAlgae(), drivetrain)));
-
-    keyBoard.scoreAlgae()
-        .onTrue(new ScoreAlgaeNetPosition(superStructure, drivetrain));
 
     keyBoard.alignToClimb().onTrue(new ClimbPosition(superStructure)
         .deadlineFor(Commands.runOnce(() -> drivetrain.setAngleForClimb())

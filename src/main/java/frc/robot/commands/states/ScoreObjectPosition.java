@@ -9,13 +9,15 @@ import frc.robot.commands.scorer.MoveScorerToScorePosition;
 import frc.robot.joysticks.OperatorController;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class ScoreCoralPosition extends SequentialCommandGroup {
+public class ScoreObjectPosition extends SequentialCommandGroup {
   OperatorController operatorKeyboard = OperatorController.getInstance();
 
-  public ScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
+  public ScoreObjectPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(new MoveScorerToScorePosition(superStructure),
-        Commands.waitUntil(operatorKeyboard.scoreCoral()),
-        Commands.run(() -> superStructure.scorer.placeCoral(), superStructure).withTimeout(Seconds.of(1)),
+        Commands.waitUntil(operatorKeyboard.scoreObject()),
+        Commands.either(Commands.run(() -> superStructure.scorer.placeCoral(), superStructure),
+            Commands.run(() -> superStructure.scorer.placeAlgae(), superStructure),
+            () -> superStructure.scorer.hasCoral()).withTimeout(Seconds.of(1)),
         Commands.idle(superStructure));
   }
 }

@@ -10,6 +10,7 @@ public class PivotConstants {
     public static final double KS = 0;
     public static final double KV = 0;
     public static final double MAX_VELOCITY = 900;
+    public static final double MAX_VELOCITY_WITH_ALGAE = 450;
     public static final double MAX_ACCELERATION = 10000;
     public static final double POSITION_ERROR_ALLOWED = 0;
     public static final double MIN_DEAD_BAND_FOR_MOTOR_STOP = -20;
@@ -31,7 +32,7 @@ public class PivotConstants {
       public static final double L2_ANGLE = 170.5;
       public static final double L3_ANGLE = 170.5;
       public static final double L4_ANGLE = 210;
-      public static final double ALGAE_NET_SCORE_ANGLE = 210;
+      public static final double ALGAE_NET_SCORE_ANGLE = 135;
       public static final double ALGAE_PROCESSOR_SCORE_ANGLE = 173;
       public static final double ALGAE_REEF_REMOVAL_ANGLE = 173;
       public static final double SECURE_FOR_ELEVATOR_UP = 142;

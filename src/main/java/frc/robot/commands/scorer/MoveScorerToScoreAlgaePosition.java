@@ -15,12 +15,12 @@ public class MoveScorerToScoreAlgaePosition extends Command {
 
   @Override
   public void initialize() {
-    superStructure.scorer.preparetoScoreAlgae();
+    superStructure.scorer.prepareToScoreAlgae();
   }
 
   @Override
   public void execute() {
-    superStructure.scorer.preparetoScoreAlgae();
+    superStructure.scorer.prepareToScoreAlgae();
   }
 
   @Override
