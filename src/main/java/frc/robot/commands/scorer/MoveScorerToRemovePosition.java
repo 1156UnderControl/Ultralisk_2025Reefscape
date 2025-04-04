@@ -19,7 +19,7 @@ public class MoveScorerToRemovePosition extends Command {
   @Override
   public void execute() {
     superStructure.scorer.removeAlgaeFromBranch();
-    if (superStructure.scorer.isAtRemovePosition()) {
+    if (superStructure.scorer.isScorerAtPosition()) {
       superStructure.scorer.removeAlgaeEndEffector();
     } else {
       superStructure.scorer.stopEndEffector();

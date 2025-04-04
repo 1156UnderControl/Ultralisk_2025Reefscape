@@ -52,17 +52,17 @@ public class GoToBranchConfiguration {
   }
 
   public void updateBranchData(Pose2d robotPose, Supplier<ReefLevel> scorerTargetReefLevelSupplier,
-      Supplier<Boolean> elevatorAtHighPositionSupplier) {
+      Supplier<Boolean> elevatorAtHighPositionSupplier, boolean backup) {
     this.distanceToTargetBranch = branch.getTargetPoseToScore().getTranslation()
         .getDistance(robotPose.getTranslation());
     Pose2d targetBranchScorePose = scorerTargetReefLevelSupplier.get() == ReefLevel.L4
         ? CoordinatesTransform.getRetreatPose(branch.getTargetPoseToScore(), 0.05)
         : branch.getTargetPoseToScore();
-    this.distanceToTarget = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect)
+    this.distanceToTarget = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect, backup)
         .getTranslation().getDistance(robotPose.getTranslation());
     finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetBranch, this.maxVelocity, this.minVelocity,
         this.maxErrorPose, minErrorPose);
-    finalTargetPose = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect);
+    finalTargetPose = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect, backup);
     if (distanceToTargetBranch <= this.errorForRotationAlignPose) {
       this.canDriveAimingAtPose = true;
     } else {
@@ -81,11 +81,15 @@ public class GoToBranchConfiguration {
     }
   }
 
-  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean goDirect) {
+  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean goDirect, boolean backup) {
+    if (backup) {
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.3, 0.0));
+    } else {
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
+    }
     if (goDirect) {
       return goal;
     } else {
-      goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
       this.goToPoseTranslationDeadband = AutoAlignConstants.PoseDeadBand.POSE_TRANSLATION_DEADBAND;
       this.goToPoseHeadingDeadband = AutoAlignConstants.PoseDeadBand.POSE_HEADING_DEADBAND;
       return this.calculateReefAvoidenceTarget(robot, goal);

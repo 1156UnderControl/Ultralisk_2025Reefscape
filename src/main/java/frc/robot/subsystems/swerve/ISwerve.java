@@ -9,11 +9,15 @@ public interface ISwerve {
 
   public void driveToNearestCoralStation();
 
-  public void driveToBranch(TargetBranch branch);
+  public void driveToBranch(TargetBranch branch, boolean backup, boolean goDirect);
 
-  public void driveToBranchFastDirect(TargetBranch branch);
+  public void driveToBranchFastDirect(TargetBranch branch, boolean backup, boolean goDirect);
 
-  public void driveToBranchFast(TargetBranch branch);
+  public void driveToBranchFast(TargetBranch branch, boolean backup, boolean goDirect);
+
+  boolean checkBackupNecessary();
+
+  boolean checkPivotWillCrashOnReef();
 
   public void driveAlignAngleJoystick();
 
@@ -28,4 +32,6 @@ public interface ISwerve {
   public boolean isAtTargetPositionWithHeading();
 
   public boolean isAtTargetPositionWithoutHeading();
+
+  public void setTargetBranch(TargetBranch branch);
 }

@@ -37,6 +37,8 @@ public class ScorerSubsystem implements IScorer {
 
   StabilizeChecker motorNotMoving = new StabilizeChecker(0.2);
 
+  StabilizeChecker pivotInternalEncoderIsLost = new StabilizeChecker(0.2);
+
   CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/Correcting Pivot");
 
   private String state = "START";
@@ -204,7 +206,8 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private boolean isPivotInternalEncoderLost() {
-    return Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalAbsoluteEncoder()) > 5;
+    return pivotInternalEncoderIsLost.isStableInCondition(
+        () -> Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalAbsoluteEncoder()) > 5);
   }
 
   void setPivotTargetPosition() {
@@ -217,7 +220,7 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void runCoralIntakeDetection() {
-    if (this.endEffectorMotor.getVelocity() >= 3000) {
+    if (this.endEffectorMotor.getVelocity() >= 2500) {
       this.endEffectorAccelerated = true;
     }
     if ((endEffectorMotor
@@ -485,7 +488,7 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
-  public boolean isAtRemovePosition() {
+  public boolean isScorerAtPosition() {
     return isPivotAndElevatorAtSetpoint();
   }
 

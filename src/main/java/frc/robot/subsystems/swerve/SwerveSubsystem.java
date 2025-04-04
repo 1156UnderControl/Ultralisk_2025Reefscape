@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import org.photonvision.PhotonCamera;
-
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.PIDConstants;
@@ -38,8 +36,6 @@ import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
-import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
-import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.FieldConstants;
@@ -49,7 +45,6 @@ import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.SwerveConstants.AutoAlignConstants;
 import frc.robot.constants.SwerveConstants.PoseEstimatorState;
 import frc.robot.constants.SwerveConstants.TargetBranch;
-import frc.robot.constants.VisionConstants;
 import frc.robot.joysticks.DriverController;
 import frc.robot.pose_estimators.ReefPoseEstimatorWithLimelight;
 
@@ -75,9 +70,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   int[] apriltagsIDs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
 
-  private static PhotonCamera arducamRight = new PhotonCamera("Arducam-right");
-
-  private ReefPoseEstimatorWithLimelight reefPoseEstimator = new ReefPoseEstimatorWithLimelight("limelight-reef",
+  private ReefPoseEstimatorWithLimelight reefPoseEstimator = new ReefPoseEstimatorWithLimelight("limelight-left",
       "limelight-right", () -> getTargetBranch());
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
@@ -91,6 +84,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   CustomBooleanLogger isUsingAngleCorrection = new CustomBooleanLogger("SwerveSubsystem/UsingAngleCorrection");
 
   CustomDoubleLogger targetVelocity = new CustomDoubleLogger("SwerveSubsystem/TargetVelocity");
+
+  CustomDoubleLogger distanceToTargetBranchLog = new CustomDoubleLogger("SwerveSubsystem/DistanceToTargetBranch");
 
   private PoseEstimatorState poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
 
@@ -135,15 +130,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
     List<PoseEstimator> listOfEstimators = new ArrayList<PoseEstimator>();
-    PoseEstimator arducamRightEstimator = new PhotonVisionPoseEstimator(arducamRight,
-        VisionConstants.robotToCamArducamRight, false);
-    PoseEstimator arducamLeftEstimator = new NoPoseEstimator();// take off left arducam for a while
-    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
-    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, false, 2);
-    listOfEstimators.add(arducamRightEstimator);
-    listOfEstimators.add(arducamLeftEstimator);
-    listOfEstimators.add(limelightReef);
-    listOfEstimators.add(limelightSource);
+    PoseEstimator limelightLeft = new LimelightPoseEstimator("limelight-left", false, false, 2);
+    PoseEstimator limelightRight = new LimelightPoseEstimator("limelight-right", false, false, 2);
+    listOfEstimators.add(limelightLeft);
+    listOfEstimators.add(limelightRight);
     PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators, "Teleop Multi Pose Estimator");
     return estimatorMultiCamera;
   }
@@ -179,8 +169,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   public void resetOdometryLimelight(Translation2d defaultPosition) {
-    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
-    Optional<PoseEstimation> limelightPoseEstimation = limelightReef.getEstimatedPose(this.getPose());
+    PoseEstimator limelightLeft = new LimelightPoseEstimator("limelight-left", false, false, 2);
+    Optional<PoseEstimation> limelightPoseEstimation = limelightLeft.getEstimatedPose(this.getPose());
     if (limelightPoseEstimation.isEmpty()) {
       resetTranslation(defaultPosition);
       this.positionUpdated = true;
@@ -241,7 +231,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     selectPoseEstimator();
     super.periodic();
     updateLogs();
-    LimelightHelpers.SetRobotOrientation("limelight-reef",
+    LimelightHelpers.SetRobotOrientation("limelight-left",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
     LimelightHelpers.SetRobotOrientation("limelight-right",
@@ -258,7 +248,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     }
     switch (poseEstimatorState) {
       case GLOBAL_POSE_ESTIMATION:
-        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-reef", this.apriltagsIDs);
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-left", this.apriltagsIDs);
         LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", this.apriltagsIDs);
         overrideTeleOpPoseEstimator(null);
         overrideAutonomousPoseEstimator(null);
@@ -283,22 +273,23 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void driveToBranch(TargetBranch branch) {
+  public void driveToBranch(TargetBranch branch, boolean backup, boolean goDirect) {
     this.targetBranch = branch;
     if (DriverStation.isAutonomousEnabled()) {
-      driveToBranchFast(branch);
+      driveToBranchFast(branch, backup, goDirect);
       return;
     }
-    goToBranchTeleoperated(branch);
+    goToBranchTeleoperated(branch, backup, goDirect);
   }
 
   @Override
-  public void driveToBranchFastDirect(TargetBranch branch) {
-    this.goToBranchConfigurationFastDirect.setBranch(branch, true);
+  public void driveToBranchFastDirect(TargetBranch branch, boolean backup, boolean goDirect) {
+    this.goToBranchConfigurationFastDirect.setBranch(branch, goDirect);
     this.goToBranchConfigurationFastDirect.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
-        elevatorAtHighPositionSupplier);
+        elevatorAtHighPositionSupplier, backup);
     this.distanceToTargetBranch = goToBranchConfigurationFastDirect.getDistanceToTargetBranch();
     this.targetVelocity.append(goToBranchConfigurationFastDirect.getFinalVelocity());
+    this.distanceToTargetBranchLog.append(distanceToTargetBranch);
     if (this.goToBranchConfigurationFastDirect.canDriveAimingAtPose()) {
       this.isUsingAngleCorrection.append(true);
       driveToPoseAimingAtPosition(0, this.goToBranchConfigurationFastDirect.getFinalPose(),
@@ -311,12 +302,13 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void driveToBranchFast(TargetBranch branch) {
-    this.goToBranchConfigurationFast.setBranch(branch, false);
+  public void driveToBranchFast(TargetBranch branch, boolean backup, boolean goDirect) {
+    this.goToBranchConfigurationFast.setBranch(branch, goDirect);
     this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
-        elevatorAtHighPositionSupplier);
+        elevatorAtHighPositionSupplier, backup);
     this.distanceToTargetBranch = goToBranchConfigurationFast.getDistanceToTargetBranch();
     this.targetVelocity.append(goToBranchConfigurationFast.getFinalVelocity());
+    this.distanceToTargetBranchLog.append(distanceToTargetBranch);
     if (this.goToBranchConfigurationFast.canDriveAimingAtPose()) {
       this.isUsingAngleCorrection.append(true);
       driveToPoseAimingAtPosition(0, this.goToBranchConfigurationFast.getFinalPose(),
@@ -328,12 +320,13 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     }
   }
 
-  private void goToBranchTeleoperated(TargetBranch branch) {
-    this.goToBranchConfigurationTeleoperated.setBranch(branch, false);
+  private void goToBranchTeleoperated(TargetBranch branch, boolean backup, boolean goDirect) {
+    this.goToBranchConfigurationTeleoperated.setBranch(branch, goDirect);
     this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
-        elevatorAtHighPositionSupplier);
+        elevatorAtHighPositionSupplier, backup);
     this.distanceToTargetBranch = goToBranchConfigurationTeleoperated.getDistanceToTargetBranch();
     this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
+    this.distanceToTargetBranchLog.append(distanceToTargetBranch);
     if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3) {
       if (false) {
         this.isUsingAngleCorrection.append(true);
@@ -348,6 +341,16 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     } else {
       driveAlignAngleJoystick();
     }
+  }
+
+  @Override
+  public boolean checkBackupNecessary() {
+    return getPose().getTranslation().getDistance(targetBranch.getTargetPoseToScore().getTranslation()) < 0.6;
+  }
+
+  @Override
+  public boolean checkPivotWillCrashOnReef() {
+    return getPose().getTranslation().getDistance(targetBranch.getTargetPoseToScore().getTranslation()) < 0.2;
   }
 
   @Override

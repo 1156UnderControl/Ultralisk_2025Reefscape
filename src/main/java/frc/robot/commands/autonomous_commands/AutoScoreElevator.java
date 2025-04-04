@@ -11,12 +11,12 @@ import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class AutoScoreElevator extends SequentialCommandGroup {
-  public AutoScoreElevator(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
+  public AutoScoreElevator(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch, boolean backup) {
     addCommands(new CollectCoralFromHP(superStructure).withTimeout(1)
         .andThen(
             new InstantCommand(() -> superStructure.scorer.setTargetBranchLevel(ReefLevel.TO_L4),
                 superStructure).unless(() -> swerve.getDistanceToTargetBranch() < 1.5)
-                .andThen(new ConditionalCommand(new AutoScoreElevator(superStructure, swerve, branch),
+                .andThen(new ConditionalCommand(new AutoScoreElevator(superStructure, swerve, branch, backup),
                     Commands.none(), () -> superStructure.scorer.hasCoral()))),
         new SwerveGoToBranchFastAutonomous(swerve, branch, false),
         Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.3),
