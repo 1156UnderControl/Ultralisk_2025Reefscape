@@ -14,10 +14,10 @@ public class AutoScoreCoralAutonomousOptimizedDirect extends SequentialCommandGr
   public AutoScoreCoralAutonomousOptimizedDirect(SuperStructure superStructure, SwerveSubsystem swerve,
       TargetBranch branch) {
     addCommands(new InstantCommand(() -> swerve.forceReefPoseEstimation(true)),
-        new SwerveGoToBranchFastAutonomous(swerve, branch, true, true)
+        new SwerveGoToBranchFastAutonomous(swerve, branch, true)
             .alongWith(new CollectCoralFromHP(superStructure)
                 .andThen(new OptimizedMoveScorerToScorePosition(superStructure, swerve))),
-        new SwerveGoToBranchFastAutonomous(swerve, branch, false, false),
+        new SwerveGoToBranchFastAutonomous(swerve, branch, false),
         Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.3),
         new InstantCommand(() -> swerve.forceReefPoseEstimation(false)));
   }

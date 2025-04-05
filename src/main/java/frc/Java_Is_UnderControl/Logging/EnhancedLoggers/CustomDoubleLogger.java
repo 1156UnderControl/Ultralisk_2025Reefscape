@@ -23,7 +23,7 @@ public class CustomDoubleLogger extends DoubleLogEntry {
 
   @Override
   public void append(double value) {
-    if (DriverStation.isEnabled() && value != this.loggedValue) {
+    if (value != this.loggedValue) {
       this.loggedValue = value;
       super.append(value);
       if (!CustomDoubleLogger.isFmsMatch) {

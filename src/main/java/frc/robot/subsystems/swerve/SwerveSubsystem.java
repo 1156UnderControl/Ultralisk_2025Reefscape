@@ -5,14 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import org.photonvision.PhotonCamera;
-
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -24,8 +21,11 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
+import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
@@ -33,23 +33,19 @@ import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveSubsystem;
 import frc.Java_Is_UnderControl.Swerve.SwervePathPlannerConfig;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
-import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
-import frc.Java_Is_UnderControl.Util.GeomUtil;
 import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
-import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
-import frc.Java_Is_UnderControl.Vision.Odometry.PhotonVisionPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.FieldConstants;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants;
+import frc.robot.constants.SwerveConstants.AutoAlignConstants;
 import frc.robot.constants.SwerveConstants.PoseEstimatorState;
 import frc.robot.constants.SwerveConstants.TargetBranch;
-import frc.robot.constants.VisionConstants;
 import frc.robot.joysticks.DriverController;
 import frc.robot.pose_estimators.ReefPoseEstimatorWithLimelight;
 
@@ -75,12 +71,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   int[] apriltagsIDs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
 
-  // private static PhotonCamera arducamLeft = new PhotonCamera("Arducam-left");
-
-  private static PhotonCamera arducamRight = new PhotonCamera("Arducam-right");
-
-  private ReefPoseEstimatorWithLimelight reefPoseEstimator = new ReefPoseEstimatorWithLimelight("limelight-reef",
-      arducamRight, VisionConstants.robotToCamArducamRight, () -> getTargetBranch());
+  private ReefPoseEstimatorWithLimelight reefPoseEstimator = new ReefPoseEstimatorWithLimelight("limelight-left",
+      "limelight-right", () -> getTargetBranch());
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
 
@@ -89,6 +81,12 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private String state = "NULL";
 
   CustomStringLogger poseEstimatorStateLogger = new CustomStringLogger("SwerveSubsystem/State_PoseEstimator");
+
+  CustomBooleanLogger isUsingAngleCorrection = new CustomBooleanLogger("SwerveSubsystem/UsingAngleCorrection");
+
+  CustomDoubleLogger targetVelocity = new CustomDoubleLogger("SwerveSubsystem/TargetVelocity");
+
+  CustomDoubleLogger distanceToTargetBranchLog = new CustomDoubleLogger("SwerveSubsystem/DistanceToTargetBranch");
 
   private PoseEstimatorState poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
 
@@ -99,6 +97,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private double distanceToTargetBranch = Double.POSITIVE_INFINITY;
 
   private boolean positionUpdated = false;
+
+  private GoToBranchConfiguration goToBranchConfigurationFastDirect;
+
+  private GoToBranchConfiguration goToBranchConfigurationFast;
+
+  private GoToBranchConfiguration goToBranchConfigurationAutonomous;
+
+  private GoToBranchConfiguration goToBranchConfigurationTeleoperated;
 
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
       new PIDConstants(5, 0, 0),
@@ -120,26 +126,52 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         modules);
     this.elevatorAtHighPositionSupplier = elevatorAtHighPositionSupplier;
     this.scorerTargetReefLevelSupplier = scorerTargetReefLevel;
+    this.configureGoToBranch();
   }
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
     List<PoseEstimator> listOfEstimators = new ArrayList<PoseEstimator>();
-    PoseEstimator arducamRightEstimator = new PhotonVisionPoseEstimator(arducamRight,
-        VisionConstants.robotToCamArducamRight, false);
-    PoseEstimator arducamLeftEstimator = new NoPoseEstimator();// take off left arducam for a while
-    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
-    PoseEstimator limelightSource = new LimelightPoseEstimator("limelight-source", false, false, 2);
-    listOfEstimators.add(arducamRightEstimator);
-    listOfEstimators.add(arducamLeftEstimator);
-    listOfEstimators.add(limelightReef);
-    listOfEstimators.add(limelightSource);
+    PoseEstimator limelightLeft = new LimelightPoseEstimator("limelight-left", false, false, 2);
+    PoseEstimator limelightRight = new LimelightPoseEstimator("limelight-right", false, false, 2);
+    listOfEstimators.add(limelightLeft);
+    listOfEstimators.add(limelightRight);
     PoseEstimator estimatorMultiCamera = new MultiCameraPoseEstimator(listOfEstimators, "Teleop Multi Pose Estimator");
     return estimatorMultiCamera;
   }
 
+  private void configureGoToBranch() {
+    this.goToBranchConfigurationFastDirect = new GoToBranchConfiguration(
+        AutoAlignConstants.PoseDeadBand.FastDirect.MIN_ERROR_AUTO_ALIGN_FAST_DIRECT,
+        AutoAlignConstants.PoseDeadBand.FastDirect.MAX_ERROR_AUTO_ALIGN_FAST_DIRECT,
+        AutoAlignConstants.PoseDeadBand.FastDirect.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST_DIRECT, "FAST_DIRECT",
+        AutoAlignConstants.VelocitiesRelatedToDistance.FastDirect.MIN_VELOCITY_POSITION,
+        AutoAlignConstants.VelocitiesRelatedToDistance.FastDirect.MAX_VELOCITY_POSITION);
+
+    this.goToBranchConfigurationFast = new GoToBranchConfiguration(
+        AutoAlignConstants.PoseDeadBand.Fast.MIN_ERROR_AUTO_ALIGN_FAST,
+        AutoAlignConstants.PoseDeadBand.Fast.MAX_ERROR_AUTO_ALIGN_FAST,
+        AutoAlignConstants.PoseDeadBand.Fast.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST, "FAST",
+        AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MIN_VELOCITY_POSITION,
+        AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MAX_VELOCITY_POSITION);
+
+    this.goToBranchConfigurationAutonomous = new GoToBranchConfiguration(
+        AutoAlignConstants.PoseDeadBand.Autonomous.MIN_ERROR_AUTO_ALIGN_AUTO,
+        AutoAlignConstants.PoseDeadBand.Autonomous.MAX_ERROR_AUTO_ALIGN_AUTO,
+        AutoAlignConstants.PoseDeadBand.Autonomous.MIN_ERROR_AUTO_ALIGN_AUTO, "AUTONOMOUS",
+        AutoAlignConstants.VelocitiesRelatedToDistance.Autonomous.MIN_VELOCITY_POSITION,
+        AutoAlignConstants.VelocitiesRelatedToDistance.Autonomous.MAX_VELOCITY_POSITION);
+
+    this.goToBranchConfigurationTeleoperated = new GoToBranchConfiguration(
+        AutoAlignConstants.PoseDeadBand.Teleoperated.MIN_ERROR_AUTO_ALIGN_TELEOPERATED,
+        AutoAlignConstants.PoseDeadBand.Teleoperated.MAX_ERROR_AUTO_ALIGN_TELEOPERATED,
+        AutoAlignConstants.PoseDeadBand.Teleoperated.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED, "TELEOPERATED",
+        AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MIN_VELOCITY_POSITION,
+        AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MAX_VELOCITY_POSITION);
+  }
+
   public void resetOdometryLimelight(Translation2d defaultPosition) {
-    PoseEstimator limelightReef = new LimelightPoseEstimator("limelight-reef", false, false, 2);
-    Optional<PoseEstimation> limelightPoseEstimation = limelightReef.getEstimatedPose(this.getPose());
+    PoseEstimator limelightLeft = new LimelightPoseEstimator("limelight-left", false, false, 2);
+    Optional<PoseEstimation> limelightPoseEstimation = limelightLeft.getEstimatedPose(this.getPose());
     if (limelightPoseEstimation.isEmpty()) {
       resetTranslation(defaultPosition);
       this.positionUpdated = true;
@@ -197,20 +229,20 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("BACKUP NECESSARY", checkBackupNecessary());
     selectPoseEstimator();
     super.periodic();
     updateLogs();
-    reefPoseEstimator.setHeadingMeasurement(getHeading());
-    LimelightHelpers.SetRobotOrientation("limelight-reef",
+    LimelightHelpers.SetRobotOrientation("limelight-left",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
-    LimelightHelpers.SetRobotOrientation("limelight-source",
+    LimelightHelpers.SetRobotOrientation("limelight-right",
         OdometryEnabledSwerveSubsystem.robotOrientation,
         OdometryEnabledSwerveSubsystem.robotAngularVelocity, 0, 0, 0, 0);
   }
 
   private void selectPoseEstimator() {
-    if ((getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 2
+    if ((getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 3
         && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP")) || this.forceReefPoseEstimation)) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
@@ -218,15 +250,14 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     }
     switch (poseEstimatorState) {
       case GLOBAL_POSE_ESTIMATION:
-        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-reef", this.apriltagsIDs);
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-left", this.apriltagsIDs);
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", this.apriltagsIDs);
         overrideTeleOpPoseEstimator(null);
         overrideAutonomousPoseEstimator(null);
         break;
       case REEF_ESTIMATION:
-        // overrideTeleOpPoseEstimator(reefPoseEstimator);
-        // overrideAutonomousPoseEstimator(reefPoseEstimator);
-        overrideTeleOpPoseEstimator(null);
-        overrideAutonomousPoseEstimator(null);
+        overrideTeleOpPoseEstimator(reefPoseEstimator);
+        overrideAutonomousPoseEstimator(reefPoseEstimator);
         break;
       default:
         overrideTeleOpPoseEstimator(null);
@@ -244,102 +275,68 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void driveToBranch(TargetBranch branch, boolean backupBranch) {
+  public void driveToBranch(TargetBranch branch, boolean backup, boolean goDirect) {
     this.targetBranch = branch;
     if (DriverStation.isAutonomousEnabled()) {
-      goToBranchAutonomous(branch, backupBranch);
+      driveToBranchFast(branch, backup, goDirect);
       return;
     }
-    goToBranchTeleoperated(branch, backupBranch);
+    goToBranchTeleoperated(branch, backup, goDirect);
   }
 
   @Override
-  public void driveToBranchFastDirect(TargetBranch branch, boolean backupBranch) {
-    this.targetBranch = branch;
-    this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
-        .getDistance(getPose().getTranslation());
-    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
-        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
-        : targetBranch.getTargetPoseToScore();
-
-    if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.6) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true), 0.9);
-      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
-      return;
-    }
-
-    if (this.distanceToTargetBranch < 1.5) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true), 2.5);
-      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
-      return;
-    }
-    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, true), 4);
-    this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
+  public void driveToBranchFastDirect(TargetBranch branch, boolean backup, boolean goDirect) {
+    this.goToBranchConfigurationFastDirect.setBranch(branch, goDirect);
+    this.goToBranchConfigurationFastDirect.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+        elevatorAtHighPositionSupplier, backup);
+    this.distanceToTargetBranch = goToBranchConfigurationFastDirect.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchConfigurationFastDirect.getFinalVelocity());
+    this.distanceToTargetBranchLog.append(distanceToTargetBranch);
+    this.isUsingAngleCorrection.append(false);
+    driveToPose(this.goToBranchConfigurationFastDirect.getFinalPose(),
+        this.goToBranchConfigurationFastDirect.getFinalVelocity());
+    this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
   }
 
   @Override
-  public void driveToBranchFast(TargetBranch branch, boolean backupBranch) {
-    this.targetBranch = branch;
-    this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
-        .getDistance(getPose().getTranslation());
-    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
-        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
-        : targetBranch.getTargetPoseToScore();
-
-    if (elevatorAtHighPositionSupplier.get() && this.distanceToTargetBranch < 0.6) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 0.9);
-      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
-      return;
-    }
-
-    if (this.distanceToTargetBranch < 1.5) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 2.5);
-      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
-      return;
-    }
-    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 4);
-    this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
+  public void driveToBranchFast(TargetBranch branch, boolean backup, boolean goDirect) {
+    this.goToBranchConfigurationFast.setBranch(branch, goDirect);
+    this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+        elevatorAtHighPositionSupplier, backup);
+    this.distanceToTargetBranch = goToBranchConfigurationFast.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchConfigurationFast.getFinalVelocity());
+    this.distanceToTargetBranchLog.append(distanceToTargetBranch);
+    this.isUsingAngleCorrection.append(false);
+    driveToPose(this.goToBranchConfigurationFast.getFinalPose(),
+        this.goToBranchConfigurationFast.getFinalVelocity());
+    this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
   }
 
-  private void goToBranchTeleoperated(TargetBranch branch, boolean backupBranch) {
-    this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
-        .getDistance(getPose().getTranslation());
-    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
-        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
-        : targetBranch.getTargetPoseToScore();
-    if (this.distanceToTargetBranch < 3) {
-      if (this.distanceToTargetBranch < 1) {
-        driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 1);
-        this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE";
-        return;
-      }
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 2);
-      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR";
+  private void goToBranchTeleoperated(TargetBranch branch, boolean backup, boolean goDirect) {
+    this.goToBranchConfigurationTeleoperated.setBranch(branch, goDirect);
+    this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+        elevatorAtHighPositionSupplier, backup);
+    this.distanceToTargetBranch = goToBranchConfigurationTeleoperated.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
+    this.distanceToTargetBranchLog.append(distanceToTargetBranch);
+    if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3) {
+      this.isUsingAngleCorrection.append(false);
+      driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
+          this.goToBranchConfigurationTeleoperated.getFinalVelocity());
+      this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
     } else {
       driveAlignAngleJoystick();
     }
   }
 
-  private void goToBranchAutonomous(TargetBranch branch, boolean backupBranch) {
-    this.distanceToTargetBranch = targetBranch.getTargetPoseToScore().getTranslation()
-        .getDistance(getPose().getTranslation());
-    Pose2d targetBranchScorePose = this.scorerTargetReefLevelSupplier.get() == ReefLevel.L4
-        ? CoordinatesTransform.getRetreatPose(targetBranch.getTargetPoseToScore(), 0.05)
-        : targetBranch.getTargetPoseToScore();
+  @Override
+  public boolean checkBackupNecessary() {
+    return getPose().getTranslation().getDistance(targetBranch.getTargetPoseToScore().getTranslation()) < 1;
+  }
 
-    if (elevatorAtHighPositionSupplier.get()) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 0.7);
-      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_ELEVATOR_TOO_HIGH_AUTONOMOUS";
-      return;
-    }
-
-    if (this.distanceToTargetBranch < 2) {
-      driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 1.5);
-      this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_CLOSE_AUTONOMOUS";
-      return;
-    }
-    driveToPose(getDriveTarget(getPose(), targetBranchScorePose, backupBranch, false), 3.5);
-    this.state = "DRIVE_TO_BRANCH_" + branch.name() + "_FAR_AUTONOMOUS";
+  @Override
+  public boolean checkPivotWillCrashOnReef() {
+    return getPose().getTranslation().getDistance(targetBranch.getTargetPoseToScore().getTranslation()) < 0.2;
   }
 
   @Override
@@ -420,44 +417,19 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public boolean isAtTargetPosition() {
+  public boolean isAtTargetPositionWithHeading() {
     return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(this.goToPoseTranslationDeadband,
         this.goToPoseTranslationDeadband, this.goToPoseHeadingDeadband));
   }
 
+  @Override
+  public boolean isAtTargetPositionWithoutHeading() {
+    return stableAtTargetPose.isStableInCondition(() -> isAtTargetPose(this.goToPoseTranslationDeadband,
+        this.goToPoseTranslationDeadband));
+  }
+
   public void driveToPoseTest() {
     driveToPose(new Pose2d(15, 2, new Rotation2d(Units.degreesToRadians(180))));
-  }
-
-  private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean moveBack, boolean goDirect) {
-    if (moveBack) {
-      goal = goal.transformBy(GeomUtil.toTransform2d(-0.25, 0.0));
-      this.goToPoseTranslationDeadband = 0.1;
-      this.goToPoseHeadingDeadband = 10;
-    } else {
-      goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
-      this.goToPoseTranslationDeadband = 0.025;
-      this.goToPoseHeadingDeadband = 3;
-    }
-    if (goDirect) {
-      return goal;
-    }
-    return this.calculateReefAvoidenceTarget(robot, goal);
-  }
-
-  private Pose2d calculateReefAvoidenceTarget(Pose2d robot, Pose2d goal) {
-    var offset = robot.relativeTo(goal);
-    double yDistance = Math.abs(offset.getY());
-    double xDistance = Math.abs(offset.getX());
-    double shiftXT = MathUtil.clamp(
-        (yDistance / (Reef.faceLength * 2)) + ((xDistance - 0.3) / (Reef.faceLength * 3)),
-        0.0,
-        1.0);
-    double shiftYT = MathUtil.clamp(offset.getX() / Reef.faceLength, 0.0, 1.0);
-    return goal.transformBy(
-        GeomUtil.toTransform2d(
-            -shiftXT * 1.2,
-            Math.copySign(shiftYT * 1.5 * 0.8, offset.getY())));
   }
 
   @Override

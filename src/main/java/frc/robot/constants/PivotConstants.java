@@ -16,7 +16,7 @@ public class PivotConstants {
     public static final double MAX_DEAD_BAND_FOR_MOTOR_STOP = 20;
 
     public class PID {
-      public static final double P = 0.02;
+      public static final double P = 0.1;
       public static final double I = 0;
       public static final double D = 0;
       public static final double arbFF = 0;
@@ -25,17 +25,17 @@ public class PivotConstants {
 
     public class setpoints {
       public static final double MAX_ANGLE = 220;
-      public static final double MIN_ANGLE = 0;
-      public static final double DEFAULT_ANGLE = 100;
+      public static final double MIN_ANGLE = 14.06;
+      public static final double DEFAULT_ANGLE = 91;
       public static final double L1_ANGLE = 129;
       public static final double L2_ANGLE = 170.5;
       public static final double L3_ANGLE = 170.5;
       public static final double L4_ANGLE = 210;
       public static final double ALGAE_MID_REMOVAL = 173;
       public static final double ALGAE_LOW_REMOVAL = 173;
-      public static final double SECURE_FOR_ELEVATOR_UP = 95;
+      public static final double SECURE_FOR_ELEVATOR_UP = 142;
       public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 160;
-      public static final double COLLECT_ANGLE = 14;
+      public static final double COLLECT_ANGLE = 16;
     }
   }
 }

@@ -27,6 +27,7 @@ import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
+import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 
@@ -153,21 +154,20 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
 
   protected void driveAimingAtPosition(ChassisSpeeds targetSpeeds, Translation2d targetPosition,
       Rotation2d offsetAngle) {
-    this.targetAimPose = new Pose2d(targetPosition, new Rotation2d());
-    Translation2d positionDifference = this.getPose().getTranslation().minus(targetPosition);
-    Rotation2d targetAngle = positionDifference.getAngle().plus(offsetAngle);
-    this.driveFieldOrientedLockedAngle(targetSpeeds, targetAngle);
+    this.driveAimingAtPosition(0, targetSpeeds, targetPosition, offsetAngle);
   }
 
-  protected void driveAimingAtPositionMoving(double dt, ChassisSpeeds targetSpeeds, Translation2d targetPosition,
+  protected void driveAimingAtPosition(double dt, ChassisSpeeds targetSpeeds, Translation2d targetPosition,
       Rotation2d offsetAngle) {
-    this.targetAimPose = new Pose2d(targetPosition, new Rotation2d());
-    Translation2d positionDifference = this.getEarlyPoseMoving(dt).getTranslation().minus(targetPosition);
-    Rotation2d targetAngle = positionDifference.getAngle().plus(offsetAngle);
+    Rotation2d targetAngle = this.getHeadingAimingAtPosition(dt, targetPosition, offsetAngle);
     this.driveFieldOrientedLockedAngle(targetSpeeds, targetAngle);
   }
 
-  protected Rotation2d getHeadingAimingAtPositionMoving(double dt, Translation2d targetPosition,
+  protected void driveAimingAtPosition(double dt, ChassisSpeeds targetSpeeds, Translation2d targetPosition) {
+    this.driveAimingAtPosition(dt, targetSpeeds, targetPosition, Rotation2d.fromDegrees(0));
+  }
+
+  protected Rotation2d getHeadingAimingAtPosition(double dt, Translation2d targetPosition,
       Rotation2d offsetAngle) {
     this.targetAimPose = new Pose2d(targetPosition, new Rotation2d());
     Translation2d positionDifference = this.getEarlyPoseMoving(dt).getTranslation().minus(targetPosition);
@@ -175,12 +175,22 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     return targetAngle;
   }
 
-  protected void driveAimingAtPositionMoving(double dt, ChassisSpeeds targetSpeeds, Translation2d targetPosition) {
-    this.driveAimingAtPositionMoving(dt, targetSpeeds, targetPosition, Rotation2d.fromDegrees(0));
-  }
-
   protected void driveToPose(Pose2d targetPose) {
     this.driveToPose(targetPose, Double.POSITIVE_INFINITY);
+  }
+
+  protected void driveToPoseAimingAtPosition(double dt, Pose2d targetPose,
+      Translation2d targetTranslationToAim, double maxSpeed) {
+    this.driveToPoseAimingAtPosition(dt, targetPose, targetTranslationToAim, maxSpeed, 0.0);
+  }
+
+  protected void driveToPoseAimingAtPosition(double dt, Pose2d targetPose,
+      Translation2d targetTranslationToAim, double maxSpeed, double offset) {
+    Rotation2d targetAngle = this.getHeadingAimingAtPosition(dt, targetTranslationToAim,
+        Rotation2d.fromDegrees(offset));
+    targetAngle = AllianceFlipUtil.apply(targetAngle);
+    Pose2d targetPoseWithLockedAngle = new Pose2d(targetPose.getX(), targetPose.getY(), targetAngle);
+    this.driveToPose(targetPoseWithLockedAngle, maxSpeed);
   }
 
   protected void driveToPose(Pose2d targetPose, double maxSpeed) {
@@ -210,6 +220,18 @@ public abstract class OdometryEnabledSwerveSubsystem extends BaseSwerveSubsystem
     boolean isAtYAxis = yAxisDistance <= yAxisToleranceMeters;
     boolean isAtAngle = this.isAtTargetHeading(angleToleranceDegrees);
     boolean isAtTargetPose = isAtXAxis && isAtYAxis && isAtAngle;
+    this.isAtTargetXAxisLogger.append(isAtXAxis);
+    this.isAtTargetYAxisLogger.append(isAtYAxis);
+    this.isAtTargetPoseLogger.append(isAtTargetPose);
+    return isAtTargetPose;
+  }
+
+  protected boolean isAtTargetPose(double xAxisToleranceMeters, double yAxisToleranceMeters) {
+    double xAxisDistance = Math.abs(this.getPose().getX() - this.targetPose.getX());
+    double yAxisDistance = Math.abs(this.getPose().getY() - this.targetPose.getY());
+    boolean isAtXAxis = xAxisDistance <= xAxisToleranceMeters;
+    boolean isAtYAxis = yAxisDistance <= yAxisToleranceMeters;
+    boolean isAtTargetPose = isAtXAxis && isAtYAxis;
     this.isAtTargetXAxisLogger.append(isAtXAxis);
     this.isAtTargetYAxisLogger.append(isAtYAxis);
     this.isAtTargetPoseLogger.append(isAtTargetPose);
