@@ -21,6 +21,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
@@ -228,6 +229,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("BACKUP NECESSARY", checkBackupNecessary());
     selectPoseEstimator();
     super.periodic();
     updateLogs();
@@ -290,15 +292,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.distanceToTargetBranch = goToBranchConfigurationFastDirect.getDistanceToTargetBranch();
     this.targetVelocity.append(goToBranchConfigurationFastDirect.getFinalVelocity());
     this.distanceToTargetBranchLog.append(distanceToTargetBranch);
-    if (this.goToBranchConfigurationFastDirect.canDriveAimingAtPose()) {
-      this.isUsingAngleCorrection.append(true);
-      driveToPoseAimingAtPosition(0, this.goToBranchConfigurationFastDirect.getFinalPose(),
-          branch.getDefaultPoseToScore().getTranslation(), this.goToBranchConfigurationFastDirect.getFinalVelocity());
-    } else {
-      this.isUsingAngleCorrection.append(false);
-      driveToPose(this.goToBranchConfigurationFastDirect.getFinalPose(),
-          this.goToBranchConfigurationFastDirect.getFinalVelocity());
-    }
+    this.isUsingAngleCorrection.append(false);
+    driveToPose(this.goToBranchConfigurationFastDirect.getFinalPose(),
+        this.goToBranchConfigurationFastDirect.getFinalVelocity());
+    this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
   }
 
   @Override
@@ -309,15 +306,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.distanceToTargetBranch = goToBranchConfigurationFast.getDistanceToTargetBranch();
     this.targetVelocity.append(goToBranchConfigurationFast.getFinalVelocity());
     this.distanceToTargetBranchLog.append(distanceToTargetBranch);
-    if (this.goToBranchConfigurationFast.canDriveAimingAtPose()) {
-      this.isUsingAngleCorrection.append(true);
-      driveToPoseAimingAtPosition(0, this.goToBranchConfigurationFast.getFinalPose(),
-          branch.getDefaultPoseToScore().getTranslation(), this.goToBranchConfigurationFast.getFinalVelocity());
-    } else {
-      this.isUsingAngleCorrection.append(false);
-      driveToPose(this.goToBranchConfigurationFast.getFinalPose(),
-          this.goToBranchConfigurationFast.getFinalVelocity());
-    }
+    this.isUsingAngleCorrection.append(false);
+    driveToPose(this.goToBranchConfigurationFast.getFinalPose(),
+        this.goToBranchConfigurationFast.getFinalVelocity());
+    this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
   }
 
   private void goToBranchTeleoperated(TargetBranch branch, boolean backup, boolean goDirect) {
@@ -328,16 +320,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
     this.distanceToTargetBranchLog.append(distanceToTargetBranch);
     if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3) {
-      if (false) {
-        this.isUsingAngleCorrection.append(true);
-        driveToPoseAimingAtPosition(0, this.goToBranchConfigurationTeleoperated.getFinalPose(),
-            branch.getDefaultPoseToScore().getTranslation(),
-            this.goToBranchConfigurationTeleoperated.getFinalVelocity());
-      } else {
-        this.isUsingAngleCorrection.append(false);
-        driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
-            this.goToBranchConfigurationTeleoperated.getFinalVelocity());
-      }
+      this.isUsingAngleCorrection.append(false);
+      driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
+          this.goToBranchConfigurationTeleoperated.getFinalVelocity());
+      this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
     } else {
       driveAlignAngleJoystick();
     }
@@ -345,7 +331,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public boolean checkBackupNecessary() {
-    return getPose().getTranslation().getDistance(targetBranch.getTargetPoseToScore().getTranslation()) < 0.6;
+    return getPose().getTranslation().getDistance(targetBranch.getTargetPoseToScore().getTranslation()) < 1;
   }
 
   @Override
