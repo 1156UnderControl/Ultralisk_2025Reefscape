@@ -74,7 +74,7 @@ public class SwerveConstants {
         public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED = 0.3;
       }
 
-      public static final double POSE_TRANSLATION_DEADBAND = 0.03;
+      public static final double POSE_TRANSLATION_DEADBAND = 0.04;
       public static final double POSE_HEADING_DEADBAND = 3;
       public static final double POSE_TRANSLATION_DEADBAND_BACKUP = 0.05;
       public static final double POSE_HEADING_DEADBAND_BACKUP = 10;
