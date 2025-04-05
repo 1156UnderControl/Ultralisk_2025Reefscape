@@ -34,7 +34,6 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean hasCoral = true;
   private boolean hasAlgae = false;
-  private boolean elevatorHasHomed = false;
   private double goalElevator = ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND;
   private double goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
 
@@ -42,17 +41,13 @@ public class ScorerSubsystem implements IScorer {
 
   StabilizeChecker pivotInternalEncoderIsLost = new StabilizeChecker(0.2);
 
-  CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/Correcting Pivot");
+  CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/correctingPivot");
 
   private String state = "START";
 
-  private String branchHeightTarget = "NONEd";
+  private String branchHeightTarget = "NONE";
 
-  private String algaeHeightTarget = "NONE";
-
-  private String netHeightTarget = "NONE";
-
-  CustomStringLogger scorerStateLogger = new CustomStringLogger("/ScorerSubsystem/State");
+  CustomStringLogger scorerStateLogger = new CustomStringLogger("/ScorerSubsystem/state");
 
   CustomStringLogger targetAlgaeLevelLogger = new CustomStringLogger("/ScorerSubsystem/targetAlgaeLevel");
 
@@ -93,10 +88,6 @@ public class ScorerSubsystem implements IScorer {
   private StabilizeChecker stablePosition = new StabilizeChecker(0.2);
 
   private StabilizeChecker stableAlgae = new StabilizeChecker(1.5);
-
-  private boolean hasLimitatedPivotVelocity = false;
-
-  private boolean hasNotLimitatedPivotVelocity = false;
 
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
@@ -161,22 +152,12 @@ public class ScorerSubsystem implements IScorer {
       setScorerStructureGoals();
     }
     if (hasAlgae) {
-      if (!this.hasLimitatedPivotVelocity) {
-        pivotMotor.configureTrapezoid(PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
-            PivotConstants.tunning_values_pivot.MAX_VELOCITY_WITH_ALGAE);
-        this.hasLimitatedPivotVelocity = true;
-        if (Math.abs(pivotMotor.getAppliedOutput()) > 0.2) {
-          endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
-        } else {
-          endEffectorMotor
-              .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_DURING_MOVEMENT);
-        }
-      }
-    } else {
-      if (!this.hasNotLimitatedPivotVelocity) {
-        pivotMotor.configureTrapezoid(PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
-            PivotConstants.tunning_values_pivot.MAX_VELOCITY);
-        this.hasNotLimitatedPivotVelocity = true;
+      if (Math.abs(pivotMotor.getAppliedOutput()) > 0.2) {
+        endEffectorMotor
+            .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_DURING_MOVEMENT);
+      } else {
+        endEffectorMotor
+            .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
       }
     }
     correctPivotPosition();
@@ -305,7 +286,6 @@ public class ScorerSubsystem implements IScorer {
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
     } else {
       endEffectorMotor.set(0);
-      this.hasNotLimitatedPivotVelocity = false;
     }
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
     state = "INTAKING_FROM_HP";
@@ -418,7 +398,6 @@ public class ScorerSubsystem implements IScorer {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
     } else {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
-      this.hasLimitatedPivotVelocity = false;
     }
   }
 
@@ -485,7 +464,6 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public void prepareToScoreAlgae() {
     assignSetpointsForAlgaeScore(this.targetReefLevel);
-    algaeHeightTarget = this.algaeScoreHeight.name();
     state = "PREPARE_TO_PLACE_CORAL";
   }
 
@@ -517,7 +495,6 @@ public class ScorerSubsystem implements IScorer {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
     }
     this.hasCoral = false;
-    this.elevatorHasHomed = false;
     this.state = "PLACING_CORAL";
   }
 
@@ -525,8 +502,6 @@ public class ScorerSubsystem implements IScorer {
   public void placeAlgae() {
     endEffectorMotor.set(0.2);
     this.hasAlgae = false;
-    this.elevatorHasHomed = false;
-    this.hasNotLimitatedPivotVelocity = false;
     this.state = "PLACING_ALGAE";
   }
 
