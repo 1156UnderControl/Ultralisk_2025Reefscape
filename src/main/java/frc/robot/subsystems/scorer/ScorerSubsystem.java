@@ -73,6 +73,8 @@ public class ScorerSubsystem implements IScorer {
 
   private double lastGoalPivot = goalPivot;
 
+  private StabilizeChecker pivotAndElevatorStableInPosition = new StabilizeChecker(0.1);
+
   private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
   private StabilizeChecker stableSensors = new StabilizeChecker(0.2);
@@ -493,8 +495,9 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private boolean isPivotAndElevatorAtSetpoint() {
-    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPositionExternalAbsoluteEncoder(), this.goalPivot, 5);
+    return this.pivotAndElevatorStableInPosition
+        .isStableInCondition(() -> Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
+            && Util.atSetpoint(this.pivotMotor.getPositionExternalAbsoluteEncoder(), this.goalPivot, 5));
   }
 
   @Override
@@ -554,7 +557,11 @@ public class ScorerSubsystem implements IScorer {
         .getPositionExternalAbsoluteEncoder() < (PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE + 10)) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
     } else {
-      endEffectorMotor.set(0);
+      if (hasCoral) {
+        endEffectorMotor.set(0.1);
+      } else {
+        endEffectorMotor.set(0);
+      }
     }
   }
 

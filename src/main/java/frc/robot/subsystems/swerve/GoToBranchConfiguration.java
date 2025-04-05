@@ -69,14 +69,14 @@ public class GoToBranchConfiguration {
       this.canDriveAimingAtPose = false;
     }
 
-    if (distanceToTargetBranch < minErrorPose) {
+    if (distanceToTargetBranch <= minErrorPose) {
       this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_CLOSE";
       return;
-    } else if (distanceToTargetBranch < maxErrorPose) {
+    } else if (distanceToTargetBranch <= maxErrorPose) {
       this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_FAR";
       return;
     } else {
-      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_FAR";
+      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_MID";
       return;
     }
   }
@@ -84,6 +84,7 @@ public class GoToBranchConfiguration {
   private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean goDirect, boolean backup) {
     if (backup) {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.3, 0.0));
+      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_BACKUP";
     } else {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
     }

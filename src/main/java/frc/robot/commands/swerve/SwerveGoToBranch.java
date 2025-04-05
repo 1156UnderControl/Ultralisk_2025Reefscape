@@ -21,6 +21,7 @@ public class SwerveGoToBranch extends Command {
 
   @Override
   public void initialize() {
+    this.swerve.setTargetBranch(targetBranch);
     isBackupNecessary = this.swerve.checkBackupNecessary();
     isGoingToNonBackupPosition = false;
   }
