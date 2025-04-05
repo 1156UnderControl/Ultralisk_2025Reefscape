@@ -5,8 +5,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
-import frc.robot.commands.scorer.MoveScorerToScorePosition;
-import frc.robot.commands.swerve.SwerveGoToBranchBackup;
 import frc.robot.commands.util.GoAndRaiseElevator;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
@@ -21,10 +19,6 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
 
   public AutoScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
     addCommands(new InstantCommand(() -> hasCancelledAutoMove = false),
-        Commands.either(
-            new SwerveGoToBranchBackup(swerve, branch).andThen(new MoveScorerToScorePosition(superStructure)),
-            Commands.none(),
-            () -> swerve.checkPivotWillCrashOnReef()),
         new GoAndRaiseElevator(swerve, superStructure, branch, driverController.isForcingDriverControl().getAsBoolean())
             .until(() -> {
               if (operatorKeyboard.scoreCoral().getAsBoolean()) {
