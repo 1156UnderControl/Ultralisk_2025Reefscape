@@ -77,11 +77,9 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean endEffectorAccelerated = false;
 
-  private boolean endEffectorDisaccelerated = false;
-
-  private double lastGoalPivot = goalPivot;
-
   private StabilizeChecker pivotAndElevatorStableInPosition = new StabilizeChecker(0.15);
+
+  private StabilizeChecker pivotStableInPosition = new StabilizeChecker(0.2);
 
   private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
@@ -151,15 +149,15 @@ public class ScorerSubsystem implements IScorer {
     if (!manualControl) {
       setScorerStructureGoals();
     }
-    if (hasAlgae) {
-      if (Math.abs(pivotMotor.getAppliedOutput()) > 0.2) {
-        endEffectorMotor
-            .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_DURING_MOVEMENT);
-      } else {
-        endEffectorMotor
-            .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
-      }
-    }
+    // if (hasAlgae) {
+    // if (Math.abs(pivotMotor.getAppliedOutput()) > 0.2) {
+    // endEffectorMotor
+    // .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_DURING_MOVEMENT);
+    // } else {
+    // endEffectorMotor
+    // .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
+    // }
+    // }
     correctPivotPosition();
     updateLogs();
   }
@@ -394,20 +392,7 @@ public class ScorerSubsystem implements IScorer {
   public void collectAlgae() {
     assignAlgaeCollectSetpointsForAlgaeHeight();
     runAlgaeIntakeDetection();
-    if (!hasAlgae) {
-      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
-    } else {
-      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
-    }
-  }
-
-  @Override
-  public void holdAlgae() {
-    if (!hasAlgae) {
-      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
-    } else {
-      this.stopEndEffector();
-    }
+    endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
   }
 
   @Override
@@ -441,23 +426,11 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void assignSetpointsForAlgaeScore(ReefLevel reefLevel) {
-    switch (reefLevel) {
-      case L1:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.PROCESSOR_HEIGHT;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_PROCESSOR_SCORE_ANGLE;
-        break;
-      case L4:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.NET_HEIGHT;
-        if (isElevatorAtSetpoint()) {
-          goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_SCORE_ANGLE;
-        } else {
-          goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_WAIT_FOR_ELEVATOR_ANGLE;
-        }
-        break;
-      default:
-        goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.PROCESSOR_HEIGHT;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_PROCESSOR_SCORE_ANGLE;
-        break;
+    goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.NET_HEIGHT;
+    if (isElevatorAtSetpoint()) {
+      goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_SCORE_ANGLE;
+    } else {
+      goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_WAIT_FOR_ELEVATOR_ANGLE;
     }
   }
 
@@ -473,17 +446,25 @@ public class ScorerSubsystem implements IScorer {
     if (hasAlgae) {
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.PROCESSOR_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_PROCESSOR_SCORE_ANGLE;
+      if (pivotStableInPosition.isStableInRange(pivotMotor.getPosition(), goalPivot, 2.5)
+          || pivotMotor.getAppliedOutput() > 0.2) {
+        endEffectorMotor
+            .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
+      } else {
+        endEffectorMotor
+            .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_DURING_MOVEMENT);
+      }
       state = "DEFAULT_WITH_ALGAE";
-    } else if (!this.hasCoral) {
-      goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
-      goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
-      state = "DEFAULT_WITHOUT_CORAL";
-      this.runCoralAntiLockRoutine();
-    } else {
+    } else if (this.hasCoral) {
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
       state = "DEFAULT_WITH_CORAL";
       this.runCoralAntiLockRoutine();
+    } else {
+      goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
+      goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
+      state = "DEFAULT_WITHOUT_CORAL";
+      endEffectorMotor.set(0);
     }
   }
 
@@ -500,7 +481,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeAlgae() {
-    endEffectorMotor.set(0.2);
+    endEffectorMotor.set(-0.4);
     this.hasAlgae = false;
     this.state = "PLACING_ALGAE";
   }
@@ -660,6 +641,11 @@ public class ScorerSubsystem implements IScorer {
     return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05);
   }
 
+  private boolean isElevatorAtProcessorHeight() {
+    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
+        ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT, 0.05);
+  }
+
   @Override
   public void setElevatorVoltage(double voltage) {
     this.elevatorMotorLeader.set(Volts.of(voltage));
@@ -728,5 +714,10 @@ public class ScorerSubsystem implements IScorer {
         endEffectorMotor.set(0);
       }
     }
+  }
+
+  @Override
+  public boolean readyToScoreProcessor() {
+    return hasAlgae && this.isElevatorAtProcessorHeight();
   }
 }

@@ -49,6 +49,10 @@ public class SuperStructure extends SubsystemBase {
     return this.scorer.hasCoral();
   }
 
+  public boolean scorerHasAlgae() {
+    return this.scorer.hasAlgae();
+  }
+
   public void setCoastToRobot() {
     this.scorer.setCoastScorer();
     this.climber.setCoastClimber();

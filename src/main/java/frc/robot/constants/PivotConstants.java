@@ -39,7 +39,7 @@ public class PivotConstants {
       public static final double SECURE_FOR_ELEVATOR_UP = 142;
       public static final double UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP = 160;
       public static final double COLLECT_ANGLE = 16;
-      public static final double COLLECT_ANGLE_ALGAE_GROUND = 216;
+      public static final double COLLECT_ANGLE_ALGAE_GROUND = 220;
     }
   }
 }

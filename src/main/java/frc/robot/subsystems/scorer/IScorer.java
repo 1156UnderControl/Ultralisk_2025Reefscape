@@ -14,6 +14,8 @@ public interface IScorer {
 
   boolean hasAlgae();
 
+  boolean readyToScoreProcessor();
+
   void intakeFromHP();
 
   void stopIntakeFromHP();
@@ -29,8 +31,6 @@ public interface IScorer {
   void prepareToPlaceCoralOnBranch(Supplier<Double> distanceToTargetPoseProvider);
 
   void collectAlgae();
-
-  void holdAlgae();
 
   void stopEndEffector();
 

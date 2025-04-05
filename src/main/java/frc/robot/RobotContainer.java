@@ -27,6 +27,7 @@ import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
+import frc.robot.commands.scorer.ScoreProcessor;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
@@ -226,6 +227,9 @@ public class RobotContainer {
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
     keyBoard.prepareToScore().onTrue(new ScoreObjectPosition(superStructure, drivetrain));
+
+    keyBoard.scoreObject().and(() -> superStructure.scorer.readyToScoreProcessor())
+        .onTrue(new ScoreProcessor(superStructure));
 
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
