@@ -73,7 +73,7 @@ public class ScorerSubsystem implements IScorer {
 
   private double lastGoalPivot = goalPivot;
 
-  private StabilizeChecker pivotAndElevatorStableInPosition = new StabilizeChecker(0.1);
+  private StabilizeChecker pivotAndElevatorStableInPosition = new StabilizeChecker(0.15);
 
   private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
@@ -156,10 +156,9 @@ public class ScorerSubsystem implements IScorer {
     targetBranchLevelLogger.append(this.targetReefLevel.name());
     targetAlgaeLevelLogger.append(this.targetAlgaeHeight.name());
     targetReefLevelLog.append(this.targetReefLevel.name());
-    SmartDashboard.putString("Scorer/TargetLevelName", this.targetReefLevel.name());
-    SmartDashboard.putString("Scorer/Target Reef Branch", branchHeightTarget);
-    SmartDashboard.putBoolean("Scorer/Has Coral", this.hasCoral());
-    SmartDashboard.putBoolean("Infra Red Has Coral", coralInfraRedSensor.getBoolean());
+    SmartDashboard.putString("ScorerSubsystem/TargetLevelName", this.targetReefLevel.name());
+    SmartDashboard.putString("ScorerSubsystem/TargetReefBranch", branchHeightTarget);
+    SmartDashboard.putBoolean("ScorerSubsystem/HasCoral", this.hasCoral());
   }
 
   private void setScorerStructureGoals() {
@@ -470,11 +469,12 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isAtCollectPosition() {
-    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
+    boolean isAtCollectPosition = Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.05)
         && Util.atSetpoint(this.pivotMotor.getPositionExternalAbsoluteEncoder(),
             PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE,
-            2);
+            6);
+    return isAtCollectPosition;
   }
 
   @Override
