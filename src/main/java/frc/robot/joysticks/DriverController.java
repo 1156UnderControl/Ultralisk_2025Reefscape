@@ -102,7 +102,7 @@ public class DriverController implements IDriverController {
 
   @Override
   public Trigger isForcingDriverControl() {
-    return driverController.leftTrigger(0.2);
+    return driverController.leftTrigger(0.4);
   }
 
   @Override

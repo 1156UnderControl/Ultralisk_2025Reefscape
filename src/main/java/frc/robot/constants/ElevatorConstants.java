@@ -42,8 +42,8 @@ public class ElevatorConstants {
     }
 
     public class stable_transition {
-      public static final double DISTANCE_FOR_FULL_DEPLOYMENT = 0.2;
-      public static final double DISTANCE_FOR_DEPLOYMENT_START = 1.3;
+      public static final double DISTANCE_FOR_FULL_DEPLOYMENT = 0.3;
+      public static final double DISTANCE_FOR_DEPLOYMENT_START = 1.0;
       public static final double SAFE_CRUISE_HEIGHT = 1.1;
     }
   }

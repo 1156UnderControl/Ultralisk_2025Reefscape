@@ -54,7 +54,7 @@ public interface IScorer {
 
   boolean isAtDefaultPosition();
 
-  boolean isAtRemovePosition();
+  boolean isScorerAtPosition();
 
   boolean isSecuredToPlaceCoral();
 
