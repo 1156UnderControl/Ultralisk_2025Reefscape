@@ -29,6 +29,12 @@ public class MoveScorerToScorePosition extends Command {
 
   @Override
   public boolean isFinished() {
-    return superStructure.scorer.isSecuredToPlaceCoral();
+    if (this.superStructure.scorer.hasCoral()) {
+      return superStructure.scorer.isSecuredToPlaceCoral();
+    }
+    if (this.superStructure.scorer.hasAlgae()) {
+      return superStructure.scorer.isSecuredToScoreOnNet();
+    }
+    return true;
   }
 }

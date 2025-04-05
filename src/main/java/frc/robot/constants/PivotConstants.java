@@ -32,7 +32,8 @@ public class PivotConstants {
       public static final double L2_ANGLE = 170.5;
       public static final double L3_ANGLE = 170.5;
       public static final double L4_ANGLE = 210;
-      public static final double ALGAE_NET_SCORE_ANGLE = 135;
+      public static final double ALGAE_NET_SCORE_ANGLE = 160;
+      public static final double ALGAE_NET_WAIT_FOR_ELEVATOR_ANGLE = 173;
       public static final double ALGAE_PROCESSOR_SCORE_ANGLE = 173;
       public static final double ALGAE_REEF_REMOVAL_ANGLE = 173;
       public static final double SECURE_FOR_ELEVATOR_UP = 142;

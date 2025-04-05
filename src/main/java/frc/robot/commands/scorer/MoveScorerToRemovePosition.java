@@ -21,6 +21,11 @@ public class MoveScorerToRemovePosition extends Command {
   }
 
   @Override
+  public void end(boolean interrupted) {
+    superStructure.scorer.collectAlgae();
+  }
+
+  @Override
   public boolean isFinished() {
     return superStructure.scorer.hasAlgae();
   }

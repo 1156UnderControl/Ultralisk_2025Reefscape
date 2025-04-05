@@ -88,7 +88,7 @@ public class ScorerSubsystem implements IScorer {
 
   private StabilizeChecker stablePosition = new StabilizeChecker(0.2);
 
-  private StabilizeChecker stableAlgae = new StabilizeChecker(3);
+  private StabilizeChecker stableAlgae = new StabilizeChecker(1.5);
 
   private boolean hasLimitatedPivotVelocity = false;
 
@@ -161,8 +161,13 @@ public class ScorerSubsystem implements IScorer {
         pivotMotor.configureTrapezoid(PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
             PivotConstants.tunning_values_pivot.MAX_VELOCITY_WITH_ALGAE);
         this.hasLimitatedPivotVelocity = true;
+        if (Math.abs(pivotMotor.getAppliedOutput()) > 0.2) {
+          endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
+        } else {
+          endEffectorMotor
+              .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_DURING_MOVEMENT);
+        }
       }
-      endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
     } else {
       if (!this.hasNotLimitatedPivotVelocity) {
         pivotMotor.configureTrapezoid(PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
@@ -271,17 +276,8 @@ public class ScorerSubsystem implements IScorer {
         .getVelocity() >= EndEffectorConstants.tunning_values_endeffector.MIN_VELOCITY_FOR_INTAKE_DETECTION_INITIALIZE) {
       this.endEffectorAccelerated = true;
     }
-
-    if (this.endEffectorMotor
-        .getVelocity() <= EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION) {
-      this.endEffectorDisaccelerated = true;
-    } else {
-      this.endEffectorDisaccelerated = false;
-    }
-
-    if ((endEffectorMotor
-        .getVelocity() < EndEffectorConstants.tunning_values_endeffector.VELOCITY_FALL_FOR_INTAKE_DETECTION
-        && endEffectorAccelerated && stableAlgae.isStableInCondition(() -> this.endEffectorDisaccelerated))
+    if ((endEffectorAccelerated && stableAlgae.isStableInCondition(() -> this.endEffectorMotor
+        .getVelocity() <= EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION))
         && stablePosition.isStableInCondition(() -> this.isAtCollectAlgaePosition())) {
       hasAlgae = true;
       endEffectorAccelerated = false;
@@ -469,7 +465,11 @@ public class ScorerSubsystem implements IScorer {
         break;
       case L4:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.NET_HEIGHT;
-        goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_SCORE_ANGLE;
+        if (isElevatorAtSetpoint()) {
+          goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_SCORE_ANGLE;
+        } else {
+          goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_WAIT_FOR_ELEVATOR_ANGLE;
+        }
         break;
       default:
         goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.PROCESSOR_HEIGHT;
@@ -481,8 +481,8 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public void prepareToScoreAlgae() {
     assignSetpointsForAlgaeScore(this.targetReefLevel);
-    state = "PREPARE_TO_PLACE_CORAL";
     algaeHeightTarget = this.algaeScoreHeight.name();
+    state = "PREPARE_TO_PLACE_CORAL";
   }
 
   @Override
@@ -491,12 +491,12 @@ public class ScorerSubsystem implements IScorer {
     if (hasAlgae) {
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.PROCESSOR_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.ALGAE_PROCESSOR_SCORE_ANGLE;
-      endEffectorMotor.set(1.0);
       state = "DEFAULT_WITH_ALGAE";
     } else if (!this.hasCoral) {
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
       state = "DEFAULT_WITHOUT_CORAL";
+      this.runCoralAntiLockRoutine();
     } else {
       goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
@@ -519,7 +519,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeAlgae() {
-    endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_EXPELL);
+    endEffectorMotor.set(0.2);
     this.hasAlgae = false;
     this.elevatorHasHomed = false;
     this.hasNotLimitatedPivotVelocity = false;
@@ -529,6 +529,13 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public boolean isSecuredToPlaceCoral() {
     return isPivotAndElevatorAtSetpoint();
+  }
+
+  @Override
+  public boolean isSecuredToScoreOnNet() {
+    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
+        && Util.atSetpoint(this.pivotMotor.getPositionExternalAbsoluteEncoder(),
+            PivotConstants.tunning_values_pivot.setpoints.ALGAE_NET_SCORE_ANGLE, 5);
   }
 
   private double limitGoalElevator(double goal) {
@@ -666,6 +673,10 @@ public class ScorerSubsystem implements IScorer {
   private boolean isPivotAndElevatorAtSetpoint() {
     return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
         && Util.atSetpoint(this.pivotMotor.getPositionExternalAbsoluteEncoder(), this.goalPivot, 5);
+  }
+
+  private boolean isElevatorAtSetpoint() {
+    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05);
   }
 
   @Override

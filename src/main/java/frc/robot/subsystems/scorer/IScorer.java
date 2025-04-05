@@ -58,6 +58,8 @@ public interface IScorer {
 
   boolean isSecuredToPlaceCoral();
 
+  boolean isSecuredToScoreOnNet();
+
   boolean isElevatorInHighPosition();
 
   ReefLevel getTargetReefLevel();
