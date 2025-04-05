@@ -83,8 +83,8 @@ public class GoToBranchConfiguration {
 
   private Pose2d getDriveTarget(Pose2d robot, Pose2d goal, boolean goDirect, boolean backup) {
     if (backup) {
-      goal = goal.transformBy(GeomUtil.toTransform2d(-0.3, 0.0));
-      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_BACKUP";
+      goal = goal.transformBy(GeomUtil.toTransform2d(-0.35, 0.0));
+      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "BACKUP";
     } else {
       goal = goal.transformBy(GeomUtil.toTransform2d(-0.11, 0.0));
     }
