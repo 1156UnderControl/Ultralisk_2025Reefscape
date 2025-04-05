@@ -13,8 +13,7 @@ public class GoAndRaiseElevator extends SequentialCommandGroup {
   TargetBranch targetBranch;
   SuperStructure superStructure;
 
-  public GoAndRaiseElevator(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch,
-      boolean forcingDriverController) {
+  public GoAndRaiseElevator(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
     this.swerve = swerve;
     this.superStructure = superStructure;
     this.targetBranch = branch;
