@@ -87,7 +87,7 @@ public class ScorerSubsystem implements IScorer {
 
   private StabilizeChecker stablePosition = new StabilizeChecker(0.2);
 
-  private StabilizeChecker stableAlgae = new StabilizeChecker(1.5);
+  private StabilizeChecker stableAlgae = new StabilizeChecker(0.5);
 
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
