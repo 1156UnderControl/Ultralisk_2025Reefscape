@@ -242,6 +242,7 @@ public class ScorerSubsystem implements IScorer {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
       goalPivot = PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE;
     } else {
+
       endEffectorMotor.set(0);
     }
     goalElevator = ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT;

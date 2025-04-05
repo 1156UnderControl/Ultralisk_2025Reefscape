@@ -2,6 +2,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.Java_Is_UnderControl.LEDs.ILed;
+import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.robot.joysticks.ControlBoard;
@@ -13,6 +15,7 @@ import frc.robot.subsystems.scorer.ScorerSubsystem;
 public class SuperStructure extends SubsystemBase {
   public IScorer scorer;
   public IClimber climber;
+  public ILed led;
 
   private ControlBoard controlBoard = ControlBoard.getInstance();
 
@@ -31,6 +34,7 @@ public class SuperStructure extends SubsystemBase {
   public SuperStructure() {
     this.scorer = ScorerSubsystem.getInstance();
     this.climber = ClimberSubsystem.getInstance();
+    this.led = LedSubsystem.getInstance();
     this.powerDistributionHub = new PowerDistribution();
     this.batteryVoltageLogEntry.append(this.powerDistributionHub.getVoltage());
     this.totalCurrentDrawLogEntry.append(this.powerDistributionHub.getTotalCurrent());

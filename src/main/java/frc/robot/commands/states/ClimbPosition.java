@@ -3,6 +3,7 @@ package frc.robot.commands.states;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.Java_Is_UnderControl.LEDs.LedColor;
 import frc.robot.SuperStructure;
 import frc.robot.commands.climber.IntakeCageClimber;
 import frc.robot.commands.climber.MoveClimberToClimbedPosition;
@@ -19,10 +20,12 @@ public class ClimbPosition extends SequentialCommandGroup {
         new MoveScorerToDefaultPosition(superStructure),
         new MoveClimberToIntakePosition(superStructure),
         new IntakeCageClimber(superStructure),
+        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.ORANGE)),
         Commands.waitUntil(operatorKeyboard.climb()),
         new MoveClimberToClimbedPosition(superStructure),
         new StopClimberMotor(superStructure),
         new InstantCommand(() -> superStructure.robotIsClimbed = true),
         Commands.idle(superStructure));
+    new InstantCommand(() -> superStructure.led.setBlink(LedColor.GREEN));
   }
 }

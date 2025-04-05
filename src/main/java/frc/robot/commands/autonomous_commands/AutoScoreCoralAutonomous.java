@@ -14,11 +14,11 @@ public class AutoScoreCoralAutonomous extends SequentialCommandGroup {
   public AutoScoreCoralAutonomous(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
     addCommands(
         new InstantCommand(() -> swerve.forceReefPoseEstimation(true)),
-        new SwerveGoToBranch(swerve, branch, true),
+        new SwerveGoToBranch(swerve, superStructure.led, branch, true),
         new MoveScorerToScorePosition(superStructure),
-        new SwerveGoToBranch(swerve, branch, false),
+        new SwerveGoToBranch(swerve, superStructure.led, branch, false),
         Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.3),
-        new SwerveGoToBranch(swerve, branch, true),
+        new SwerveGoToBranch(swerve, superStructure.led, branch, true),
         new InstantCommand(() -> swerve.forceReefPoseEstimation(false)));
   }
 }
