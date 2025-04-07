@@ -15,16 +15,26 @@ public class MoveScorerToScorePosition extends Command {
 
   @Override
   public void initialize() {
-    superStructure.scorer.prepareToPlaceCoralOnBranch();
   }
 
   @Override
   public void execute() {
-    superStructure.scorer.prepareToPlaceCoralOnBranch();
+    if (this.superStructure.scorer.hasCoral()) {
+      superStructure.scorer.prepareToPlaceCoralOnBranch();
+    }
+    if (this.superStructure.scorer.hasAlgae()) {
+      superStructure.scorer.prepareToScoreAlgae();
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return superStructure.scorer.isSecuredToPlaceCoral();
+    if (this.superStructure.scorer.hasCoral()) {
+      return superStructure.scorer.isSecuredToPlaceCoral();
+    }
+    if (this.superStructure.scorer.hasAlgae()) {
+      return superStructure.scorer.isSecuredToScoreOnNet();
+    }
+    return true;
   }
 }

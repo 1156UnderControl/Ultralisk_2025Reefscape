@@ -27,13 +27,14 @@ import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
+import frc.robot.commands.scorer.ScoreProcessor;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
-import frc.robot.commands.states.ScoreCoralPosition;
-import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.commands.states.ScoreObjectPosition;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
@@ -225,22 +226,28 @@ public class RobotContainer {
 
     keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
 
-    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    keyBoard.prepareToScore().onTrue(new ScoreObjectPosition(superStructure, drivetrain));
+
+    keyBoard.scoreObject().and(() -> superStructure.scorer.readyToScoreProcessor())
+        .onTrue(new ScoreProcessor(superStructure));
 
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.GROUND);
         }));
 
     keyBoard.reefL2()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.LOW);
         }));
 
     keyBoard.reefL3()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.MID);
+        }));
 
     keyBoard.reefL4()
         .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
