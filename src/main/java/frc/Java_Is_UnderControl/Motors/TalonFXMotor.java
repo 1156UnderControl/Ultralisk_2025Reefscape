@@ -548,6 +548,11 @@ public class TalonFXMotor implements IMotor {
   }
 
   @Override
+  public double getPositionExternalAbsoluteEncoder() {
+    return 0;
+  }
+
+  @Override
   public void setPositionFactorExternalEncoder(double factor) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'setPositionFactorExternalEncoder'");

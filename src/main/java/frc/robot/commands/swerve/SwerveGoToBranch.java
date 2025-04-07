@@ -11,29 +11,43 @@ public class SwerveGoToBranch extends Command {
   ISwerve swerve;
   ILed led;
   TargetBranch targetBranch;
-  boolean isSpacedToBranch;
+  boolean isBackupNecessary;
+  boolean reachedBackupPosition = false;
+  boolean isGoingToNonBackupPosition;
+  boolean goDirect;
 
-  public SwerveGoToBranch(SwerveSubsystem swerve, ILed led, TargetBranch branch, boolean isSpacedToBranch) {
+  public SwerveGoToBranch(SwerveSubsystem swerve, TargetBranch branch) {
     this.swerve = swerve;
     this.led = led;
     this.targetBranch = branch;
-    this.isSpacedToBranch = isSpacedToBranch;
     addRequirements(swerve);
   }
 
   @Override
   public void initialize() {
+    this.swerve.setTargetBranch(targetBranch);
+    isBackupNecessary = this.swerve.checkBackupNecessary();
+    isGoingToNonBackupPosition = false;
   }
 
   @Override
   public void execute() {
-    led.setSolidColor(LedColor.YELLOW);
-    this.swerve.driveToBranch(this.targetBranch, this.isSpacedToBranch);
+    if (isBackupNecessary && !reachedBackupPosition) {
+      led.setSolidColor(LedColor.YELLOW);
+      this.swerve.driveToBranch(targetBranch, true, true);
+      if (this.swerve.isAtTargetPositionWithoutHeading()) {
+        reachedBackupPosition = true;
+      }
+    } else {
+      led.setSolidColor(LedColor.RED);
+      this.swerve.driveToBranch(targetBranch, false, false);
+      isGoingToNonBackupPosition = true;
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return this.swerve.isAtTargetPosition();
+    return this.swerve.isAtTargetPositionWithoutHeading() && isGoingToNonBackupPosition;
   }
 
   @Override

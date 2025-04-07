@@ -68,6 +68,9 @@ public class SparkFlexMotor implements IMotor {
   private CustomIntegerLogger faultsLog;
   private CustomDoubleLogger targetPositionLog;
   private CustomDoubleLogger targetSpeedLog;
+  private CustomDoubleLogger absoluteExternalEncoderLogger;
+  private CustomDoubleLogger externalEncoderPositionLog;
+  private CustomDoubleLogger externalEncoderVelocityLog;
 
   boolean isInverted = false;
 
@@ -136,6 +139,10 @@ public class SparkFlexMotor implements IMotor {
     this.faultsLog = new CustomIntegerLogger("/motors/" + motorId + "/faults");
     this.targetPositionLog = new CustomDoubleLogger("/motors/" + motorId + "/targetPosition");
     this.targetSpeedLog = new CustomDoubleLogger("/motors/" + motorId + "/targetSpeed");
+    this.absoluteExternalEncoderLogger = new CustomDoubleLogger(
+        "/motors/" + motorId + "/externalAbsoluteEncoderPosition");
+    this.externalEncoderPositionLog = new CustomDoubleLogger("/motors/" + motorId + "/externalEncoderPosition");
+    this.externalEncoderVelocityLog = new CustomDoubleLogger("/motors/" + motorId + "/externalEncoderVelocity");
     StringLogEntry firmwareVersionLog = new StringLogEntry(DataLogManager.getLog(),
         "/motors/" + motorId + "/firmwareVersion");
     firmwareVersionLog.append(this.motor.getFirmwareString());
@@ -154,6 +161,9 @@ public class SparkFlexMotor implements IMotor {
     this.targetOutputLog.append(this.targetPercentage);
     this.currentLog.append(this.motor.getOutputCurrent());
     this.positionLog.append(this.motor.getEncoder().getPosition());
+    this.absoluteExternalEncoderLogger.append(this.getPositionExternalAbsoluteEncoder());
+    this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
+    this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
     this.velocityLog.append(this.motor.getEncoder().getVelocity());
     this.temperatureLog.append(this.motor.getMotorTemperature());
     // this.faultsLog.append(this.motor.getFaults());
@@ -247,6 +257,7 @@ public class SparkFlexMotor implements IMotor {
   @Override
   public void setInvertedEncoder(boolean inverted) {
     config.externalEncoder.inverted(inverted);
+    config.absoluteEncoder.inverted(inverted);
   }
 
   @Override
@@ -502,21 +513,24 @@ public class SparkFlexMotor implements IMotor {
 
   @Override
   public double getPositionExternalEncoder() {
-    if (!usingAlternateEncoder) {
-      this.config.externalEncoder.countsPerRevolution(8192);
-      this.usingAlternateEncoder = true;
-    }
     return motor.getExternalEncoder().getPosition();
+  }
+
+  @Override
+  public double getPositionExternalAbsoluteEncoder() {
+    return motor.getAbsoluteEncoder().getPosition();
   }
 
   @Override
   public void setPositionFactorExternalEncoder(double factor) {
     this.config.externalEncoder.positionConversionFactor(factor);
+    this.config.absoluteEncoder.positionConversionFactor(factor);
   }
 
   @Override
   public void setVelocityFactorExternalEncoder(double factor) {
-    this.config.externalEncoder.positionConversionFactor(factor);
+    this.config.externalEncoder.velocityConversionFactor(factor);
+    this.config.absoluteEncoder.velocityConversionFactor(factor);
   }
 
   @Override

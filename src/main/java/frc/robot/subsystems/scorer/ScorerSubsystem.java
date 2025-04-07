@@ -26,7 +26,7 @@ public class ScorerSubsystem implements IScorer {
   private IMotor elevatorMotorFollower = new SparkFlexMotor(ElevatorConstants.ID_elevatorFollowerMotor,
       "ELEVATOR_FOLLOWER");
 
-  private final IMotor pivotMotor = new SparkMAXMotor(PivotConstants.ID_pivotMotor, false, "PIVOT");
+  private final IMotor pivotMotor = new SparkFlexMotor(PivotConstants.ID_pivotMotor, false, "PIVOT");
   private final IMotor endEffectorMotor = new SparkMAXMotor(EndEffectorConstants.ID_endEffectorMotor, "END_EFFECTOR");
   private final InfraRed coralInfraRedSensor = new InfraRed(EndEffectorConstants.Port_coralInfraRed, false);
 
@@ -36,6 +36,8 @@ public class ScorerSubsystem implements IScorer {
   private double goalPivot = PivotConstants.tunning_values_pivot.setpoints.DEFAULT_ANGLE;
 
   StabilizeChecker motorNotMoving = new StabilizeChecker(0.2);
+
+  StabilizeChecker pivotInternalEncoderIsLost = new StabilizeChecker(0.2);
 
   CustomBooleanLogger correctingPivot = new CustomBooleanLogger("/ScorerSubsystem/Correcting Pivot");
 
@@ -70,6 +72,8 @@ public class ScorerSubsystem implements IScorer {
   private boolean endEffectorAccelerated = false;
 
   private double lastGoalPivot = goalPivot;
+
+  private StabilizeChecker pivotAndElevatorStableInPosition = new StabilizeChecker(0.15);
 
   private Supplier<Double> distanceToTargetPoseProvider = () -> this.goStraightToTargetHeightProvider();
 
@@ -121,8 +125,8 @@ public class ScorerSubsystem implements IScorer {
         PivotConstants.tunning_values_pivot.PID.D,
         0,
         ElevatorConstants.tunning_values_elevator.PID.IZone);
-    pivotMotor.setPosition(0);
-    pivotMotor.setPositionExternalEncoder(0);
+    pivotMotor.burnFlash();
+    pivotMotor.setPosition(pivotMotor.getPositionExternalAbsoluteEncoder());
   }
 
   private void setConfigsEndEffector() {
@@ -152,10 +156,9 @@ public class ScorerSubsystem implements IScorer {
     targetBranchLevelLogger.append(this.targetReefLevel.name());
     targetAlgaeLevelLogger.append(this.targetAlgaeHeight.name());
     targetReefLevelLog.append(this.targetReefLevel.name());
-    SmartDashboard.putString("Scorer/TargetLevelName", this.targetReefLevel.name());
-    SmartDashboard.putString("Scorer/Target Reef Branch", branchHeightTarget);
-    SmartDashboard.putBoolean("Scorer/Has Coral", this.hasCoral());
-    SmartDashboard.putBoolean("Infra Red Has Coral", coralInfraRedSensor.getBoolean());
+    SmartDashboard.putString("ScorerSubsystem/TargetLevelName", this.targetReefLevel.name());
+    SmartDashboard.putString("ScorerSubsystem/TargetReefBranch", branchHeightTarget);
+    SmartDashboard.putBoolean("ScorerSubsystem/HasCoral", this.hasCoral());
   }
 
   private void setScorerStructureGoals() {
@@ -174,9 +177,8 @@ public class ScorerSubsystem implements IScorer {
         setPivotTargetPosition();
       }
     } else {
-      if ((!elevatorSecureForPivot()
-          && goalPivot < PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP)
-          || isPivotInternalEncoderLost()) {
+      if (!elevatorSecureForPivot()
+          && goalPivot < PivotConstants.tunning_values_pivot.setpoints.UNSECURE_POSITON_FOR_ROTATION_WITH_ELEVATOR_UP) {
         elevatorMotorLeader.setPositionReference(limitGoalElevator(stabilizedGoalElevator),
             ElevatorConstants.tunning_values_elevator.PID.arbFF);
         pivotMotor.set(0);
@@ -205,7 +207,8 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private boolean isPivotInternalEncoderLost() {
-    return Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalEncoder()) > 5;
+    return pivotInternalEncoderIsLost.isStableInCondition(
+        () -> Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalAbsoluteEncoder()) > 5);
   }
 
   void setPivotTargetPosition() {
@@ -218,7 +221,7 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void runCoralIntakeDetection() {
-    if (this.endEffectorMotor.getVelocity() >= 3000) {
+    if (this.endEffectorMotor.getVelocity() >= 2500) {
       this.endEffectorAccelerated = true;
     }
     if ((endEffectorMotor
@@ -405,7 +408,7 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean pivotSecureForElevator() {
     return this.pivotMotor
-        .getPositionExternalEncoder() > PivotConstants.tunning_values_pivot.setpoints.SECURE_FOR_ELEVATOR_UP;
+        .getPositionExternalAbsoluteEncoder() > PivotConstants.tunning_values_pivot.setpoints.SECURE_FOR_ELEVATOR_UP;
   }
 
   private boolean elevatorSecureForPivot() {
@@ -467,11 +470,12 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isAtCollectPosition() {
-    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
+    boolean isAtCollectPosition = Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
         ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_HEIGHT, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPositionExternalEncoder(),
+        && Util.atSetpoint(this.pivotMotor.getPositionExternalAbsoluteEncoder(),
             PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE,
-            2);
+            6);
+    return isAtCollectPosition;
   }
 
   @Override
@@ -483,17 +487,18 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private void resetPivotEncoder() {
-    pivotMotor.setPosition(pivotMotor.getPositionExternalEncoder());
+    pivotMotor.setPosition(pivotMotor.getPositionExternalAbsoluteEncoder());
   }
 
   @Override
-  public boolean isAtRemovePosition() {
+  public boolean isScorerAtPosition() {
     return isPivotAndElevatorAtSetpoint();
   }
 
   private boolean isPivotAndElevatorAtSetpoint() {
-    return Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
-        && Util.atSetpoint(this.pivotMotor.getPositionExternalEncoder(), this.goalPivot, 5);
+    return this.pivotAndElevatorStableInPosition
+        .isStableInCondition(() -> Util.atSetpoint(this.elevatorMotorLeader.getPosition(), this.goalElevator, 0.05)
+            && Util.atSetpoint(this.pivotMotor.getPositionExternalAbsoluteEncoder(), this.goalPivot, 5));
   }
 
   @Override
@@ -550,10 +555,24 @@ public class ScorerSubsystem implements IScorer {
 
   public void runCoralAntiLockRoutine() {
     if (this.pivotMotor
-        .getPositionExternalEncoder() < (PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE + 10)) {
+        .getPositionExternalAbsoluteEncoder() < (PivotConstants.tunning_values_pivot.setpoints.COLLECT_ANGLE + 10)) {
       endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
     } else {
-      endEffectorMotor.set(0);
+      if (hasCoral) {
+        endEffectorMotor.set(0.1);
+      } else {
+        endEffectorMotor.set(0);
+      }
     }
+  }
+
+  @Override
+  public void setAngle180() {
+    this.goalPivot = 180;
+  }
+
+  @Override
+  public void setAngle10() {
+    this.goalPivot = 20;
   }
 }
