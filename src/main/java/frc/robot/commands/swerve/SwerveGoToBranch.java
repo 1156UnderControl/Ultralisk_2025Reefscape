@@ -55,7 +55,7 @@ public class SwerveGoToBranch extends Command {
     if (interrupted) {
       this.superStructure.led.setSolidColor(LedColor.RED);
     } else {
-      this.superStructure.led.setBlink(LedColor.GREEN);
+      this.superStructure.led.setBlink(LedColor.PURPLE);
     }
     this.swerve.stopSwerve();
   }

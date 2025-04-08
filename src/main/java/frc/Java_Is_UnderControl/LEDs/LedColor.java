@@ -2,7 +2,6 @@ package frc.Java_Is_UnderControl.LEDs;
 
 public abstract class LedColor {
   public static final Color RED = new Color(255, 0, 0, "RED");
-  public static final Color ORANGE = new Color(255, 165, 0, "ORANGE");
   public static final Color YELLOW = new Color(255, 150, 0, "YELLOW");
   public static final Color GREEN = new Color(0, 255, 0, "GREEN");
   public static final Color BLUE = new Color(0, 0, 255, "BLUE");

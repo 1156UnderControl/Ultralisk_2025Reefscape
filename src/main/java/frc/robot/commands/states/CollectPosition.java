@@ -12,8 +12,9 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class CollectPosition extends SequentialCommandGroup {
 
   public CollectPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
+    new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.YELLOW));
     addCommands(Commands.race(new MoveScorerToCollectPosition(superStructure), new SwerveAngleWithCoralStation(swerve)),
-        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.YELLOW)),
+        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.PURPLE)),
         Commands.waitSeconds(0.6));
   }
 }
