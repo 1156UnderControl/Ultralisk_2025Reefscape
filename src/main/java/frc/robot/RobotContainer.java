@@ -17,8 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.Java_Is_UnderControl.LEDs.ILed;
-import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimized;
@@ -52,16 +50,14 @@ public class RobotContainer {
 
   public final SuperStructure superStructure = new SuperStructure();
 
-  private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
+  private SwerveModuleConstants[] modulesArray = TunerConstants.getModuleConstants();
 
   public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.isElevatorInHighPosition(),
       () -> superStructure.scorer.getTargetReefLevel(),
       TunerConstants.getSwerveDrivetrainConstants(),
-      modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
+      modulesArray[0], modulesArray[1], modulesArray[2], modulesArray[3]);
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
-
-  public final ILed leds = LedSubsystem.getInstance();
 
   public RobotContainer() {
     setNamedCommandsForAuto();

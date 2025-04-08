@@ -11,12 +11,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.Java_Is_UnderControl.LEDs.LedColor;
+import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.robot.joysticks.OperatorController;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+
+  private boolean autoHasExecuted = false;
 
   OperatorController controller = OperatorController.getInstance();
 
@@ -42,6 +46,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    if (!this.autoHasExecuted) {
+      if (LimelightHelpers.getTV("limelight-left")) {
+        this.m_robotContainer.superStructure.led.setSolidColor(LedColor.GREEN);
+        return;
+      }
+      this.m_robotContainer.superStructure.led.setSolidColor(LedColor.RED);
+      return;
+    }
+    this.m_robotContainer.superStructure.led.setRainbow();
+    return;
   }
 
   @Override
@@ -64,6 +78,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousExit() {
+    this.autoHasExecuted = true;
   }
 
   @Override
