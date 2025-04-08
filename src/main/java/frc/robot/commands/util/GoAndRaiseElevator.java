@@ -18,6 +18,6 @@ public class GoAndRaiseElevator extends SequentialCommandGroup {
     this.superStructure = superStructure;
     this.targetBranch = branch;
     addCommands(new OptimizedMoveScorerToScorePosition(superStructure, swerve)
-        .alongWith(new SwerveGoToBranch(swerve, superStructure.led, branch, true)));
+        .alongWith(new SwerveGoToBranch(swerve, superStructure, branch)));
   }
 }
