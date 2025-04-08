@@ -32,6 +32,7 @@ import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreObjectPosition;
+import frc.robot.commands.swerve.SwerveAngleWithCoralStation;
 import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
@@ -220,7 +221,8 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+    keyBoard.collectCoral().onTrue(
+        new CollectPosition(superStructure, drivetrain).deadlineFor(new SwerveAngleWithCoralStation(drivetrain)));
 
     keyBoard.prepareToScore().onTrue(new ScoreObjectPosition(superStructure, drivetrain));
 
