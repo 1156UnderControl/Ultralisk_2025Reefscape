@@ -10,9 +10,6 @@ public class SwerveGoToBranchFastAutonomous extends Command {
   TargetBranch targetBranch;
   boolean isSpacedToBranch;
   boolean goDirect;
-  boolean isBackupNecessary;
-  boolean reachedBackupPosition = false;
-  boolean isGoingToNonBackupPosition;
 
   public SwerveGoToBranchFastAutonomous(SwerveSubsystem swerve, TargetBranch branch,
       boolean goDirect) {
@@ -24,34 +21,20 @@ public class SwerveGoToBranchFastAutonomous extends Command {
 
   @Override
   public void initialize() {
-    isBackupNecessary = this.swerve.checkBackupNecessary();
-    isGoingToNonBackupPosition = false;
   }
 
   @Override
   public void execute() {
-    if (isBackupNecessary && !reachedBackupPosition) {
-      if (goDirect) {
-        this.swerve.driveToBranch(targetBranch, true, true);
-      } else {
-        this.swerve.driveToBranch(targetBranch, true, false);
-      }
-      if (this.swerve.isAtTargetPositionWithoutHeading()) {
-        reachedBackupPosition = true;
-      }
+    if (goDirect) {
+      this.swerve.driveToBranch(targetBranch, true, true);
     } else {
-      if (goDirect) {
-        this.swerve.driveToBranch(targetBranch, false, true);
-      } else {
-        this.swerve.driveToBranch(targetBranch, false, false);
-      }
-      isGoingToNonBackupPosition = true;
+      this.swerve.driveToBranch(targetBranch, true, false);
     }
   }
 
   @Override
   public boolean isFinished() {
-    return this.swerve.isAtTargetPositionWithoutHeading() && isGoingToNonBackupPosition;
+    return this.swerve.isAtTargetPositionWithoutHeading();
   }
 
   @Override
