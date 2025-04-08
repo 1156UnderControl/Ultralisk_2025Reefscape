@@ -261,4 +261,9 @@ public class NoMotor implements IMotor {
   public void updateLogs() {
     return;
   }
+
+  @Override
+  public void setAbsoluteEncoderZeroOffset(double zeroOffset) {
+    return;
+  }
 }

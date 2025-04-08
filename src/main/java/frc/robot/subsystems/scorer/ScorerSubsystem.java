@@ -125,6 +125,7 @@ public class ScorerSubsystem implements IScorer {
     pivotMotor.setPositionFactor(PivotConstants.POSITION_FACTOR_ROTOR_ROTATION_TO_MECHANISM_DEGREES);
     pivotMotor.setPositionFactorExternalEncoder(PivotConstants.POSITION_FACTOR_MECHANISM_ROTATION_TO_MECHANISM_DEGREES);
     pivotMotor.setVelocityFactorExternalEncoder(PivotConstants.VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_DEG_PER_SECOND);
+    pivotMotor.setAbsoluteEncoderZeroOffset(PivotConstants.ZERO_OFFSET_ABSOLUTE_ENCODER);
     pivotMotor.configureTrapezoid(PivotConstants.tunning_values_pivot.MAX_ACCELERATION,
         PivotConstants.tunning_values_pivot.MAX_VELOCITY);
     pivotMotor.configurePIDF(

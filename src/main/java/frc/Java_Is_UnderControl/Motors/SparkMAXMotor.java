@@ -515,7 +515,7 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public double getPositionExternalAbsoluteEncoder() {
-    return 0;
+    return motor.getAbsoluteEncoder().getPosition();
   }
 
   @Override
@@ -541,5 +541,10 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public void setVelocityFactorExternalEncoder(double factor) {
     this.config.alternateEncoder.velocityConversionFactor(factor);
+  }
+
+  @Override
+  public void setAbsoluteEncoderZeroOffset(double zeroOffset) {
+    this.config.absoluteEncoder.zeroOffset(zeroOffset);
   }
 }

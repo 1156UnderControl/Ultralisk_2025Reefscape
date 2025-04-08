@@ -124,6 +124,8 @@ public interface IMotor {
 
   void setVelocityFactor(double factor);
 
+  void setAbsoluteEncoderZeroOffset(double zeroOffset);
+
   void setVelocityFactorExternalEncoder(double factor);
 
   void setPosition(double position);

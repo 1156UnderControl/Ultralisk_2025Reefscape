@@ -522,6 +522,11 @@ public class SparkFlexMotor implements IMotor {
   }
 
   @Override
+  public void setAbsoluteEncoderZeroOffset(double zeroOffset) {
+    this.config.absoluteEncoder.zeroOffset(zeroOffset);
+  }
+
+  @Override
   public void setPositionFactorExternalEncoder(double factor) {
     this.config.externalEncoder.positionConversionFactor(factor);
     this.config.absoluteEncoder.positionConversionFactor(factor);
