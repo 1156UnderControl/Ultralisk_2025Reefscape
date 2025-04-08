@@ -76,6 +76,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   CustomStringLogger swerveStateLogger = new CustomStringLogger("SwerveSubsystem/State");
 
+  CustomBooleanLogger forcingReefPoseEstimatorLogger = new CustomBooleanLogger(
+      "SwerveSubsystem/forcingReefPoseEstimatorLogger");
+
   private StabilizeChecker stableAtTargetPose = new StabilizeChecker(0.150);
 
   private String state = "NULL";
@@ -242,8 +245,9 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void selectPoseEstimator() {
+    forcingReefPoseEstimatorLogger.append(forceReefPoseEstimation);
     if ((getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 3
-        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP")) || this.forceReefPoseEstimation)) {
+        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP"))) || this.forceReefPoseEstimation) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
       poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
@@ -284,8 +288,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     goToBranchTeleoperated(branch, backup, goDirect);
   }
 
-  @Override
-  public void driveToBranchFastDirect(TargetBranch branch, boolean backup, boolean goDirect) {
+  private void driveToBranchFastDirect(TargetBranch branch, boolean backup, boolean goDirect) {
     this.goToBranchConfigurationFastDirect.setBranch(branch, goDirect);
     this.goToBranchConfigurationFastDirect.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier, backup);
@@ -295,11 +298,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.isUsingAngleCorrection.append(false);
     driveToPose(this.goToBranchConfigurationFastDirect.getFinalPose(),
         this.goToBranchConfigurationFastDirect.getFinalVelocity());
-    this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
+    this.state = this.goToBranchConfigurationFastDirect.getGoToBranchState();
   }
 
-  @Override
-  public void driveToBranchFast(TargetBranch branch, boolean backup, boolean goDirect) {
+  private void driveToBranchFast(TargetBranch branch, boolean backup, boolean goDirect) {
     this.goToBranchConfigurationFast.setBranch(branch, goDirect);
     this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         elevatorAtHighPositionSupplier, backup);
@@ -309,7 +311,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.isUsingAngleCorrection.append(false);
     driveToPose(this.goToBranchConfigurationFast.getFinalPose(),
         this.goToBranchConfigurationFast.getFinalVelocity());
-    this.state = this.goToBranchConfigurationTeleoperated.getGoToBranchState();
+    this.state = this.goToBranchConfigurationFast.getGoToBranchState();
   }
 
   private void goToBranchTeleoperated(TargetBranch branch, boolean backup, boolean goDirect) {

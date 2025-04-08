@@ -11,10 +11,6 @@ public interface ISwerve {
 
   public void driveToBranch(TargetBranch branch, boolean backup, boolean goDirect);
 
-  public void driveToBranchFastDirect(TargetBranch branch, boolean backup, boolean goDirect);
-
-  public void driveToBranchFast(TargetBranch branch, boolean backup, boolean goDirect);
-
   boolean checkBackupNecessary();
 
   boolean checkPivotWillCrashOnReef();

@@ -5,6 +5,7 @@ public class PivotConstants {
   public static final double POSITION_FACTOR_MECHANISM_ROTATION_TO_MECHANISM_DEGREES = 360;
   public static final double POSITION_FACTOR_ROTOR_ROTATION_TO_MECHANISM_DEGREES = 4.1638;
   public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_MECHANISM_DEG_PER_SECOND = 6;
+  public static final double ZERO_OFFSET_ABSOLUTE_ENCODER = 0.7541;
 
   public class tunning_values_pivot {
     public static final double KS = 0;

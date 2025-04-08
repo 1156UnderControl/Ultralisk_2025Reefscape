@@ -34,7 +34,6 @@ public class GoToBranchConfiguration {
 
   double distanceToTargetBranch;
   double distanceToTarget;
-
   double deltaVelocity;
   double deltaDistance;
   double relationDeltas;
@@ -68,7 +67,6 @@ public class GoToBranchConfiguration {
     } else {
       this.canDriveAimingAtPose = false;
     }
-
     if (distanceToTargetBranch <= minErrorPose) {
       this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_CLOSE";
       return;

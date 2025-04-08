@@ -32,18 +32,18 @@ public class SwerveGoToBranchFastAutonomous extends Command {
   public void execute() {
     if (isBackupNecessary && !reachedBackupPosition) {
       if (goDirect) {
-        this.swerve.driveToBranchFastDirect(targetBranch, true, true);
+        this.swerve.driveToBranch(targetBranch, true, true);
       } else {
-        this.swerve.driveToBranchFast(targetBranch, true, false);
+        this.swerve.driveToBranch(targetBranch, true, false);
       }
       if (this.swerve.isAtTargetPositionWithoutHeading()) {
         reachedBackupPosition = true;
       }
     } else {
       if (goDirect) {
-        this.swerve.driveToBranchFastDirect(targetBranch, false, true);
+        this.swerve.driveToBranch(targetBranch, false, true);
       } else {
-        this.swerve.driveToBranchFast(targetBranch, false, false);
+        this.swerve.driveToBranch(targetBranch, false, false);
       }
       isGoingToNonBackupPosition = true;
     }
