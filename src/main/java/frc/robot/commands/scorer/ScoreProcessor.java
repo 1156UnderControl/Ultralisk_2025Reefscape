@@ -3,10 +3,10 @@ package frc.robot.commands.scorer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.SuperStructure;
 
-public class MoveScorerToRemovePosition extends Command {
+public class ScoreProcessor extends Command {
   SuperStructure superStructure;
 
-  public MoveScorerToRemovePosition(SuperStructure superStructure) {
+  public ScoreProcessor(SuperStructure superStructure) {
     this.superStructure = superStructure;
     addRequirements(this.superStructure);
   }
@@ -17,16 +17,11 @@ public class MoveScorerToRemovePosition extends Command {
 
   @Override
   public void execute() {
-    superStructure.scorer.collectAlgae();
-  }
-
-  @Override
-  public void end(boolean interrupted) {
-    superStructure.scorer.collectAlgae();
+    superStructure.scorer.placeAlgae();
   }
 
   @Override
   public boolean isFinished() {
-    return superStructure.scorer.hasAlgae();
+    return false;
   }
 }
