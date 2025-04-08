@@ -15,6 +15,5 @@ public class CollectPosition extends SequentialCommandGroup {
     addCommands(Commands.race(new MoveScorerToCollectPosition(superStructure), new SwerveAngleWithCoralStation(swerve)),
         new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.YELLOW)),
         Commands.waitSeconds(0.6));
-    new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.GREEN));
   }
 }
