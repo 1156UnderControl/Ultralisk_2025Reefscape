@@ -15,4 +15,8 @@ public interface ILed {
 
   void setRainbow();
 
+  void setElevatorColor(Color color);
+
+  void setIntakeColor(Color color);
+
 }

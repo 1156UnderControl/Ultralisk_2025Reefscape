@@ -20,6 +20,11 @@ public class LedSubsystem extends SubsystemBase implements ILed {
   private AddressableLEDBuffer ledBuffer;
   private int rainbowFirstPixelHue;
 
+  private final int intakeStart = 0;
+  private final int intakeEnd = 39;
+  private final int elevatorStart = 40;
+  private final int elevatorEnd = 79;
+
   private Timer blinkTimer = new Timer();
 
   private double blinkFrequency;
@@ -104,6 +109,23 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     this.blinkTimer.reset();
     this.blinkTimer.start();
     this.processBlink();
+  }
+
+  private void setColorRange(int start, int end, Color color) {
+    for (int i = start; i <= end; i++) {
+      ledBuffer.setRGB(i, color.red, color.green, color.blue);
+    }
+    led.setData(ledBuffer);
+  }
+
+  public void setIntakeColor(Color color) {
+    this.mode = LedMode.SOLID;
+    setColorRange(intakeStart, intakeEnd, color);
+  }
+
+  public void setElevatorColor(Color color) {
+    this.mode = LedMode.SOLID;
+    setColorRange(elevatorStart, elevatorEnd, color);
   }
 
   public void setBlink(Color color, int numberOfBlinks) {
