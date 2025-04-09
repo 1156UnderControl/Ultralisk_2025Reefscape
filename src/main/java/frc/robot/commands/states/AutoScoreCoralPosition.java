@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
+import frc.robot.commands.scorer.MoveScorerToScorePosition;
 import frc.robot.commands.util.GoAndRaiseElevator;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
@@ -26,7 +27,7 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
               }
               return hasCancelledAutoMove;
             })),
-        new ParallelRaceGroup(Commands.idle(superStructure)
+        new ParallelRaceGroup(new MoveScorerToScorePosition(superStructure)
             .until(operatorKeyboard.scoreObject()
                 .or(() -> swerve.isAtTargetPositionWithoutHeading() && superStructure.scorer.isScorerAtPosition())
                 .or(() -> hasCancelledAutoMove)),
