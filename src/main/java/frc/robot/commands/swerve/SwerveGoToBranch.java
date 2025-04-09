@@ -32,14 +32,13 @@ public class SwerveGoToBranch extends Command {
 
   @Override
   public void execute() {
+    this.superStructure.led.setSolidColor(LedColor.YELLOW);
     if (isBackupNecessary && !reachedBackupPosition) {
-      this.superStructure.led.setSolidColor(LedColor.YELLOW);
       this.swerve.driveToBranch(targetBranch, true, true);
       if (this.swerve.isAtTargetPositionWithoutHeading()) {
         reachedBackupPosition = true;
       }
     } else {
-      this.superStructure.led.setSolidColor(LedColor.RED);
       this.swerve.driveToBranch(targetBranch, false, false);
       isGoingToNonBackupPosition = true;
     }
