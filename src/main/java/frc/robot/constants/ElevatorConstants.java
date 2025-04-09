@@ -33,7 +33,7 @@ public class ElevatorConstants {
       public static final double L4_HEIGHT = 2.1;
       public static final double ALGAE_COLLECT_MID = 1.37;
       public static final double ALGAE_COLLECT_LOW = 0.98;
-      public static final double SECURE_FOR_PIVOT_ROTATION = 0.60;
+      public static final double SECURE_FOR_PIVOT_ROTATION = 1;
       public static final double COLLECT_HEIGHT = MIN_HEIGHT;
       public static final double COLLECT_ALGAE_REEF_MID = 1.14;
       public static final double COLLECT_ALGAE_REEF_LOW = 0.82;

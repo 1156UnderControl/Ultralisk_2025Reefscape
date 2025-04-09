@@ -31,7 +31,6 @@ import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
-import frc.robot.commands.states.LedStateUpdater;
 import frc.robot.commands.states.RemoveAlgaePosition;
 import frc.robot.commands.states.ScoreObjectPosition;
 import frc.robot.commands.swerve.SwerveAngleWithCoralStation;
@@ -40,7 +39,6 @@ import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.OperatorController;
-import frc.robot.subsystems.leds.LedSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.swerve.generated.TunerConstants;
 
@@ -70,7 +68,6 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Chooser", this.autoChooser);
     superStructure
         .setDefaultCommand(new DefaultPosition(superStructure));
-    LedSubsystem.getInstance().setDefaultCommand(new LedStateUpdater(superStructure));
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoystick(), drivetrain)
             .onlyIf(() -> DriverStation.isTeleopEnabled()));
