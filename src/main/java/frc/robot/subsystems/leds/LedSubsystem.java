@@ -215,7 +215,7 @@ public class LedSubsystem extends SubsystemBase implements ILed {
 
   private void processSolidColor(Color solidColor) {
     for (var i = 0; i < ledBuffer.getLength(); i++) {
-      ledBuffer.setRGB(i, solidColor.red, solidColor.green, solidColor.blue);
+      ledBuffer.setRGB(i, solidColor.red, solidColor.blue, solidColor.green);
     }
     led.setData(ledBuffer);
   }
