@@ -54,7 +54,8 @@ public class Robot extends TimedRobot {
       this.m_robotContainer.superStructure.led.setSolidColor(LedColor.RED);
       return;
     }
-    this.m_robotContainer.superStructure.led.setElevatorColor(LedColor.CYAN);
+    this.m_robotContainer.superStructure.led.setIntakeColor(LedColor.YELLOW);
+    this.m_robotContainer.superStructure.led.setElevatorColor(LedColor.GREEN);
     return;
   }
 

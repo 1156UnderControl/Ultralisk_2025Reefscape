@@ -1,9 +1,11 @@
-package frc.Java_Is_UnderControl.LEDs;
+package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.Java_Is_UnderControl.LEDs.Color;
+import frc.Java_Is_UnderControl.LEDs.LedColor;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.robot.constants.ElevatorConstants;

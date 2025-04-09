@@ -1,4 +1,6 @@
-package frc.Java_Is_UnderControl.LEDs;
+package frc.robot.subsystems.leds;
+
+import frc.Java_Is_UnderControl.LEDs.Color;
 
 public interface ILed {
   void setBlinkFrequency(double frequency);
