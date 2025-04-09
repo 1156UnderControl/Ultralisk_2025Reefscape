@@ -42,6 +42,24 @@ public class SwerveConstants {
     }
   }
 
+  public enum TargetFace {
+    A(0), B(1), C(2), D(3), E(4), F(5);
+
+    private final int faceIndex;
+
+    TargetFace(int faceIndex) {
+      this.faceIndex = faceIndex;
+    }
+
+    public Pose2d getTargetPoseToScore() {
+      Pose2d transformedPose = CoordinatesTransform.applyRotationToPoseAngle(
+          CoordinatesTransform
+              .getRetreatPose(AllianceFlipUtil.apply(Reef.centerFaces[faceIndex]), 0.6),
+          Rotation2d.k180deg);
+      return transformedPose;
+    }
+  }
+
   public enum PoseEstimatorState {
     REEF_ESTIMATION, GLOBAL_POSE_ESTIMATION, AUTO_POSE_ESTIMATION;
   }

@@ -337,52 +337,49 @@ public class ScorerSubsystem implements IScorer {
     }
   }
 
-  private AlgaeHeightReef getAutoAlgaeLevel(TargetBranch targetBranch) {
-    AlgaeHeightReef algaeHeight;
-
+  @Override
+  public void setAutoAlgaeLevel(TargetBranch targetBranch) {
     switch (targetBranch) {
       case A:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case B:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case C:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case D:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case E:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case F:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case G:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case H:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case I:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case J:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case K:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case L:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       default:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
     }
-
-    return algaeHeight;
   }
 
   @Override
@@ -666,6 +663,11 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public ReefLevel getTargetReefLevel() {
     return this.targetReefLevel;
+  }
+
+  @Override
+  public AlgaeHeightReef getTargetReefLevelAlgae() {
+    return this.algaeReefHeight;
   }
 
   @Override

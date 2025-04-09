@@ -6,13 +6,16 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.Java_Is_UnderControl.Util.CoordinatesTransform;
 import frc.Java_Is_UnderControl.Util.GeomUtil;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.AutoAlignConstants;
 import frc.robot.constants.SwerveConstants.TargetBranch;
+import frc.robot.constants.SwerveConstants.TargetFace;
 
 public class GoToBranchConfiguration {
   private TargetBranch branch;
+  private TargetFace face;
   private double minErrorPose;
   private double maxErrorPose;
   private double errorForRotationAlignPose;
@@ -33,6 +36,7 @@ public class GoToBranchConfiguration {
   private String state;
 
   double distanceToTargetBranch;
+  double distanceToTargetFace;
   double distanceToTarget;
   double deltaVelocity;
   double deltaDistance;
@@ -51,31 +55,50 @@ public class GoToBranchConfiguration {
   }
 
   public void updateBranchData(Pose2d robotPose, Supplier<ReefLevel> scorerTargetReefLevelSupplier,
-      Supplier<Boolean> elevatorAtHighPositionSupplier, boolean backup) {
-    this.distanceToTargetBranch = branch.getTargetPoseToScore().getTranslation()
-        .getDistance(robotPose.getTranslation());
-    Pose2d targetBranchScorePose = scorerTargetReefLevelSupplier.get() == ReefLevel.L4
-        ? CoordinatesTransform.getRetreatPose(branch.getTargetPoseToScore(), 0.05)
-        : branch.getTargetPoseToScore();
-    this.distanceToTarget = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect, backup)
-        .getTranslation().getDistance(robotPose.getTranslation());
-    finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetBranch, this.maxVelocity, this.minVelocity,
-        this.maxErrorPose, minErrorPose);
-    finalTargetPose = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect, backup);
-    if (distanceToTargetBranch <= this.errorForRotationAlignPose) {
-      this.canDriveAimingAtPose = true;
-    } else {
+      Supplier<AlgaeHeightReef> scorerTargetReefLevelAlgaeSupplier,
+      Supplier<Boolean> elevatorAtHighPositionSupplier, boolean backup, boolean goToFace) {
+    if (goToFace) {
+      this.distanceToTargetFace = face.getTargetPoseToScore().getTranslation().getDistance(robotPose.getTranslation());
+      Pose2d targetFaceScorePose = scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.LOW
+          || scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.MID
+              ? CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0.05)
+              : face.getTargetPoseToScore();
+      distanceToTarget = this.getDriveTarget(robotPose, targetFaceScorePose, true, false).getTranslation()
+          .getDistance(robotPose.getTranslation());
+      finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetFace, this.maxVelocity, this.minVelocity,
+          this.maxErrorPose, minErrorPose);
+      finalTargetPose = this.getDriveTarget(robotPose, targetFaceScorePose, this.goDirect, backup);
       this.canDriveAimingAtPose = false;
-    }
-    if (distanceToTargetBranch <= minErrorPose) {
-      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_CLOSE";
-      return;
-    } else if (distanceToTargetBranch <= maxErrorPose) {
-      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_FAR";
-      return;
+      if (distanceToTargetFace <= minErrorPose) {
+        this.state = "DRIVE_TO_FACE_" + this.goToBranchMode + branch.name();
+        return;
+      }
     } else {
-      this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_MID";
-      return;
+      this.distanceToTargetBranch = branch.getTargetPoseToScore().getTranslation()
+          .getDistance(robotPose.getTranslation());
+      Pose2d targetBranchScorePose = scorerTargetReefLevelSupplier.get() == ReefLevel.L4
+          ? CoordinatesTransform.getRetreatPose(branch.getTargetPoseToScore(), 0.05)
+          : branch.getTargetPoseToScore();
+      this.distanceToTarget = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect, backup)
+          .getTranslation().getDistance(robotPose.getTranslation());
+      finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetBranch, this.maxVelocity, this.minVelocity,
+          this.maxErrorPose, minErrorPose);
+      finalTargetPose = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect, backup);
+      if (distanceToTargetBranch <= this.errorForRotationAlignPose) {
+        this.canDriveAimingAtPose = true;
+      } else {
+        this.canDriveAimingAtPose = false;
+      }
+      if (distanceToTargetBranch <= minErrorPose) {
+        this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_CLOSE";
+        return;
+      } else if (distanceToTargetBranch <= maxErrorPose) {
+        this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_FAR";
+        return;
+      } else {
+        this.state = "DRIVE_TO_BRANCH_" + this.goToBranchMode + branch.name() + "_MID";
+        return;
+      }
     }
   }
 
@@ -125,6 +148,53 @@ public class GoToBranchConfiguration {
     return targetVelocity;
   }
 
+  private TargetFace getReefFace(TargetBranch targetBranch) {
+    TargetFace targetFaceAssignment;
+
+    switch (targetBranch) {
+      case A:
+        targetFaceAssignment = TargetFace.A;
+        break;
+      case B:
+        targetFaceAssignment = TargetFace.A;
+        break;
+      case C:
+        targetFaceAssignment = TargetFace.B;
+        break;
+      case D:
+        targetFaceAssignment = TargetFace.B;
+        break;
+      case E:
+        targetFaceAssignment = TargetFace.C;
+        break;
+      case F:
+        targetFaceAssignment = TargetFace.C;
+        break;
+      case G:
+        targetFaceAssignment = TargetFace.D;
+        break;
+      case H:
+        targetFaceAssignment = TargetFace.D;
+        break;
+      case I:
+        targetFaceAssignment = TargetFace.E;
+        break;
+      case J:
+        targetFaceAssignment = TargetFace.E;
+        break;
+      case K:
+        targetFaceAssignment = TargetFace.F;
+        break;
+      case L:
+        targetFaceAssignment = TargetFace.F;
+        break;
+      default:
+        targetFaceAssignment = TargetFace.A;
+        break;
+    }
+    return targetFaceAssignment;
+  }
+
   public double getPoseTranslationDeadband() {
     return this.goToPoseTranslationDeadband;
   }
@@ -133,7 +203,7 @@ public class GoToBranchConfiguration {
     return this.goToPoseHeadingDeadband;
   }
 
-  public String getGoToBranchState() {
+  public String getGoToState() {
     return this.state;
   }
 
@@ -154,8 +224,15 @@ public class GoToBranchConfiguration {
     this.goDirect = goDirect;
   }
 
+  public void setFace(TargetFace targetFace) {
+    this.face = targetFace;
+  }
+
   public double getDistanceToTargetBranch() {
     return this.distanceToTargetBranch;
   }
 
+  public double getDistanceToTargetFace() {
+    return this.distanceToTargetFace;
+  }
 }

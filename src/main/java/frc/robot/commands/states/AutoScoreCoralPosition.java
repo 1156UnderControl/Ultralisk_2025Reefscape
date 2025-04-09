@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.util.GoAndRaiseElevator;
+import frc.robot.commands.util.GoToFaceAndRaiseElevator;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
 import frc.robot.joysticks.IDriverController;
@@ -32,6 +33,8 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
                 .or(() -> hasCancelledAutoMove)),
             Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)),
         Commands.run(() -> superStructure.scorer.placeCoral())
-            .alongWith(Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)));
+            .alongWith(Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)),
+        Commands.idle(superStructure).until(operatorKeyboard.removeAlgaeFromBranch()),
+        new GoToFaceAndRaiseElevator(swerve, superStructure, branch));
   }
 }
