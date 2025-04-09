@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.Java_Is_UnderControl.LEDs.LedColor;
+import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.robot.joysticks.OperatorController;
 
 public class Robot extends TimedRobot {
@@ -45,18 +46,17 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    /*
-     * if (!this.autoHasExecuted) {
-     * if (LimelightHelpers.getTV("limelight-left")) {
-     * this.m_robotContainer.superStructure.led.setSolidColor(LedColor.GREEN);
-     * return;
-     * }
-     * this.m_robotContainer.superStructure.led.setSolidColor(LedColor.RED);
-     * return;
-     * }
-     */
-    this.m_robotContainer.superStructure.led.setIntakeColor(LedColor.GREEN);
-    this.m_robotContainer.superStructure.led.setElevatorColor(LedColor.YELLOW);
+
+    if (!this.autoHasExecuted) {
+      if (LimelightHelpers.getTV("limelight-left")) {
+        this.m_robotContainer.superStructure.led.setSolidColor(LedColor.GREEN);
+        return;
+      }
+      this.m_robotContainer.superStructure.led.setSolidColor(LedColor.RED);
+      return;
+    }
+
+    this.m_robotContainer.superStructure.led.setSolidColor(LedColor.BLUE);
     return;
   }
 
