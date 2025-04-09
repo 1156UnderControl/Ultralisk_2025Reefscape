@@ -150,15 +150,6 @@ public class ScorerSubsystem implements IScorer {
     if (!manualControl) {
       setScorerStructureGoals();
     }
-    // if (hasAlgae) {
-    // if (Math.abs(pivotMotor.getAppliedOutput()) > 0.2) {
-    // endEffectorMotor
-    // .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_DURING_MOVEMENT);
-    // } else {
-    // endEffectorMotor
-    // .set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_HOLDING_ALGAE);
-    // }
-    // }
     correctPivotPosition();
     updateLogs();
   }
@@ -227,8 +218,12 @@ public class ScorerSubsystem implements IScorer {
   }
 
   private boolean isPivotInternalEncoderLost() {
+    double absoluteEncoderValue = pivotMotor.getPositionExternalAbsoluteEncoder();
+    if (absoluteEncoderValue < 5 || absoluteEncoderValue > 230) {
+      return false;
+    }
     return pivotInternalEncoderIsLost.isStableInCondition(
-        () -> Math.abs(pivotMotor.getPosition() - pivotMotor.getPositionExternalAbsoluteEncoder()) > 5);
+        () -> Math.abs(pivotMotor.getPosition() - absoluteEncoderValue) > 5);
   }
 
   void setPivotTargetPosition() {
