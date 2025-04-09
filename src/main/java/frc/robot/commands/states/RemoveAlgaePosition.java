@@ -18,7 +18,7 @@ public class RemoveAlgaePosition extends SequentialCommandGroup {
     addCommands(
         new MoveScorerToRemovePosition(superStructure)
             .alongWith(new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.RED)))
-            .andThen(new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.BLUE))),
+            .andThen(new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.CYAN))),
         new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight-right")),
         Commands.idle(superStructure).onlyIf(() -> superStructure.scorer.getTargetReefLevel() != ReefLevel.L1));
 

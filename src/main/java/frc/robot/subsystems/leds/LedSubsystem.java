@@ -326,8 +326,10 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     int range = end - start + 1;
     int ledsToLight = (int) Math.round(normalizedHeight * range);
 
+    boolean inverted = start == intakeRightStart || start == elevatorLeftStart;
+
     for (int i = 0; i < range; i++) {
-      int ledIndex = start + i;
+      int ledIndex = inverted ? end - i : start + i;
       if (i < ledsToLight) {
         ledBuffer.setRGB(ledIndex, color.red, color.green, color.blue);
       } else {
@@ -335,4 +337,5 @@ public class LedSubsystem extends SubsystemBase implements ILed {
       }
     }
   }
+
 }

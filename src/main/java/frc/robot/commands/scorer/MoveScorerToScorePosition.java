@@ -20,10 +20,10 @@ public class MoveScorerToScorePosition extends Command {
 
   @Override
   public void execute() {
-    superStructure.led.setIntakeLeftHeightColor(LedColor.RED);
-    superStructure.led.setIntakeRightHeightColor(LedColor.RED);
-    superStructure.led.setElevatorLeftHeightColor(LedColor.RED);
-    superStructure.led.setElevatorRightHeightColor(LedColor.RED);
+    superStructure.led.setIntakeLeftHeightColor(LedColor.YELLOW);
+    superStructure.led.setIntakeRightHeightColor(LedColor.YELLOW);
+    superStructure.led.setElevatorLeftHeightColor(LedColor.YELLOW);
+    superStructure.led.setElevatorRightHeightColor(LedColor.YELLOW);
 
     if (this.superStructure.scorer.hasCoral()) {
       superStructure.scorer.prepareToPlaceCoralOnBranch();
