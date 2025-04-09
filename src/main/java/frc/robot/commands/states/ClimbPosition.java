@@ -20,12 +20,12 @@ public class ClimbPosition extends SequentialCommandGroup {
         new MoveScorerToDefaultPosition(superStructure),
         new MoveClimberToIntakePosition(superStructure),
         new IntakeCageClimber(superStructure),
-        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.ORANGE)),
+        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.YELLOW)),
         Commands.waitUntil(operatorKeyboard.climb()),
         new MoveClimberToClimbedPosition(superStructure),
         new StopClimberMotor(superStructure),
-        new InstantCommand(() -> superStructure.led.setRainbow()),
         new InstantCommand(() -> superStructure.robotIsClimbed = true),
+        new InstantCommand(() -> superStructure.led.setRainbow()),
         Commands.idle(superStructure));
   }
 }

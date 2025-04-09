@@ -6,11 +6,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
+import frc.robot.constants.ElevatorConstants;
 
 class LedMode {
   public static final String SOLID = "SOLID";
   public static final String RAINBOW = "RAINBOW";
   public static final String BLINK = "BLINK";
+  public static final String PERHEIGHT = "PERHEIGHT";
 }
 
 public class LedSubsystem extends SubsystemBase implements ILed {
@@ -40,6 +42,10 @@ public class LedSubsystem extends SubsystemBase implements ILed {
   private String mode;
 
   private Color color;
+
+  private double elevatorMinHeight = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
+
+  private double elevatorMaxHeight = ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT;
 
   private CustomStringLogger modeLogEntry = new CustomStringLogger("/LedSubsystem/Mode");
 
@@ -78,6 +84,9 @@ public class LedSubsystem extends SubsystemBase implements ILed {
         break;
       case LedMode.BLINK:
         processBlink();
+        break;
+      case LedMode.PERHEIGHT:
+        processHeight();
         break;
     }
     this.modeLogEntry.append(this.mode);
@@ -128,6 +137,13 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     setColorRange(elevatorStart, elevatorEnd, color);
   }
 
+  public void setElevatorHeight(double height, double maxHeight) {
+    this.mode = LedMode.PERHEIGHT;
+    this.color = LedColor.RED;
+    this.elevatorMinHeight = elevatorMinHeight;
+    this.elevatorMaxHeight = elevatorMaxHeight;
+  }
+
   public void setBlink(Color color, int numberOfBlinks) {
     this.setBlink(color, numberOfBlinks, LedColor.OFF);
   }
@@ -152,6 +168,24 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     this.rainbowFirstPixelHue += 3;
     // Verifica Limites
     this.rainbowFirstPixelHue %= 180;
+    led.setData(ledBuffer);
+  }
+
+  private void processHeight() {
+    int ledStart = this.elevatorStart;
+    int ledEnd = this.elevatorEnd;
+    int ledRange = ledEnd - ledStart + 1;
+
+    int ledsToLight = (int) Math.round((elevatorMinHeight / elevatorMaxHeight) * ledRange);
+
+    for (int i = ledStart; i <= ledEnd; i++) {
+      if (i < ledStart + ledsToLight) {
+        ledBuffer.setRGB(i, color.red, color.green, color.blue);
+      } else {
+        ledBuffer.setRGB(i, 0, 0, 0);
+      }
+    }
+
     led.setData(ledBuffer);
   }
 
