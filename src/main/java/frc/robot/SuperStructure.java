@@ -34,7 +34,7 @@ public class SuperStructure extends SubsystemBase {
   public SuperStructure() {
     this.scorer = ScorerSubsystem.getInstance();
     this.climber = ClimberSubsystem.getInstance();
-    this.led = LedSubsystem.getInstance();
+    this.led = LedSubsystem.getInstance(() -> scorer.getElevatorPosition());
     this.powerDistributionHub = new PowerDistribution();
     this.batteryVoltageLogEntry.append(this.powerDistributionHub.getVoltage());
     this.totalCurrentDrawLogEntry.append(this.powerDistributionHub.getTotalCurrent());

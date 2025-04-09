@@ -1,5 +1,7 @@
 package frc.robot.subsystems.leds;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,6 +18,7 @@ class LedMode {
   public static final String BLINK = "BLINK";
   public static final String PERHEIGHT = "PERHEIGHT";
   public static final String SEGMENTED = "SEGMENTED";
+  public static final String HEIGHT_SEGMENTED = "HEIGHT_SEGMENTED";
 }
 
 public class LedSubsystem extends SubsystemBase implements ILed {
@@ -25,6 +28,16 @@ public class LedSubsystem extends SubsystemBase implements ILed {
   private AddressableLEDBuffer ledBuffer;
   private int rainbowFirstPixelHue;
 
+  private final int intakeLeftStart = 0;
+  private final int intakeLeftEnd = 15;
+  private final int intakeRightStart = 16;
+  private final int intakeRightEnd = 31;
+
+  private final int elevatorLeftStart = 32;
+  private final int elevatorLeftEnd = 55;
+  private final int elevatorRightStart = 56;
+  private final int elevatorRightEnd = 79;
+
   private final int intakeStart = 0;
   private final int intakeEnd = 31;
   private final int elevatorStart = 32;
@@ -32,6 +45,10 @@ public class LedSubsystem extends SubsystemBase implements ILed {
 
   private Color intakeColor = LedColor.OFF;
   private Color elevatorColor = LedColor.OFF;
+  private Color intakeLeftHeightColor = LedColor.OFF;
+  private Color intakeRightHeightColor = LedColor.OFF;
+  private Color elevatorLeftHeightColor = LedColor.OFF;
+  private Color elevatorRightHeightColor = LedColor.OFF;
 
   private Timer blinkTimer = new Timer();
 
@@ -51,6 +68,8 @@ public class LedSubsystem extends SubsystemBase implements ILed {
 
   private Color color;
 
+  Supplier<Double> elevatorPosition;
+
   private double elevatorMinHeight = ElevatorConstants.tunning_values_elevator.setpoints.MIN_HEIGHT;
 
   private double elevatorMaxHeight = ElevatorConstants.tunning_values_elevator.setpoints.MAX_HEIGHT;
@@ -61,14 +80,15 @@ public class LedSubsystem extends SubsystemBase implements ILed {
 
   private CustomBooleanLogger blinkTrackerLogEntry = new CustomBooleanLogger("/LedSubsystem/BlinkTracker");
 
-  public static LedSubsystem getInstance() {
+  public static LedSubsystem getInstance(Supplier<Double> elevatorPosition) {
     if (instance == null) {
-      instance = new LedSubsystem();
+      instance = new LedSubsystem(elevatorPosition);
     }
     return instance;
   }
 
-  private LedSubsystem() {
+  private LedSubsystem(Supplier<Double> elevatorPosition) {
+    this.elevatorPosition = elevatorPosition;
     this.setBlinkFrequency(3);
     this.mode = LedMode.SOLID;
     this.color = LedColor.OFF;
@@ -98,6 +118,9 @@ public class LedSubsystem extends SubsystemBase implements ILed {
         break;
       case LedMode.PERHEIGHT:
         processHeight();
+        break;
+      case LedMode.HEIGHT_SEGMENTED:
+        processHeightAnimation();
         break;
     }
     this.modeLogEntry.append(this.mode);
@@ -149,6 +172,48 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     this.processSegments();
   }
 
+  public void setIntakeHeightColor(Color color) {
+    this.elevatorRightHeightColor = color;
+    this.mode = LedMode.HEIGHT_SEGMENTED;
+    this.processHeightAnimation();
+  }
+
+  public void setElevatorHeightColor(Color color) {
+    this.elevatorRightHeightColor = color;
+    this.mode = LedMode.HEIGHT_SEGMENTED;
+    this.processHeightAnimation();
+  }
+
+  public void setHeightColor(Color color) {
+    this.elevatorRightHeightColor = color;
+    this.mode = LedMode.HEIGHT_SEGMENTED;
+    this.processHeightAnimation();
+  }
+
+  public void setElevatorRightHeightColor(Color color) {
+    this.elevatorRightHeightColor = color;
+    this.mode = LedMode.HEIGHT_SEGMENTED;
+    this.processHeightAnimation();
+  }
+
+  public void setElevatorLeftHeightColor(Color color) {
+    this.elevatorLeftHeightColor = color;
+    this.mode = LedMode.HEIGHT_SEGMENTED;
+    this.processHeightAnimation();
+  }
+
+  public void setIntakeLeftHeightColor(Color color) {
+    this.mode = LedMode.HEIGHT_SEGMENTED;
+    this.intakeLeftHeightColor = color;
+    this.processHeightAnimation();
+  }
+
+  public void setIntakeRightHeightColor(Color color) {
+    this.mode = LedMode.HEIGHT_SEGMENTED;
+    this.intakeRightHeightColor = color;
+    this.processHeightAnimation();
+  }
+
   public void setElevatorHeight(double height, double maxHeight) {
     this.mode = LedMode.PERHEIGHT;
     this.color = LedColor.RED;
@@ -188,24 +253,29 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     int ledEnd = this.elevatorEnd;
     int ledRange = ledEnd - ledStart + 1;
 
-    int ledsToLight = (int) Math.round((elevatorMinHeight / elevatorMaxHeight) * ledRange);
+    double currentHeight = elevatorPosition.get();
+    double normalizedHeight = Math.min(1.0,
+        Math.max(0.0, (currentHeight - elevatorMinHeight) / (elevatorMaxHeight - elevatorMinHeight)));
 
-    for (int i = ledStart; i <= ledEnd; i++) {
-      if (i < ledStart + ledsToLight) {
-        ledBuffer.setRGB(i, color.red, color.green, color.blue);
+    int ledsToLight = (int) Math.round(normalizedHeight * ledRange);
+
+    for (int i = 0; i < ledRange; i++) {
+      int ledIndex = ledStart + i;
+      if (i < ledsToLight) {
+        ledBuffer.setRGB(ledIndex, color.red, color.blue, color.green);
       } else {
-        ledBuffer.setRGB(i, 0, 0, 0);
+        ledBuffer.setRGB(ledIndex, 0, 0, 0);
       }
     }
+
+    led.setData(ledBuffer);
   }
 
   private void processSegments() {
-    // Pinta o segmento do intake com intakeColor
     for (int i = intakeStart; i <= intakeEnd; i++) {
       ledBuffer.setRGB(i, intakeColor.red, intakeColor.blue, intakeColor.green);
     }
 
-    // Pinta o segmento do elevador com elevatorColor
     for (int i = elevatorStart; i <= elevatorEnd; i++) {
       ledBuffer.setRGB(i, elevatorColor.red, elevatorColor.blue, elevatorColor.green);
     }
@@ -228,6 +298,7 @@ public class LedSubsystem extends SubsystemBase implements ILed {
         this.setSolidColor(this.colorAfterBlink);
         return;
       }
+
     }
     if (elapsedTime % this.blinkPeriod < this.halfBlinkPeriod) {
       this.processSolidColor(this.color);
@@ -235,6 +306,33 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     } else {
       this.processSolidColor(LedColor.OFF);
       this.blinkTrackerLogEntry.append(false);
+    }
+  }
+
+  private void processHeightAnimation() {
+    double currentHeight = elevatorPosition.get();
+    double normalizedHeight = Math.min(1.0,
+        Math.max(0.0, (currentHeight - elevatorMinHeight) / (elevatorMaxHeight - elevatorMinHeight)));
+
+    setHeightRange(intakeLeftStart, intakeLeftEnd, intakeLeftHeightColor, normalizedHeight);
+    setHeightRange(intakeRightStart, intakeRightEnd, intakeRightHeightColor, normalizedHeight);
+    setHeightRange(elevatorLeftStart, elevatorLeftEnd, elevatorLeftHeightColor, normalizedHeight);
+    setHeightRange(elevatorRightStart, elevatorRightEnd, elevatorRightHeightColor, normalizedHeight);
+
+    led.setData(ledBuffer);
+  }
+
+  private void setHeightRange(int start, int end, Color color, double normalizedHeight) {
+    int range = end - start + 1;
+    int ledsToLight = (int) Math.round(normalizedHeight * range);
+
+    for (int i = 0; i < range; i++) {
+      int ledIndex = start + i;
+      if (i < ledsToLight) {
+        ledBuffer.setRGB(ledIndex, color.red, color.green, color.blue);
+      } else {
+        ledBuffer.setRGB(ledIndex, 0, 0, 0);
+      }
     }
   }
 }

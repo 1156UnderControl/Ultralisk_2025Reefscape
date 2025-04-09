@@ -24,6 +24,8 @@ public interface IScorer {
 
   void placeAlgae();
 
+  double getElevatorPosition();
+
   void prepareToScoreAlgae();
 
   void prepareToPlaceCoralOnBranch();

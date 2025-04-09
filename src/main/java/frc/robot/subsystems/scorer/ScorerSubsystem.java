@@ -718,4 +718,9 @@ public class ScorerSubsystem implements IScorer {
   public boolean readyToScoreProcessor() {
     return hasAlgae && this.isElevatorAtProcessorHeight();
   }
+
+  @Override
+  public double getElevatorPosition() {
+    return elevatorMotorLeader.getPosition();
+  }
 }
