@@ -7,7 +7,7 @@ import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.ISwerve;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class SwerveGoToBranchFastAutonomous extends Command {
+public class SwerveGoToBranchFastAutonomousWithoutBackup extends Command {
   ISwerve swerve;
   TargetBranch targetBranch;
   SuperStructure superStructure;
@@ -15,7 +15,7 @@ public class SwerveGoToBranchFastAutonomous extends Command {
   boolean isGoingToNonBackupPosition;
   boolean goDirect;
 
-  public SwerveGoToBranchFastAutonomous(SwerveSubsystem swerve, TargetBranch branch,
+  public SwerveGoToBranchFastAutonomousWithoutBackup(SwerveSubsystem swerve, TargetBranch branch,
       boolean goDirect) {
     this.swerve = swerve;
     this.targetBranch = branch;
@@ -25,36 +25,22 @@ public class SwerveGoToBranchFastAutonomous extends Command {
 
   @Override
   public void initialize() {
-    this.swerve.setTargetBranch(targetBranch);
-    isGoingToNonBackupPosition = false;
   }
 
   @Override
   public void execute() {
-    if (!reachedBackupPosition) {
-      this.superStructure.led.setSolidColor(LedColor.YELLOW);
-      if (this.goDirect) {
-        this.swerve.driveToBranch(targetBranch, true, true);
-      } else {
-        this.swerve.driveToBranch(targetBranch, true, false);
-      }
-      if (this.swerve.isAtTargetPositionWithoutHeading()) {
-        reachedBackupPosition = true;
-      }
+    this.superStructure.led.setSolidColor(LedColor.RED);
+    if (this.goDirect) {
+      this.swerve.driveToBranch(targetBranch, false, true);
     } else {
-      this.superStructure.led.setSolidColor(LedColor.RED);
-      if (this.goDirect) {
-        this.swerve.driveToBranch(targetBranch, false, true);
-      } else {
-        this.swerve.driveToBranch(targetBranch, false, false);
-      }
-      isGoingToNonBackupPosition = true;
+      this.swerve.driveToBranch(targetBranch, false, false);
     }
+    isGoingToNonBackupPosition = true;
   }
 
   @Override
   public boolean isFinished() {
-    return this.swerve.isAtTargetPositionWithoutHeading() && isGoingToNonBackupPosition;
+    return this.swerve.isAtTargetPositionWithoutHeading();
   }
 
   @Override

@@ -21,6 +21,7 @@ import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimized;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimizedDirect;
+import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimizedDirectWithoutBackup;
 import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
@@ -207,6 +208,43 @@ public class RobotContainer {
             .andThen(new DefaultPositionAutonomous(superStructure)));
     NamedCommands.registerCommand("Score Coral L Optimized Direct",
         new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.L)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+
+    NamedCommands.registerCommand("Score Coral A Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.A)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral B Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.B)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral C Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.C)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral D Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.D)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral E Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.E)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral F Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.F)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral G Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.G)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral H Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.H)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral I Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.I)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral J Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.J)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral K Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.K)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral L Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.L)
             .andThen(new DefaultPositionAutonomous(superStructure)));
 
     NamedCommands.registerCommand("Set Coral Level L1",
