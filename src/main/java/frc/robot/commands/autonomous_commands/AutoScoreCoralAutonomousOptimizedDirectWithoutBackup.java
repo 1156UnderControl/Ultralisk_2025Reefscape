@@ -14,7 +14,7 @@ public class AutoScoreCoralAutonomousOptimizedDirectWithoutBackup extends Sequen
   public AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(SuperStructure superStructure, SwerveSubsystem swerve,
       TargetBranch branch) {
     addCommands(new InstantCommand(() -> swerve.forceReefPoseEstimation(true)),
-        new SwerveGoToBranchFastAutonomousWithoutBackup(swerve, branch, true)
+        new SwerveGoToBranchFastAutonomousWithoutBackup(swerve, branch, superStructure, true)
             .alongWith(new CollectCoralFromHP(superStructure)
 
                 .andThen(new OptimizedMoveScorerToScorePosition(superStructure, swerve))),

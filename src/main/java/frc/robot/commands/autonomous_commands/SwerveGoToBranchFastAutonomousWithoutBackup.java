@@ -16,10 +16,12 @@ public class SwerveGoToBranchFastAutonomousWithoutBackup extends Command {
   boolean goDirect;
 
   public SwerveGoToBranchFastAutonomousWithoutBackup(SwerveSubsystem swerve, TargetBranch branch,
+      SuperStructure superStructure,
       boolean goDirect) {
     this.swerve = swerve;
     this.targetBranch = branch;
     this.goDirect = goDirect;
+    this.superStructure = superStructure;
     addRequirements(swerve);
   }
 
