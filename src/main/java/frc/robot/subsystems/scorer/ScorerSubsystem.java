@@ -87,6 +87,8 @@ public class ScorerSubsystem implements IScorer {
 
   private StabilizeChecker stableAlgae = new StabilizeChecker(0.5);
 
+  private boolean isAlgaeManualControl = true;
+
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
       instance = new ScorerSubsystem();
@@ -388,6 +390,16 @@ public class ScorerSubsystem implements IScorer {
     assignAlgaeCollectSetpointsForAlgaeHeight();
     runAlgaeIntakeDetection();
     endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+  }
+
+  @Override
+  public void setAlgaeManualControl(boolean isManualControl) {
+    this.isAlgaeManualControl = isManualControl;
+  }
+
+  @Override
+  public boolean isAlgaeManualControl() {
+    return this.isAlgaeManualControl;
   }
 
   @Override

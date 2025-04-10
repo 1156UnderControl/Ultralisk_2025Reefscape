@@ -1,5 +1,6 @@
 package frc.robot.commands.util;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToRemovePosition;
@@ -17,6 +18,7 @@ public class GoToFaceAndRaiseElevator extends SequentialCommandGroup {
     this.superStructure = superStructure;
     this.targetBranch = branch;
     addCommands(
-        new SwerveGoToFace(swerve, superStructure, branch).andThen(new MoveScorerToRemovePosition(superStructure)));
+        new SwerveGoToFace(swerve, superStructure, branch), new MoveScorerToRemovePosition(superStructure)
+            .alongWith(Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)));
   }
 }

@@ -47,6 +47,7 @@ import frc.robot.constants.SwerveConstants;
 import frc.robot.constants.SwerveConstants.AutoAlignConstants;
 import frc.robot.constants.SwerveConstants.PoseEstimatorState;
 import frc.robot.constants.SwerveConstants.TargetBranch;
+import frc.robot.constants.SwerveConstants.TargetFace;
 import frc.robot.joysticks.DriverController;
 import frc.robot.pose_estimators.ReefPoseEstimatorWithLimelight;
 
@@ -115,6 +116,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private GoToBranchConfiguration goToBranchConfigurationAutonomous;
 
   private GoToBranchConfiguration goToBranchConfigurationTeleoperated;
+
+  private Pose2d targetFacePose = TargetFace.A.getTargetPoseToScore();
 
   private static final SwervePathPlannerConfig pathPlannerConfig = new SwervePathPlannerConfig(
       new PIDConstants(5, 0, 0),
@@ -331,7 +334,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   @Override
-  public void goToFaceTeleoperated() {
+  public void goToFaceTeleoperated(TargetBranch branch) {
+    this.goToBranchConfigurationTeleoperated.setBranch(branch, true);
     this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
         elevatorAtHighPositionSupplier, false, true);
@@ -341,7 +345,15 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.isUsingAngleCorrection.append(false);
     driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
         this.goToBranchConfigurationTeleoperated.getFinalVelocity());
+    this.targetFacePose = this.goToBranchConfigurationTeleoperated.getFinalPose();
     this.state = this.goToBranchConfigurationTeleoperated.getGoToState();
+  }
+
+  @Override
+  public boolean isAtTargetFacePositionWithoutHeading() {
+    return stableAtTargetPose
+        .isStableInCondition(() -> isAtTargetPose(this.targetFacePose, this.goToPoseTranslationDeadband,
+            this.goToPoseTranslationDeadband));
   }
 
   @Override

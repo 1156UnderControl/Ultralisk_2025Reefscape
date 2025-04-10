@@ -58,6 +58,7 @@ public class GoToBranchConfiguration {
       Supplier<AlgaeHeightReef> scorerTargetReefLevelAlgaeSupplier,
       Supplier<Boolean> elevatorAtHighPositionSupplier, boolean backup, boolean goToFace) {
     if (goToFace) {
+      this.face = this.getReefFace(branch);
       this.distanceToTargetFace = face.getTargetPoseToScore().getTranslation().getDistance(robotPose.getTranslation());
       Pose2d targetFaceScorePose = scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.LOW
           || scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.MID
@@ -234,5 +235,9 @@ public class GoToBranchConfiguration {
 
   public double getDistanceToTargetFace() {
     return this.distanceToTargetFace;
+  }
+
+  public TargetFace getTargetFace() {
+    return getReefFace(branch);
   }
 }

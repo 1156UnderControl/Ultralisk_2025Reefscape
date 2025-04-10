@@ -35,6 +35,10 @@ public interface IScorer {
 
   void collectAlgae();
 
+  void setAlgaeManualControl(boolean isManualControl);
+
+  boolean isAlgaeManualControl();
+
   void stopEndEffector();
 
   void moveScorerToDefaultPosition();

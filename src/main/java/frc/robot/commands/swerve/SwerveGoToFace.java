@@ -26,17 +26,21 @@ public class SwerveGoToFace extends Command {
 
   @Override
   public void execute() {
+    System.out.println(
+        "To Rodando!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     this.superStructure.led.setSolidColor(LedColor.RED);
-    this.swerve.goToFaceTeleoperated();
+    this.swerve.goToFaceTeleoperated(targetBranch);
   }
 
   @Override
   public boolean isFinished() {
-    return this.swerve.isAtTargetPositionWithoutHeading();
+    return this.swerve.isAtTargetFacePositionWithoutHeading();
   }
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println(
+        "Terminei!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     if (interrupted) {
       this.superStructure.led.setSolidColor(LedColor.RED);
     } else {

@@ -11,7 +11,9 @@ public interface ISwerve {
 
   void driveToBranch(TargetBranch branch, boolean backup, boolean goDirect);
 
-  void goToFaceTeleoperated();
+  void goToFaceTeleoperated(TargetBranch branch);
+
+  boolean isAtTargetFacePositionWithoutHeading();
 
   boolean checkBackupNecessary();
 
