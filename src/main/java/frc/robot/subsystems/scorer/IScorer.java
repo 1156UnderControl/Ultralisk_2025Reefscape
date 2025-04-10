@@ -73,6 +73,4 @@ public interface IScorer {
   void setCoastScorer();
 
   void setBrakeScorer();
-
-  double getElevatorPosition();
 }
