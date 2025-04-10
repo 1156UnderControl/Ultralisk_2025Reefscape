@@ -42,6 +42,24 @@ public class SwerveConstants {
     }
   }
 
+  public enum TargetFace {
+    A(0), B(5), C(4), D(3), E(2), F(1);
+
+    private final int faceIndex;
+
+    TargetFace(int faceIndex) {
+      this.faceIndex = faceIndex;
+    }
+
+    public Pose2d getTargetPoseToScore() {
+      Pose2d transformedPose = CoordinatesTransform.applyRotationToPoseAngle(
+          CoordinatesTransform
+              .getRetreatPose(AllianceFlipUtil.apply(Reef.centerFaces[faceIndex]), 0.6),
+          Rotation2d.k180deg);
+      return transformedPose;
+    }
+  }
+
   public enum PoseEstimatorState {
     REEF_ESTIMATION, GLOBAL_POSE_ESTIMATION, AUTO_POSE_ESTIMATION;
   }
@@ -69,7 +87,7 @@ public class SwerveConstants {
       }
 
       public class Teleoperated {
-        public static final double MAX_ERROR_AUTO_ALIGN_TELEOPERATED = 3;
+        public static final double MAX_ERROR_AUTO_ALIGN_TELEOPERATED = 2.0;
         public static final double MIN_ERROR_AUTO_ALIGN_TELEOPERATED = 1.0;
         public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED = 0.3;
       }
@@ -102,7 +120,7 @@ public class SwerveConstants {
 
       public class Teleoperated {
         public static final double MIN_VELOCITY_POSITION = 1.0;
-        public static final double MAX_VELOCITY_POSITION = 3.0;
+        public static final double MAX_VELOCITY_POSITION = 4.5;
       }
 
       public static final double MAX_VELOCITY_POSITION = 2;

@@ -15,7 +15,7 @@ public class DefaultPosition extends SequentialCommandGroup {
     addCommands(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-right")),
         new StowClimber(superStructure),
         new MoveScorerToDefaultPosition(superStructure),
-        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.PURPLE)),
+        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.BLUE)),
         new InstantCommand(() -> {
           if (superStructure.scorer.hasCoral()) {
             superStructure.led.setSolidColor(LedColor.WHITE);
