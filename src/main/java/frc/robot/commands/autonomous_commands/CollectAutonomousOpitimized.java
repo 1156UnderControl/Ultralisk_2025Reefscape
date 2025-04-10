@@ -28,7 +28,7 @@ public class CollectAutonomousOpitimized extends Command {
 
   @Override
   public boolean isFinished() {
-    if (collectTimer.get() >= 0.5) {
+    if (collectTimer.get() >= 0.4) {
       return true;
     }
     return superStructure.scorer.hasCoral();

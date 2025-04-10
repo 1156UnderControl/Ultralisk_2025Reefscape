@@ -102,14 +102,12 @@ public class SwerveConstants {
     public class VelocitiesRelatedToDistance {
       public class FastDirect {
         public static final double MIN_VELOCITY_POSITION = 0.4;
-        public static final double MID_VELOCITY_POSITION = 2.5;
         public static final double MAX_VELOCITY_POSITION = 4;
       }
 
       public class Fast {
-        public static final double MIN_VELOCITY_POSITION = 0.9;
-        public static final double MID_VELOCITY_POSITION = 2.5;
-        public static final double MAX_VELOCITY_POSITION = 4;
+        public static final double MIN_VELOCITY_POSITION = 1;
+        public static final double MAX_VELOCITY_POSITION = 3.5;
       }
 
       public class Autonomous {
