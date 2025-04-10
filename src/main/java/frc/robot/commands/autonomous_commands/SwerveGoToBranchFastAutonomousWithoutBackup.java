@@ -50,7 +50,7 @@ public class SwerveGoToBranchFastAutonomousWithoutBackup extends Command {
     if (interrupted) {
       this.superStructure.led.setSolidColor(LedColor.RED);
     } else {
-      this.superStructure.led.setBlink(LedColor.PURPLE);
+      this.superStructure.led.setBlink(LedColor.GREEN);
     }
     this.swerve.stopSwerve();
   }

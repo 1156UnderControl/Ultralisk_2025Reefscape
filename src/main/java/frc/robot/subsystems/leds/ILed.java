@@ -21,4 +21,18 @@ public interface ILed {
 
   void setIntakeColor(Color color);
 
+  void setIntakeHeightColor(Color color);
+
+  void setElevatorHeightColor(Color color);
+
+  void setHeightColor(Color color);
+
+  void setIntakeLeftHeightColor(Color color);
+
+  void setIntakeRightHeightColor(Color color);
+
+  void setElevatorLeftHeightColor(Color color);
+
+  void setElevatorRightHeightColor(Color color);
+
 }
