@@ -322,7 +322,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.distanceToTargetBranch = goToBranchConfigurationTeleoperated.getDistanceToTargetBranch();
     this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
     this.distanceToTargetBranchLog.append(distanceToTargetBranch);
-    if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3) {
+    if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3.5) {
       this.isUsingAngleCorrection.append(false);
       driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
           this.goToBranchConfigurationTeleoperated.getFinalVelocity());
