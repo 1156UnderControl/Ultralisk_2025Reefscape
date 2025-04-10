@@ -89,6 +89,8 @@ public class ScorerSubsystem implements IScorer {
 
   private boolean isAlgaeManualControl = true;
 
+  private boolean timerAfterAutoAlignFinished = false;
+
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
       instance = new ScorerSubsystem();
@@ -294,6 +296,16 @@ public class ScorerSubsystem implements IScorer {
     endEffectorMotor.set(0);
     state = "START";
     this.endEffectorAccelerated = false;
+  }
+
+  @Override
+  public void setTimerAfterAutoAlignFinished(boolean hasFinished) {
+    this.timerAfterAutoAlignFinished = hasFinished;
+  }
+
+  @Override
+  public boolean isTimerAfterAutoAlignFinished() {
+    return this.timerAfterAutoAlignFinished;
   }
 
   @Override

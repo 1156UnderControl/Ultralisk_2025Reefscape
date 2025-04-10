@@ -21,6 +21,10 @@ public interface IScorer {
 
   void stopIntakeFromHP();
 
+  void setTimerAfterAutoAlignFinished(boolean hasFinished);
+
+  boolean isTimerAfterAutoAlignFinished();
+
   void placeCoral();
 
   void placeAlgae();
