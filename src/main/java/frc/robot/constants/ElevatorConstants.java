@@ -27,13 +27,13 @@ public class ElevatorConstants {
       public static final double MIN_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
       public static final double NET_HEIGHT = 2.27;
       public static final double PROCESSOR_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
-      public static final double L1_HEIGHT = ZERO_POSITION_IN_METERS_FROM_GROUND;
+      public static final double L1_HEIGHT = 0.44;
       public static final double L2_HEIGHT = 0.8;
       public static final double L3_HEIGHT = 1.19;
       public static final double L4_HEIGHT = 2.1;
       public static final double ALGAE_COLLECT_MID = 1.37;
       public static final double ALGAE_COLLECT_LOW = 0.98;
-      public static final double SECURE_FOR_PIVOT_ROTATION = 0.60;
+      public static final double SECURE_FOR_PIVOT_ROTATION = 1;
       public static final double COLLECT_HEIGHT = MIN_HEIGHT;
       public static final double COLLECT_ALGAE_REEF_MID = 1.14;
       public static final double COLLECT_ALGAE_REEF_LOW = 0.82;

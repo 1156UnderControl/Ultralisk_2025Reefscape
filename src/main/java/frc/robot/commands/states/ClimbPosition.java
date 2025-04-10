@@ -24,8 +24,8 @@ public class ClimbPosition extends SequentialCommandGroup {
         Commands.waitUntil(operatorKeyboard.climb()),
         new MoveClimberToClimbedPosition(superStructure),
         new StopClimberMotor(superStructure),
-        new InstantCommand(() -> superStructure.led.setRainbow()),
         new InstantCommand(() -> superStructure.robotIsClimbed = true),
+        new InstantCommand(() -> superStructure.led.setRainbow()),
         Commands.idle(superStructure));
   }
 }

@@ -134,8 +134,8 @@ public class ScorerSubsystem implements IScorer {
         PivotConstants.tunning_values_pivot.PID.D,
         0,
         ElevatorConstants.tunning_values_elevator.PID.IZone);
-    pivotMotor.burnFlash();
     pivotMotor.setPosition(pivotMotor.getPositionExternalAbsoluteEncoder());
+    pivotMotor.burnFlash();
   }
 
   private void setConfigsEndEffector() {
@@ -213,8 +213,9 @@ public class ScorerSubsystem implements IScorer {
         && isPivotInternalEncoderLost()) {
       correctingPivot.append(true);
       resetPivotEncoder();
+    } else {
+      correctingPivot.append(false);
     }
-    correctingPivot.append(false);
   }
 
   private boolean isPivotInternalEncoderLost() {
@@ -718,5 +719,10 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public boolean readyToScoreProcessor() {
     return hasAlgae && this.isElevatorAtProcessorHeight();
+  }
+
+  @Override
+  public double getElevatorPosition() {
+    return elevatorMotorLeader.getPosition();
   }
 }

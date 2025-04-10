@@ -17,9 +17,10 @@ public class RemoveAlgaePosition extends SequentialCommandGroup {
   public RemoveAlgaePosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(
         new MoveScorerToRemovePosition(superStructure)
-            .alongWith(Commands.run(() -> superStructure.led.setSolidColor(LedColor.RED)))
-            .andThen(Commands.run(() -> superStructure.led.setSolidColor(LedColor.PURPLE))),
+            .alongWith(new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.RED)))
+            .andThen(new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.CYAN))),
         new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceBlink("limelight-right")),
         Commands.idle(superStructure).onlyIf(() -> superStructure.scorer.getTargetReefLevel() != ReefLevel.L1));
+
   }
 }

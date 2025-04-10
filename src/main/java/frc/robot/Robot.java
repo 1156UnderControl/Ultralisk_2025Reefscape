@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+
     if (!this.autoHasExecuted) {
       if (LimelightHelpers.getTV("limelight-left")) {
         this.m_robotContainer.superStructure.led.setSolidColor(LedColor.GREEN);
@@ -54,7 +55,8 @@ public class Robot extends TimedRobot {
       this.m_robotContainer.superStructure.led.setSolidColor(LedColor.RED);
       return;
     }
-    this.m_robotContainer.superStructure.led.setRainbow();
+
+    this.m_robotContainer.superStructure.led.setSolidColor(LedColor.BLUE);
     return;
   }
 

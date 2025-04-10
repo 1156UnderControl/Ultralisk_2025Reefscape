@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Coral J Optimized Direct"
+            "name": "Score Coral J Optimized Direct Without Backup"
           }
         },
         {
@@ -41,7 +41,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Coral K Optimized"
+                  "name": "Score Coral K Optimized Direct"
                 }
               }
             ]
@@ -66,7 +66,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Coral L Optimized"
+                  "name": "Score Coral L Optimized Direct"
                 }
               }
             ]
