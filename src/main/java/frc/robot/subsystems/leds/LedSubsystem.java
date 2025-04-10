@@ -156,7 +156,7 @@ public class LedSubsystem extends SubsystemBase implements ILed {
 
   private void setColorRange(int start, int end, Color color) {
     for (int i = start; i <= end; i++) {
-      ledBuffer.setRGB(i, color.red, color.green, color.blue);
+      ledBuffer.setRGB(i, color.red, color.blue, color.green);
     }
   }
 
@@ -326,12 +326,12 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     int range = end - start + 1;
     int ledsToLight = (int) Math.round(normalizedHeight * range);
 
-    boolean inverted = start == intakeRightStart || start == elevatorLeftStart;
+    boolean inverted = start == intakeRightStart || start == elevatorRightStart;
 
     for (int i = 0; i < range; i++) {
       int ledIndex = inverted ? end - i : start + i;
       if (i < ledsToLight) {
-        ledBuffer.setRGB(ledIndex, color.red, color.green, color.blue);
+        ledBuffer.setRGB(ledIndex, color.red, color.blue, color.green);
       } else {
         ledBuffer.setRGB(ledIndex, 0, 0, 0);
       }
