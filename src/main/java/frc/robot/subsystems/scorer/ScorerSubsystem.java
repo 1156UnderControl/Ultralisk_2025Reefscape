@@ -87,6 +87,8 @@ public class ScorerSubsystem implements IScorer {
 
   private StabilizeChecker stableAlgae = new StabilizeChecker(0.5);
 
+  private boolean isAlgaeManualControl = true;
+
   public static ScorerSubsystem getInstance() {
     if (instance == null) {
       instance = new ScorerSubsystem();
@@ -338,52 +340,49 @@ public class ScorerSubsystem implements IScorer {
     }
   }
 
-  private AlgaeHeightReef getAutoAlgaeLevel(TargetBranch targetBranch) {
-    AlgaeHeightReef algaeHeight;
-
+  @Override
+  public void setAutoAlgaeLevel(TargetBranch targetBranch) {
     switch (targetBranch) {
       case A:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case B:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case C:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case D:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case E:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case F:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case G:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case H:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case I:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case J:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
       case K:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       case L:
-        algaeHeight = AlgaeHeightReef.LOW;
+        this.algaeReefHeight = AlgaeHeightReef.LOW;
         break;
       default:
-        algaeHeight = AlgaeHeightReef.MID;
+        this.algaeReefHeight = AlgaeHeightReef.MID;
         break;
     }
-
-    return algaeHeight;
   }
 
   @Override
@@ -391,6 +390,16 @@ public class ScorerSubsystem implements IScorer {
     assignAlgaeCollectSetpointsForAlgaeHeight();
     runAlgaeIntakeDetection();
     endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+  }
+
+  @Override
+  public void setAlgaeManualControl(boolean isManualControl) {
+    this.isAlgaeManualControl = isManualControl;
+  }
+
+  @Override
+  public boolean isAlgaeManualControl() {
+    return this.isAlgaeManualControl;
   }
 
   @Override
@@ -667,6 +676,11 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public ReefLevel getTargetReefLevel() {
     return this.targetReefLevel;
+  }
+
+  @Override
+  public AlgaeHeightReef getTargetReefLevelAlgae() {
+    return this.algaeReefHeight;
   }
 
   @Override
