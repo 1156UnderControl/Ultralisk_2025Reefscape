@@ -38,7 +38,5 @@ public class CollectAutonomousOpitimized extends Command {
   public void end(boolean interrupted) {
     collectTimer.stop();
     collectTimer.reset();
-    // superStructure.scorer.stopEndEffector();
-    System.out.println("Terminei After Optimizeddddddddddddddddddddddddddddddddddd");
   }
 }
