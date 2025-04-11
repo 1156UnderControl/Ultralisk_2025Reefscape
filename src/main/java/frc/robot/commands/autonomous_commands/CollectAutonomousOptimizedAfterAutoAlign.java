@@ -28,19 +28,18 @@ public class CollectAutonomousOptimizedAfterAutoAlign extends Command {
     if (!this.swerve.isAtTargetPositionWithoutHeading()) {
       superStructure.scorer.intakeFromHP();
     } else {
-      collectTimer.start();
-      if (collectTimer.get() < 2) {
-        superStructure.scorer.intakeFromHP();
-      } else {
-        if (superStructure.scorerHasCoral()) {
-          superStructure.scorer.setTimerAfterAutoAlignFinished(false);
+      if (!superStructure.scorerHasCoral()) {
+        collectTimer.start();
+        if (collectTimer.get() < 2) {
+          superStructure.scorer.intakeFromHP();
         } else {
           this.superStructure.scorer.stopEndEffector();
           superStructure.scorer.setTimerAfterAutoAlignFinished(true);
         }
+      } else {
+        superStructure.scorer.setTimerAfterAutoAlignFinished(false);
       }
     }
-    superStructure.scorer.intakeFromHP();
   }
 
   @Override
@@ -52,6 +51,5 @@ public class CollectAutonomousOptimizedAfterAutoAlign extends Command {
   public void end(boolean interrupted) {
     collectTimer.stop();
     collectTimer.reset();
-    System.out.println("Terminei After alignnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
   }
 }
