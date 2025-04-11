@@ -77,6 +77,12 @@
           "data": {
             "pathName": "SecondCollect 3 Corals Left"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Coral Optimized"
+          }
         }
       ]
     }
