@@ -61,6 +61,8 @@ public class ScorerSubsystem implements IScorer {
 
   CustomStringLogger targetReefLevelLog = new CustomStringLogger("/ScorerSubsystem/targetReefLevel");
 
+  CustomBooleanLogger isHomingElevatorLog = new CustomBooleanLogger("/ScorerSubsystem/isHomingElevator");
+
   CustomBooleanLogger elevatorStoppedByPivotLimit = new CustomBooleanLogger(
       "/ScorerSubsystem/elevatorStoppedByPivotLimit");
 
@@ -86,6 +88,8 @@ public class ScorerSubsystem implements IScorer {
   private StabilizeChecker stablePosition = new StabilizeChecker(0.2);
 
   private StabilizeChecker stableAlgae = new StabilizeChecker(0.5);
+
+  private StabilizeChecker homingElevatorStabitily = new StabilizeChecker(1);
 
   private boolean isAlgaeManualControl = true;
 
@@ -153,6 +157,7 @@ public class ScorerSubsystem implements IScorer {
       setScorerStructureGoals();
     }
     correctPivotPosition();
+    runElevatorPassiveHoming();
     updateLogs();
   }
 
@@ -736,5 +741,19 @@ public class ScorerSubsystem implements IScorer {
   @Override
   public double getElevatorPosition() {
     return elevatorMotorLeader.getPosition();
+  }
+
+  private void runElevatorPassiveHoming() {
+    boolean isInHomingRange = this.elevatorMotorLeader
+        .getPosition() < (ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND
+            + ElevatorConstants.PASSIVE_HOMING_RANGE);
+    boolean isForcingElevatorDown = this.elevatorMotorLeader.getAppliedOutput() < -0.01;
+    if (this.homingElevatorStabitily.isStableInCondition(() -> isInHomingRange && isForcingElevatorDown)) {
+      this.elevatorMotorLeader.setPosition(ElevatorConstants.ZERO_POSITION_IN_METERS_FROM_GROUND - 0.002);
+      this.elevatorMotorLeader.set(0);
+      this.isHomingElevatorLog.append(true);
+    } else {
+      this.isHomingElevatorLog.append(false);
+    }
   }
 }

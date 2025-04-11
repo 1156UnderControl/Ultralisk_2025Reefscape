@@ -6,6 +6,7 @@ public class ElevatorConstants {
   public static final double POSITION_FACTOR_MOTOR_ROTATION_TO_MECHANISM_METERS = 0.024437;
   public static final double VELOCITY_FACTOR_MOTOR_RPM_TO_METERS_PER_SECOND = 0.0004072;
   public static final double ZERO_POSITION_IN_METERS_FROM_GROUND = 0.38;
+  public static final double PASSIVE_HOMING_RANGE = 0.02;
 
   public class tunning_values_elevator {
     public static final double KS = 0;
