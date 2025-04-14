@@ -476,7 +476,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   public void driveAlignAngleJoystickRemoveAlgae() {
     ChassisSpeeds desiredSpeeds = this.inputsToChassisSpeeds(controller.getYtranslation(),
-        controller.getXtranslation()).times(0.3);
+        controller.getXtranslation()).times(0.5);
     this.state = "DRIVE_ALIGN_ANGLE_JOY_REMOVE_ALGAE";
     this.driveFieldOrientedLockedJoystickAngle(desiredSpeeds, controller.getCOS_Joystick(),
         controller.getSIN_Joystick());
