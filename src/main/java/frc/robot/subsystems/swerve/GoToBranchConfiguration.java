@@ -62,13 +62,14 @@ public class GoToBranchConfiguration {
       this.distanceToTargetFace = face.getTargetPoseToScore().getTranslation().getDistance(robotPose.getTranslation());
       Pose2d targetFaceScorePose = scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.LOW
           || scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.MID
-              ? CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0.05)
+              ? backup ? CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0.05)
+                  : CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0)
               : face.getTargetPoseToScore();
       distanceToTarget = this.getDriveTarget(robotPose, targetFaceScorePose, true, false).getTranslation()
           .getDistance(robotPose.getTranslation());
       finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetFace, this.maxVelocity, this.minVelocity,
           this.maxErrorPose, minErrorPose);
-      finalTargetPose = this.getDriveTarget(robotPose, targetFaceScorePose, this.goDirect, backup);
+      finalTargetPose = this.getDriveTarget(robotPose, targetFaceScorePose, this.goDirect, false);
       this.canDriveAimingAtPose = false;
       if (distanceToTargetFace <= minErrorPose) {
         this.state = "DRIVE_TO_FACE_" + this.goToBranchMode + branch.name();

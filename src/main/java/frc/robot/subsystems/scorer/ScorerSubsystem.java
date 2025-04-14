@@ -410,6 +410,12 @@ public class ScorerSubsystem implements IScorer {
   }
 
   @Override
+  public void runEndEffectorForAlgaeRemoval() {
+    runAlgaeIntakeDetection();
+    endEffectorMotor.set(EndEffectorConstants.tunning_values_endeffector.setpoints.DUTY_CYCLE_INTAKE);
+  }
+
+  @Override
   public void setAlgaeManualControl(boolean isManualControl) {
     this.isAlgaeManualControl = isManualControl;
   }

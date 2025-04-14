@@ -5,12 +5,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToScorePosition;
 import frc.robot.joysticks.OperatorController;
-import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class ScoreObjectPosition extends SequentialCommandGroup {
   OperatorController operatorKeyboard = OperatorController.getInstance();
 
-  public ScoreObjectPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
+  public ScoreObjectPosition(SuperStructure superStructure) {
     addCommands(new MoveScorerToScorePosition(superStructure).until(operatorKeyboard.scoreObject().and(() -> {
       if (superStructure.scorer.hasCoral()) {
         return superStructure.scorer.isSecuredToPlaceCoral();

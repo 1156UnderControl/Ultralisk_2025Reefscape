@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ResetOdometry Right XY"
+            "name": "ResetOdometry Center XY With Vision"
           }
         },
         {
@@ -19,25 +19,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Coral H"
+            "name": "Score Coral G Optimized Direct Without Backup And Remove Algae"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "Backup First Net"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": null
+            "name": "Score Algae"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": "Match Autos",
   "choreoAuto": false
 }

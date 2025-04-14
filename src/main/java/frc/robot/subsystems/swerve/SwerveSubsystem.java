@@ -338,6 +338,22 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.goToBranchConfigurationTeleoperated.setBranch(branch, true);
     this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
+        elevatorAtHighPositionSupplier, true, true);
+    this.distanceToTargetFace = goToBranchConfigurationTeleoperated.getDistanceToTargetFace();
+    this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
+    this.distanceToTargetFaceLog.append(distanceToTargetFace);
+    this.isUsingAngleCorrection.append(false);
+    driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
+        this.goToBranchConfigurationTeleoperated.getFinalVelocity());
+    this.targetFacePose = this.goToBranchConfigurationTeleoperated.getFinalPose();
+    this.state = this.goToBranchConfigurationTeleoperated.getGoToState();
+  }
+
+  @Override
+  public void goToFaceAutonomous(TargetBranch branch) {
+    this.goToBranchConfigurationTeleoperated.setBranch(branch, true);
+    this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+        scorerTargetReefLevelAlgaeSupplier,
         elevatorAtHighPositionSupplier, false, true);
     this.distanceToTargetFace = goToBranchConfigurationTeleoperated.getDistanceToTargetFace();
     this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());

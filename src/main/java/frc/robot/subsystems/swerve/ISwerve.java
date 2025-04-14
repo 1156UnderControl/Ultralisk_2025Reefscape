@@ -13,6 +13,8 @@ public interface ISwerve {
 
   void goToFaceTeleoperated(TargetBranch branch);
 
+  void goToFaceAutonomous(TargetBranch branch);
+
   boolean isAtTargetFacePositionWithoutHeading();
 
   boolean checkBackupNecessary();

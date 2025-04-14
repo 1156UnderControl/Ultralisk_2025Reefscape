@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "First Point - Push Robots"
+            "pathName": null
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "First Push - Push Robot"
+            "pathName": null
           }
         }
       ]

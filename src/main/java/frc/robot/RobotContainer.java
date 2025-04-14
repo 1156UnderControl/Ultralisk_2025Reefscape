@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
+import frc.robot.commands.autonomous_commands.AutoPrepareToScoreAlgaeNet;
+import frc.robot.commands.autonomous_commands.AutoScoreAlgae;
+import frc.robot.commands.autonomous_commands.AutoScoreAndPrepareToRemoveAlgaeFromBranch;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimized;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimizedDirect;
@@ -247,6 +250,36 @@ public class RobotContainer {
         new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.L)
             .andThen(new DefaultPositionAutonomous(superStructure)));
 
+    NamedCommands.registerCommand("Score Coral A Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.A));
+    NamedCommands.registerCommand("Score Coral B Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.B));
+    NamedCommands.registerCommand("Score Coral C Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.C));
+    NamedCommands.registerCommand("Score Coral D Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.D));
+    NamedCommands.registerCommand("Score Coral E Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.E));
+    NamedCommands.registerCommand("Score Coral F Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.F));
+    NamedCommands.registerCommand("Score Coral G Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.G));
+    NamedCommands.registerCommand("Score Coral H Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.H));
+    NamedCommands.registerCommand("Score Coral H Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.I));
+    NamedCommands.registerCommand("Score Coral J Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.J));
+    NamedCommands.registerCommand("Score Coral K Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.K));
+    NamedCommands.registerCommand("Score Coral L Optimized Direct Without Backup And Remove Algae",
+        new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.L));
+
+    NamedCommands.registerCommand("Prepare To Score Algae On Net",
+        new AutoPrepareToScoreAlgaeNet(superStructure));
+    NamedCommands.registerCommand("Score Algae",
+        new AutoScoreAlgae(superStructure));
+
     NamedCommands.registerCommand("Set Coral Level L1",
         new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1)));
     NamedCommands.registerCommand("Set Coral Level L2",
@@ -262,7 +295,7 @@ public class RobotContainer {
     keyBoard.collectCoral().onTrue(
         new CollectPosition(superStructure, drivetrain).deadlineFor(new SwerveAngleWithCoralStation(drivetrain)));
 
-    keyBoard.prepareToScore().onTrue(new ScoreObjectPosition(superStructure, drivetrain));
+    keyBoard.prepareToScore().onTrue(new ScoreObjectPosition(superStructure));
 
     keyBoard.scoreObject().and(() -> superStructure.scorer.readyToScoreProcessor())
         .onTrue(new ScoreProcessor(superStructure));
