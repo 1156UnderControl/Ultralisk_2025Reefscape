@@ -96,9 +96,20 @@ public class ControlBoard implements IDriverController, IOperatorController {
     return mDriverController.cancelAction();
   }
 
-  public Object getDoNotScore() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getDoNotScore'");
+  @Override
+  public Trigger setHasAlgae() {
+    return mDriverController.setHasAlgae();
+  }
+
+  @Override
+  public Trigger setHasCoral() {
+    return mDriverController.setHasCoral();
+
+  }
+
+  @Override
+  public Trigger setNoObject() {
+    return mDriverController.setNoObject();
   }
 
 }

@@ -1,6 +1,5 @@
 package frc.robot.commands.states;
 
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.Java_Is_UnderControl.LEDs.LedColor;
@@ -23,7 +22,6 @@ public class DefaultPosition extends SequentialCommandGroup {
           } else {
             superStructure.led.setSolidColor(LedColor.BLUE);
           }
-        }),
-        Commands.idle(superStructure));
+        }));
   }
 }

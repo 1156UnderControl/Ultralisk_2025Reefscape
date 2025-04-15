@@ -89,5 +89,11 @@ public interface IScorer {
 
   void setBrakeScorer();
 
+  void overrideHasCoral();
+
+  void overrideHasAlgae();
+
+  void overrideNoObject();
+
   double getElevatorPosition();
 }
