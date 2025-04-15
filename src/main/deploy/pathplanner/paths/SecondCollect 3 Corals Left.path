@@ -38,6 +38,17 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "Move To Default",
+      "waypointRelativePos": 0.02,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Move To Default"
+        }
+      }
+    },
+    {
       "name": "Intake Coral",
       "waypointRelativePos": 0.32754342431761096,
       "endWaypointRelativePos": null,

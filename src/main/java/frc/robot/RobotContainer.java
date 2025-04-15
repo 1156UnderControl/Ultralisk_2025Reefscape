@@ -100,152 +100,107 @@ public class RobotContainer {
         new CollectAutonomous(superStructure).andThen(new DefaultPosition(superStructure))
             .finallyDo(() -> superStructure.scorer.stopEndEffector()));
     NamedCommands.registerCommand("Score Coral A",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.A)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.A));
     NamedCommands.registerCommand("Score Coral B",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.B)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.B));
     NamedCommands.registerCommand("Score Coral C",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.C)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.C));
     NamedCommands.registerCommand("Score Coral D",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.D)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.D));
     NamedCommands.registerCommand("Score Coral E",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.E)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.E));
     NamedCommands.registerCommand("Score Coral F",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.F)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.F));
     NamedCommands.registerCommand("Score Coral G",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.G)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.G));
     NamedCommands.registerCommand("Score Coral H",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.H)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.H));
     NamedCommands.registerCommand("Score Coral I",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.I)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.I));
     NamedCommands.registerCommand("Score Coral J",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.J)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.J));
     NamedCommands.registerCommand("Score Coral K",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.K)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.K));
     NamedCommands.registerCommand("Score Coral L",
-        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.L)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomous(superStructure, drivetrain, TargetBranch.L));
 
     NamedCommands.registerCommand("Score Coral A Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.A)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.A));
     NamedCommands.registerCommand("Score Coral B Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.B)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.B));
     NamedCommands.registerCommand("Score Coral C Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.C)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.C));
     NamedCommands.registerCommand("Score Coral D Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.D)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.D));
     NamedCommands.registerCommand("Score Coral E Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.E)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.E));
     NamedCommands.registerCommand("Score Coral F Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.F)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.F));
     NamedCommands.registerCommand("Score Coral G Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.G)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.G));
     NamedCommands.registerCommand("Score Coral H Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.H)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.H));
     NamedCommands.registerCommand("Score Coral I Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.I)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.I));
     NamedCommands.registerCommand("Score Coral J Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.J)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.J));
     NamedCommands.registerCommand("Score Coral K Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.K)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.K));
     NamedCommands.registerCommand("Score Coral L Optimized",
-        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.L)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimized(superStructure, drivetrain, TargetBranch.L));
 
     NamedCommands.registerCommand("Score Coral A Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.A)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.A));
     NamedCommands.registerCommand("Score Coral B Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.B)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.B));
     NamedCommands.registerCommand("Score Coral C Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.C)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.C));
     NamedCommands.registerCommand("Score Coral D Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.D)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.D));
     NamedCommands.registerCommand("Score Coral E Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.E)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.E));
     NamedCommands.registerCommand("Score Coral F Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.F)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.F));
     NamedCommands.registerCommand("Score Coral G Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.G)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.G));
     NamedCommands.registerCommand("Score Coral H Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.H)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.H));
     NamedCommands.registerCommand("Score Coral I Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.I)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.I));
     NamedCommands.registerCommand("Score Coral J Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.J)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.J));
     NamedCommands.registerCommand("Score Coral K Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.K)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.K));
     NamedCommands.registerCommand("Score Coral L Optimized Direct",
-        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.L)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.L));
 
     NamedCommands.registerCommand("Score Coral A Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.A)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.A));
     NamedCommands.registerCommand("Score Coral B Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.B)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.B));
     NamedCommands.registerCommand("Score Coral C Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.C)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.C));
     NamedCommands.registerCommand("Score Coral D Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.D)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.D));
     NamedCommands.registerCommand("Score Coral E Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.E)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.E));
     NamedCommands.registerCommand("Score Coral F Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.F)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.F));
     NamedCommands.registerCommand("Score Coral G Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.G)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.G));
     NamedCommands.registerCommand("Score Coral H Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.H)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.H));
     NamedCommands.registerCommand("Score Coral I Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.I)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.I));
     NamedCommands.registerCommand("Score Coral J Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.J)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.J));
     NamedCommands.registerCommand("Score Coral K Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.K)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.K));
     NamedCommands.registerCommand("Score Coral L Optimized Direct Without Backup",
-        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.L)
-            .andThen(new DefaultPositionAutonomous(superStructure)));
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.L));
+
+    NamedCommands.registerCommand("Move To Default",
+        new DefaultPositionAutonomous(superStructure));
 
     NamedCommands.registerCommand("Set Coral Level L1",
         new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1)));

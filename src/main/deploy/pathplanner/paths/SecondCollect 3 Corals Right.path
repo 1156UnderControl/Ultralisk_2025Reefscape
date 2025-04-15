@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 2.6843195091786898,
-        "y": 1.5357815559351804
+        "y": 1.5357815559351806
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,6 +32,17 @@
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
+    {
+      "name": "Move To Default",
+      "waypointRelativePos": 0.02,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Move To Default"
+        }
+      }
+    },
     {
       "name": "Intake Coral",
       "waypointRelativePos": 0.32754342431761096,
