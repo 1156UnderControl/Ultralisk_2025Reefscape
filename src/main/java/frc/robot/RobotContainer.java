@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.commands.autonomous_commands.AutoPrepareToScoreAlgaeNet;
+import frc.robot.commands.autonomous_commands.AutoRemoveAlgaeFromBranch;
 import frc.robot.commands.autonomous_commands.AutoScoreAlgae;
 import frc.robot.commands.autonomous_commands.AutoScoreAndPrepareToRemoveAlgaeFromBranch;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
@@ -221,7 +222,7 @@ public class RobotContainer {
         new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.G));
     NamedCommands.registerCommand("Score Coral H Optimized Direct Without Backup And Remove Algae",
         new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.H));
-    NamedCommands.registerCommand("Score Coral H Optimized Direct Without Backup And Remove Algae",
+    NamedCommands.registerCommand("Score Coral I Optimized Direct Without Backup And Remove Algae",
         new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.I));
     NamedCommands.registerCommand("Score Coral J Optimized Direct Without Backup And Remove Algae",
         new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.J));
@@ -229,6 +230,19 @@ public class RobotContainer {
         new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.K));
     NamedCommands.registerCommand("Score Coral L Optimized Direct Without Backup And Remove Algae",
         new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.L));
+
+    NamedCommands.registerCommand("Remove Algae From A-B",
+        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.A));
+    NamedCommands.registerCommand("Remove Algae From C-D",
+        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.C));
+    NamedCommands.registerCommand("Remove Algae From E-F",
+        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.E));
+    NamedCommands.registerCommand("Remove Algae From G-H",
+        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.G));
+    NamedCommands.registerCommand("Remove Algae From I-J",
+        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.I));
+    NamedCommands.registerCommand("Remove Algae From K-L",
+        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.K));
 
     NamedCommands.registerCommand("Prepare To Score Algae On Net",
         new AutoPrepareToScoreAlgaeNet(superStructure));
