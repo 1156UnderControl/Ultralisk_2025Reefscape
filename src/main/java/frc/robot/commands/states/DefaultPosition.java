@@ -1,6 +1,5 @@
 package frc.robot.commands.states;
 
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.Java_Is_UnderControl.LEDs.LedColor;
@@ -15,15 +14,14 @@ public class DefaultPosition extends SequentialCommandGroup {
     addCommands(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-right")),
         new StowClimber(superStructure),
         new MoveScorerToDefaultPosition(superStructure),
-        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.BLUE)),
         new InstantCommand(() -> {
           if (superStructure.scorer.hasCoral()) {
             superStructure.led.setSolidColor(LedColor.WHITE);
-          }
-          if (superStructure.scorer.hasAlgae()) {
+          } else if (superStructure.scorer.hasAlgae()) {
             superStructure.led.setSolidColor(LedColor.CYAN);
+          } else {
+            superStructure.led.setSolidColor(LedColor.BLUE);
           }
-        }),
-        Commands.idle(superStructure));
+        }));
   }
 }
