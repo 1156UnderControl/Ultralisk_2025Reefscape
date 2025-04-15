@@ -14,13 +14,13 @@ public class DefaultPosition extends SequentialCommandGroup {
     addCommands(new InstantCommand(() -> LimelightHelpers.setLEDMode_ForceOff("limelight-right")),
         new StowClimber(superStructure),
         new MoveScorerToDefaultPosition(superStructure),
-        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.BLUE)),
         new InstantCommand(() -> {
           if (superStructure.scorer.hasCoral()) {
             superStructure.led.setSolidColor(LedColor.WHITE);
-          }
-          if (superStructure.scorer.hasAlgae()) {
+          } else if (superStructure.scorer.hasAlgae()) {
             superStructure.led.setSolidColor(LedColor.CYAN);
+          } else {
+            superStructure.led.setSolidColor(LedColor.BLUE);
           }
         }));
   }
