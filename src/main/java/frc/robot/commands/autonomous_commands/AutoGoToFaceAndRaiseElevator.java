@@ -1,5 +1,6 @@
 package frc.robot.commands.autonomous_commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToRemovePosition;
@@ -16,6 +17,8 @@ public class AutoGoToFaceAndRaiseElevator extends SequentialCommandGroup {
     this.superStructure = superStructure;
     this.targetBranch = branch;
     addCommands(
-        new AutoGoToFace(swerve, superStructure, branch), new MoveScorerToRemovePosition(superStructure));
+        new AutoGoToFace(swerve, superStructure, branch),
+        new InstantCommand(() -> this.superStructure.scorer.setAutoAlgaeLevel(branch))
+            .andThen(new MoveScorerToRemovePosition(superStructure)));
   }
 }
