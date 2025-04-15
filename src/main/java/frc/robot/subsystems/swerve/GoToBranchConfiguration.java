@@ -65,7 +65,7 @@ public class GoToBranchConfiguration {
       if (scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.LOW
           || scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.MID) {
         targetFaceScorePose = backup ? CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0.05)
-            : CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0);
+            : CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0.15);
       } else {
         targetFaceScorePose = face.getTargetPoseToScore();
       }

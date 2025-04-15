@@ -15,6 +15,8 @@ public interface ISwerve {
 
   void goToFaceAutonomous(TargetBranch branch);
 
+  void goToCollectAlgaeFromFacePosition(TargetBranch branch);
+
   boolean isAtTargetFacePositionWithoutHeading();
 
   boolean checkBackupNecessary();

@@ -266,8 +266,7 @@ public class ScorerSubsystem implements IScorer {
       this.endEffectorAccelerated = true;
     }
     if ((endEffectorAccelerated && stableAlgae.isStableInCondition(() -> this.endEffectorMotor
-        .getVelocity() <= EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION))
-        && stablePosition.isStableInCondition(() -> this.isAtCollectAlgaePosition())) {
+        .getVelocity() <= EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION))) {
       hasAlgae = true;
       endEffectorAccelerated = false;
     }
@@ -635,7 +634,7 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public boolean isAtCollectAlgaePosition() {
-    return true;
+    return isPivotAndElevatorAtSetpoint();
     // Util.atSetpoint(this.elevatorMotorLeader.getPosition(),
     // ElevatorConstants.tunning_values_elevator.setpoints.COLLECT_ALGAE_GROUND,
     // 0.05)
