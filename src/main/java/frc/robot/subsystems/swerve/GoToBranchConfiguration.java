@@ -60,11 +60,15 @@ public class GoToBranchConfiguration {
     if (goToFace) {
       this.face = this.getReefFace(branch);
       this.distanceToTargetFace = face.getTargetPoseToScore().getTranslation().getDistance(robotPose.getTranslation());
-      Pose2d targetFaceScorePose = scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.LOW
-          || scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.MID
-              ? backup ? CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0.05)
-                  : CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0)
-              : face.getTargetPoseToScore();
+
+      Pose2d targetFaceScorePose;
+      if (scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.LOW
+          || scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.MID) {
+        targetFaceScorePose = backup ? CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0.05)
+            : CoordinatesTransform.getRetreatPose(face.getTargetPoseToScore(), 0);
+      } else {
+        targetFaceScorePose = face.getTargetPoseToScore();
+      }
       distanceToTarget = this.getDriveTarget(robotPose, targetFaceScorePose, true, false).getTranslation()
           .getDistance(robotPose.getTranslation());
       finalVelocity = this.calculateRobotMaxVelocity(distanceToTargetFace, this.maxVelocity, this.minVelocity,
