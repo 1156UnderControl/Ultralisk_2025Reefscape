@@ -131,7 +131,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
-        configureMulticameraPoseEstimation(),
+        new LimelightPoseEstimator("limelight-left", false, false, 2),
         configureMulticameraPoseEstimation(),
         new PIDConfig(6, 0, 0),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_TRANSLATION_PID,
