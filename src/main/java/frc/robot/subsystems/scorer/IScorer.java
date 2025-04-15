@@ -2,8 +2,10 @@ package frc.robot.subsystems.scorer;
 
 import java.util.function.Supplier;
 
-import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightScore;
 import frc.robot.constants.FieldConstants.ReefLevel;
+import frc.robot.constants.SwerveConstants.TargetBranch;
 
 public interface IScorer {
 
@@ -11,25 +13,39 @@ public interface IScorer {
 
   boolean hasCoral();
 
+  boolean hasAlgae();
+
+  boolean readyToScoreProcessor();
+
   void intakeFromHP();
 
   void stopIntakeFromHP();
+
+  void setTimerAfterAutoAlignFinished(boolean hasFinished);
+
+  boolean isTimerAfterAutoAlignFinished();
+
+  void placeCoral();
+
+  void placeAlgae();
+
+  void prepareToScoreAlgae();
 
   void prepareToPlaceCoralOnBranch();
 
   void prepareToPlaceCoralOnBranch(Supplier<Double> distanceToTargetPoseProvider);
 
-  void removeAlgaeFromBranch();
+  void setAutoAlgaeLevel(TargetBranch targetBranch);
 
-  void removeAlgaeEndEffector();
+  void collectAlgae();
+
+  void setAlgaeManualControl(boolean isManualControl);
+
+  boolean isAlgaeManualControl();
 
   void stopEndEffector();
 
   void moveScorerToDefaultPosition();
-
-  void placeCoral();
-
-  void homeElevator();
 
   void setElevatorTestPosition(double testPosition);
 
@@ -43,25 +59,33 @@ public interface IScorer {
 
   void setEndEffectorDutyCycle(double dutyCycle);
 
-  boolean isAtCollectPosition();
+  boolean isAtCollectAlgaePosition();
+
+  boolean isAtCollectCoralPosition();
 
   boolean isAtDefaultPosition();
 
-  boolean isAtRemovePosition();
+  boolean isScorerAtPosition();
 
   boolean isSecuredToPlaceCoral();
+
+  boolean isSecuredToScoreOnNet();
 
   boolean isElevatorInHighPosition();
 
   ReefLevel getTargetReefLevel();
 
+  AlgaeHeightReef getTargetReefLevelAlgae();
+
   void setTargetBranchLevel(ReefLevel reefHeight);
 
-  void setTargetAlgaeHeight(AlgaeHeight algaeHeight);
+  void setTargetAlgaeHeight(AlgaeHeightReef algaeHeight);
 
-  boolean hasPlaced();
+  void setTargetAlgaeScoreHeight(AlgaeHeightScore algaeHeightScore);
 
   void setCoastScorer();
 
   void setBrakeScorer();
+
+  double getElevatorPosition();
 }

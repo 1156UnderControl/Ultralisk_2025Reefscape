@@ -146,17 +146,17 @@ public class SparkMAXMotor implements IMotor {
 
   @Override
   public void updateLogs() {
-    // this.appliedOutputLog.append(this.getAppliedOutput());
-    // this.targetOutputLog.append(this.targetPercentage);
-    // this.currentLog.append(this.getVoltage());
-    // this.positionLog.append(this.getPosition());
-    // this.velocityLog.append(this.getVelocity());
-    // this.temperatureLog.append(this.motor.getMotorTemperature());
-    // // this.faultsLog.append(this.motor.getFaults());
-    // this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
-    // this.targetPositionLog.append(this.targetPosition);
-    // this.targetSpeedLog.append(this.targetVelocity);
-    // this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
+    this.appliedOutputLog.append(this.getAppliedOutput());
+    this.targetOutputLog.append(this.targetPercentage);
+    this.currentLog.append(this.getVoltage());
+    this.positionLog.append(this.getPosition());
+    this.velocityLog.append(this.getVelocity());
+    this.temperatureLog.append(this.motor.getMotorTemperature());
+    // this.faultsLog.append(this.motor.getFaults());
+    this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
+    this.targetPositionLog.append(this.targetPosition);
+    this.targetSpeedLog.append(this.targetVelocity);
+    this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
   }
 
   private void configureSparkMax(Supplier<REVLibError> config) {
@@ -514,6 +514,11 @@ public class SparkMAXMotor implements IMotor {
   }
 
   @Override
+  public double getPositionExternalAbsoluteEncoder() {
+    return motor.getAbsoluteEncoder().getPosition();
+  }
+
+  @Override
   public void setPositionFactorExternalEncoder(double factor) {
     this.config.alternateEncoder.positionConversionFactor(factor);
   }
@@ -536,5 +541,10 @@ public class SparkMAXMotor implements IMotor {
   @Override
   public void setVelocityFactorExternalEncoder(double factor) {
     this.config.alternateEncoder.velocityConversionFactor(factor);
+  }
+
+  @Override
+  public void setAbsoluteEncoderZeroOffset(double zeroOffset) {
+    this.config.absoluteEncoder.zeroOffset(zeroOffset);
   }
 }

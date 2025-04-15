@@ -60,7 +60,6 @@ public interface IMotor {
    *                        is rotations)
    *                        </ul>
    */
-
   void configureMotionProfiling(double P, double I, double D, double ff, double maxVelocity, double maxAcceleration,
       double positionErrorAllowed);
 
@@ -115,6 +114,8 @@ public interface IMotor {
 
   double getPositionExternalEncoder();
 
+  double getPositionExternalAbsoluteEncoder();
+
   double getVelocityExternalEncoder();
 
   void setPositionFactor(double factor);
@@ -122,6 +123,8 @@ public interface IMotor {
   void setPositionFactorExternalEncoder(double factor);
 
   void setVelocityFactor(double factor);
+
+  void setAbsoluteEncoderZeroOffset(double zeroOffset);
 
   void setVelocityFactorExternalEncoder(double factor);
 

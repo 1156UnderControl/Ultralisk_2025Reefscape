@@ -1,6 +1,7 @@
 package frc.robot.commands.scorer;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.Java_Is_UnderControl.LEDs.LedColor;
 import frc.robot.SuperStructure;
 
 public class MoveScorerToCollectPosition extends Command {
@@ -19,6 +20,11 @@ public class MoveScorerToCollectPosition extends Command {
   @Override
   public void execute() {
     superStructure.scorer.intakeFromHP();
+    if (superStructure.scorer.isAtCollectCoralPosition()) {
+      superStructure.led.setBlink(LedColor.GREEN);
+    } else {
+      superStructure.led.setSolidColor(LedColor.RED);
+    }
   }
 
   @Override

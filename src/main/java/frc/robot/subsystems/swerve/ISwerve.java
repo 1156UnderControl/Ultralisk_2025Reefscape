@@ -3,27 +3,35 @@ package frc.robot.subsystems.swerve;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 
 public interface ISwerve {
-  public void driveLockedAngleToNearestCoralStation();
+  void driveLockedAngleToNearestCoralStation();
 
-  public void driveLockedAngleToClimb();
+  void driveLockedAngleToClimb();
 
-  public void driveToNearestCoralStation();
+  void driveToNearestCoralStation();
 
-  public void driveToBranch(TargetBranch branch, boolean backupBranch);
+  void driveToBranch(TargetBranch branch, boolean backup, boolean goDirect);
 
-  public void driveToBranchFastDirect(TargetBranch branch, boolean backupBranch);
+  void goToFaceTeleoperated(TargetBranch branch);
 
-  public void driveToBranchFast(TargetBranch branch, boolean backupBranch);
+  boolean isAtTargetFacePositionWithoutHeading();
 
-  public void driveAlignAngleJoystick();
+  boolean checkBackupNecessary();
 
-  public void driveAlignAngleJoystickSuperSlow();
+  boolean checkPivotWillCrashOnReef();
 
-  public void stopSwerve();
+  void driveAlignAngleJoystick();
 
-  public double getDistanceToTargetBranch();
+  void driveAlignAngleJoystickSuperSlow();
 
-  public boolean swerveIsToCloseToReefForLiftingElevador();
+  void stopSwerve();
 
-  public boolean isAtTargetPosition();
+  double getDistanceToTargetBranch();
+
+  boolean swerveIsToCloseToReefForLiftingElevador();
+
+  boolean isAtTargetPositionWithHeading();
+
+  boolean isAtTargetPositionWithoutHeading();
+
+  void setTargetBranch(TargetBranch branch);
 }

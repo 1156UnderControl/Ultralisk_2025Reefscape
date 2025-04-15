@@ -3,8 +3,10 @@
   "robotLength": 0.83,
   "holonomicMode": true,
   "pathFolders": [
+    "Odometry Tests",
+    "3 Corals Sides",
     "4 Corals",
-    "TEST"
+    "3 Corals Center"
   ],
   "autoFolders": [
     "Match Autos",

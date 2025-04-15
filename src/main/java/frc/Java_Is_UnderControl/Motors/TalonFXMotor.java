@@ -154,14 +154,14 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void updateLogs() {
-    // this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
-    // this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
-    // this.positionLog.append(this.getPosition());
-    // this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
-    // this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
-    // this.faultsLog.append(this.motor.getFaultField().getValue());
-    // this.targetPositionLog.append(this.targetPosition);
-    // this.targetSpeedLog.append(this.targetVelocity);
+    this.appliedOutputLog.append(this.motor.getDutyCycle().getValueAsDouble());
+    this.currentLog.append(this.motor.getStatorCurrent().getValueAsDouble());
+    this.positionLog.append(this.getPosition());
+    this.velocityLog.append(this.motor.getVelocity().getValueAsDouble());
+    this.temperatureLog.append(this.motor.getDeviceTemp().getValueAsDouble());
+    this.faultsLog.append(this.motor.getFaultField().getValue());
+    this.targetPositionLog.append(this.targetPosition);
+    this.targetSpeedLog.append(this.targetVelocity);
   }
 
   @Override
@@ -548,6 +548,11 @@ public class TalonFXMotor implements IMotor {
   }
 
   @Override
+  public double getPositionExternalAbsoluteEncoder() {
+    return 0;
+  }
+
+  @Override
   public void setPositionFactorExternalEncoder(double factor) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'setPositionFactorExternalEncoder'");
@@ -561,20 +566,22 @@ public class TalonFXMotor implements IMotor {
 
   @Override
   public void configExternalEncoder() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'configExternalEncoder'");
+    return;
   }
 
   @Override
   public double getVelocityExternalEncoder() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getVelocityExternalEncoder'");
+    return 0;
   }
 
   @Override
   public void setVelocityFactorExternalEncoder(double factor) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'setVelocityFactorExternalEncoder'");
+    return;
+  }
+
+  @Override
+  public void setAbsoluteEncoderZeroOffset(double zeroOffset) {
+    return;
   }
 
 }

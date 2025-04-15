@@ -19,6 +19,8 @@ public class CollectCoralFromHP extends Command {
   @Override
   public void execute() {
     superStructure.scorer.intakeFromHP();
+    System.out
+        .println("To RODANDOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
   }
 
   @Override

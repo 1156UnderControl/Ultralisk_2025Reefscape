@@ -228,6 +228,11 @@ public class NoMotor implements IMotor {
   }
 
   @Override
+  public double getPositionExternalAbsoluteEncoder() {
+    return 0;
+  }
+
+  @Override
   public void setPositionFactorExternalEncoder(double factor) {
     return;
   }
@@ -254,6 +259,11 @@ public class NoMotor implements IMotor {
 
   @Override
   public void updateLogs() {
+    return;
+  }
+
+  @Override
+  public void setAbsoluteEncoderZeroOffset(double zeroOffset) {
     return;
   }
 }

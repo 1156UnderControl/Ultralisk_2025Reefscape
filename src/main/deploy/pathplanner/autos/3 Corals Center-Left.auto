@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ResetOdometry Left XY With Vision"
+            "name": "ResetOdometry Center XY With Vision"
           }
         },
         {
@@ -19,13 +19,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Coral J Optimized Direct Without Backup"
+            "name": "Score Coral G Optimized Direct"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "FirstCollect 3 Corals Left"
+            "pathName": "FirstCollect 3 Corals Center-Left"
           }
         },
         {
@@ -41,7 +41,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Coral K Optimized Direct"
+                  "name": "Score Coral H Optimized"
                 }
               }
             ]
@@ -50,7 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SecondCollect 3 Corals Left"
+            "pathName": "FirstCollect 3 Corals Center-Left"
           }
         },
         {
@@ -66,7 +66,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Score Coral L Optimized Direct"
+                  "name": "Score Coral I Optimized"
                 }
               }
             ]
@@ -75,19 +75,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SecondCollect 3 Corals Left"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake Coral Optimized"
+            "pathName": "SecondCollect 3 Corals Center-Left"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": "Match Autos",
   "choreoAuto": false
 }

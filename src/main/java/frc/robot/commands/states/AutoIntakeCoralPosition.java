@@ -1,7 +1,9 @@
 package frc.robot.commands.states;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.Java_Is_UnderControl.LEDs.LedColor;
 import frc.robot.SuperStructure;
 import frc.robot.commands.intake.CollectCoralFromHP;
 import frc.robot.commands.scorer.MoveScorerToCollectPosition;
@@ -12,7 +14,9 @@ public class AutoIntakeCoralPosition extends SequentialCommandGroup {
 
   public AutoIntakeCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve) {
     addCommands(new MoveScorerToCollectPosition(superStructure),
+        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.YELLOW)),
         Commands.race(new CollectCoralFromHP(superStructure), new SwerveAlignWithCoralStation(swerve)),
+        new InstantCommand(() -> superStructure.led.setSolidColor(LedColor.WHITE)),
         Commands.waitSeconds(0.35));
   }
 }

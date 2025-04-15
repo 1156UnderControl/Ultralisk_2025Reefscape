@@ -17,23 +17,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.Java_Is_UnderControl.LEDs.ILed;
-import frc.Java_Is_UnderControl.LEDs.LedSubsystem;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimized;
-import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimizedDirect;
+import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomousOptimizedDirectWithoutBackup;
+import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
+import frc.robot.commands.scorer.ScoreProcessor;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.ClimbPosition;
 import frc.robot.commands.states.CollectPosition;
 import frc.robot.commands.states.DefaultPosition;
 import frc.robot.commands.states.RemoveAlgaePosition;
-import frc.robot.commands.states.ScoreCoralPosition;
-import frc.robot.constants.FieldConstants.AlgaeHeight;
+import frc.robot.commands.states.ScoreObjectPosition;
+import frc.robot.commands.swerve.SwerveAngleWithCoralStation;
+import frc.robot.constants.FieldConstants.Algae.AlgaeHeightReef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.joysticks.DriverController;
@@ -51,16 +52,14 @@ public class RobotContainer {
 
   public final SuperStructure superStructure = new SuperStructure();
 
-  private SwerveModuleConstants[] modulosArray = TunerConstants.getModuleConstants();
+  private SwerveModuleConstants[] modulesArray = TunerConstants.getModuleConstants();
 
   public final SwerveSubsystem drivetrain = new SwerveSubsystem(() -> superStructure.scorer.isElevatorInHighPosition(),
-      () -> superStructure.scorer.getTargetReefLevel(),
+      () -> superStructure.scorer.getTargetReefLevel(), () -> superStructure.scorer.getTargetReefLevelAlgae(),
       TunerConstants.getSwerveDrivetrainConstants(),
-      modulosArray[0], modulosArray[1], modulosArray[2], modulosArray[3]);
+      modulesArray[0], modulesArray[1], modulesArray[2], modulesArray[3]);
 
   private final Telemetry logger = new Telemetry(drivetrain.MaxSpeed);
-
-  public final ILed leds = LedSubsystem.getInstance();
 
   public RobotContainer() {
     setNamedCommandsForAuto();
@@ -87,8 +86,11 @@ public class RobotContainer {
             () -> drivetrain.resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 4.73)))));
     NamedCommands.registerCommand("ResetOdometry Right XY",
         new InstantCommand(
-            () -> drivetrain
-                .resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 3.317)))));
+            () -> drivetrain.resetTranslation(AllianceFlipUtil.apply(new Translation2d(7.18, 3.317)))));
+
+    NamedCommands.registerCommand("ResetOdometry Center XY With Vision",
+        new AutoUpdateOdometry(drivetrain, new Translation2d(7.18, 4)));
+
     NamedCommands.registerCommand("ResetOdometry Right XY With Vision",
         new AutoUpdateOdometry(drivetrain, new Translation2d(7.18, 3.317)));
     NamedCommands.registerCommand("ResetOdometry Left XY With Vision",
@@ -208,6 +210,43 @@ public class RobotContainer {
         new AutoScoreCoralAutonomousOptimizedDirect(superStructure, drivetrain, TargetBranch.L)
             .andThen(new DefaultPositionAutonomous(superStructure)));
 
+    NamedCommands.registerCommand("Score Coral A Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.A)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral B Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.B)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral C Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.C)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral D Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.D)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral E Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.E)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral F Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.F)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral G Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.G)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral H Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.H)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral I Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.I)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral J Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.J)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral K Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.K)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+    NamedCommands.registerCommand("Score Coral L Optimized Direct Without Backup",
+        new AutoScoreCoralAutonomousOptimizedDirectWithoutBackup(superStructure, drivetrain, TargetBranch.L)
+            .andThen(new DefaultPositionAutonomous(superStructure)));
+
     NamedCommands.registerCommand("Set Coral Level L1",
         new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1)));
     NamedCommands.registerCommand("Set Coral Level L2",
@@ -220,29 +259,39 @@ public class RobotContainer {
 
   private void configureBindings() {
 
-    keyBoard.collectCoral().onTrue(new CollectPosition(superStructure, drivetrain));
+    keyBoard.collectCoral().onTrue(
+        new CollectPosition(superStructure, drivetrain).deadlineFor(new SwerveAngleWithCoralStation(drivetrain)));
 
-    keyBoard.prepareToScoreCoral().onTrue(new ScoreCoralPosition(superStructure, drivetrain));
+    keyBoard.prepareToScore().onTrue(new ScoreObjectPosition(superStructure, drivetrain));
+
+    keyBoard.scoreObject().and(() -> superStructure.scorer.readyToScoreProcessor())
+        .onTrue(new ScoreProcessor(superStructure));
 
     keyBoard.reefL1()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L1);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.LOW);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.GROUND);
+          this.superStructure.scorer.setAlgaeManualControl(true);
         }));
 
     keyBoard.reefL2()
         .onTrue(new InstantCommand(() -> {
           this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L2);
-          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeight.MID);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.LOW);
+          this.superStructure.scorer.setAlgaeManualControl(true);
         }));
 
     keyBoard.reefL3()
-        .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3)));
+        .onTrue(new InstantCommand(() -> {
+          this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L3);
+          this.superStructure.scorer.setTargetAlgaeHeight(AlgaeHeightReef.MID);
+          this.superStructure.scorer.setAlgaeManualControl(true);
+        }));
 
     keyBoard.reefL4()
         .onTrue(new InstantCommand(() -> this.superStructure.scorer.setTargetBranchLevel(ReefLevel.L4)));
 
-    keyBoard.removeAlgaeFromBranch()
+    keyBoard.removeAlgaeFromBranch().and(() -> this.superStructure.scorer.isAlgaeManualControl())
         .onTrue(new RemoveAlgaePosition(superStructure, drivetrain)
             .deadlineFor(Commands.run(() -> drivetrain.driveAlignAngleJoystickRemoveAlgae(), drivetrain)));
 
@@ -254,34 +303,82 @@ public class RobotContainer {
 
     keyBoard.cancelAction().onTrue(new DefaultPosition(superStructure));
 
-    keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A));
+    keyBoard.goToReefA().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.A)
+        .alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.A);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefB().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.B));
+    keyBoard.goToReefB().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.B)
+        .alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.B);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefC().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.C));
+    keyBoard.goToReefC().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.C).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.C);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefD().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.D));
+    keyBoard.goToReefD().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.D).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.D);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefE().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.E));
+    keyBoard.goToReefE().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.E).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.E);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefF().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.F));
+    keyBoard.goToReefF().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.F).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.F);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefG().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.G));
+    keyBoard.goToReefG().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.G).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.G);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefH().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.H));
+    keyBoard.goToReefH().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.H).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.H);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefI().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.I));
+    keyBoard.goToReefI().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.I).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.I);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefJ().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.J));
+    keyBoard.goToReefJ().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.J).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.J);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefK().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.K));
+    keyBoard.goToReefK().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.K).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.K);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    keyBoard.goToReefL().onTrue(new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.L));
+    keyBoard.goToReefL().onTrue(
+        new AutoScoreCoralPosition(superStructure, drivetrain, TargetBranch.L).alongWith(new InstantCommand(() -> {
+          superStructure.scorer.setAutoAlgaeLevel(TargetBranch.L);
+          superStructure.scorer.setAlgaeManualControl(false);
+        })));
 
-    driverController.x().and(() -> DriverStation.isDisabled())
-        .whileTrue(Commands.runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot())
-            .ignoringDisable(true));
+    driverController.x().and(() -> DriverStation.isDisabled()).whileTrue(Commands
+        .runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot()).ignoringDisable(true));
     drivetrain.registerTelemetry(logger::telemeterize);
+
   }
 
   public Command getAutonomousCommand() {
