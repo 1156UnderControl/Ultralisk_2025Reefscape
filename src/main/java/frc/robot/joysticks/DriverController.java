@@ -115,6 +115,21 @@ public class DriverController implements IDriverController {
     return driverController.povLeft();
   }
 
+  @Override
+  public Trigger setHasAlgae() {
+    return driverController.leftStick().and(driverController.rightStick().negate());
+  }
+
+  @Override
+  public Trigger setHasCoral() {
+    return driverController.rightStick().and(driverController.leftStick().negate());
+  }
+
+  @Override
+  public Trigger setNoObject() {
+    return driverController.leftStick().and(driverController.rightStick());
+  }
+
   private double performAllianceInputDirectionCorrection(Double value) {
     Alliance alliance = DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get()
         : DriverStation.Alliance.Red;

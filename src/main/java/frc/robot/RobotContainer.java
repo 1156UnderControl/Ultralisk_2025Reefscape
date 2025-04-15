@@ -330,6 +330,12 @@ public class RobotContainer {
           superStructure.scorer.setAlgaeManualControl(false);
         })));
 
+    driverController.y().onTrue(Commands.runOnce(() -> superStructure.scorer.overrideHasAlgae()));
+
+    driverController.a().onTrue(Commands.runOnce(() -> superStructure.scorer.overrideHasCoral()));
+
+    driverController.b().onTrue(Commands.runOnce(() -> superStructure.scorer.overrideNoObject()));
+
     driverController.x().and(() -> DriverStation.isDisabled()).whileTrue(Commands
         .runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot()).ignoringDisable(true));
     drivetrain.registerTelemetry(logger::telemeterize);

@@ -768,4 +768,23 @@ public class ScorerSubsystem implements IScorer {
       this.isHomingElevatorLog.append(false);
     }
   }
+
+  @Override
+  public void overrideHasCoral() {
+    this.hasCoral = true;
+    this.hasAlgae = false;
+
+  }
+
+  @Override
+  public void overrideHasAlgae() {
+    this.hasAlgae = true;
+    this.hasCoral = false;
+  }
+
+  @Override
+  public void overrideNoObject() {
+    this.hasCoral = false;
+    this.hasAlgae = false;
+  }
 }

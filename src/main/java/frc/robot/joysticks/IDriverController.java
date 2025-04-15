@@ -32,4 +32,11 @@ public interface IDriverController {
   Trigger isForcingDriverControl();
 
   Trigger cancelAction();
+
+  Trigger setHasAlgae();
+
+  Trigger setHasCoral();
+
+  Trigger setNoObject();
+
 }
