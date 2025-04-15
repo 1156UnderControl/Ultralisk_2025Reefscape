@@ -10,6 +10,6 @@ public class AutoScoreAlgae extends SequentialCommandGroup {
 
   public AutoScoreAlgae(SuperStructure superStructure) {
     addCommands(
-        Commands.run(() -> superStructure.scorer.hasCoral(), superStructure).withTimeout(1));
+        Commands.run(() -> superStructure.scorer.placeAlgae(), superStructure).withTimeout(1));
   }
 }
