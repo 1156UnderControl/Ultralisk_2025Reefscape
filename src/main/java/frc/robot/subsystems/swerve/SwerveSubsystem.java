@@ -37,6 +37,7 @@ import frc.Java_Is_UnderControl.Util.StabilizeChecker;
 import frc.Java_Is_UnderControl.Vision.Deprecated.Cameras.LimelightHelpers;
 import frc.Java_Is_UnderControl.Vision.Odometry.LimelightPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.MultiCameraPoseEstimator;
+import frc.Java_Is_UnderControl.Vision.Odometry.NoPoseEstimator;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimation;
 import frc.Java_Is_UnderControl.Vision.Odometry.PoseEstimator;
 import frc.robot.constants.FieldConstants;
@@ -131,7 +132,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
-        configureMulticameraPoseEstimation(),
+        new NoPoseEstimator(),
         configureMulticameraPoseEstimation(),
         new PIDConfig(6, 0, 0),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_TRANSLATION_PID,
