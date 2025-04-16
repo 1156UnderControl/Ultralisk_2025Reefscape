@@ -29,19 +29,19 @@ public class LedSubsystem extends SubsystemBase implements ILed {
   private int rainbowFirstPixelHue;
 
   private final int intakeLeftStart = 0;
-  private final int intakeLeftEnd = 15;
-  private final int intakeRightStart = 16;
-  private final int intakeRightEnd = 31;
+  private final int intakeLeftEnd = 14;
+  private final int intakeRightStart = 15;
+  private final int intakeRightEnd = 29;
 
-  private final int elevatorLeftStart = 32;
-  private final int elevatorLeftEnd = 55;
-  private final int elevatorRightStart = 56;
-  private final int elevatorRightEnd = 79;
+  private final int elevatorLeftStart = 30;
+  private final int elevatorLeftEnd = 52;
+  private final int elevatorRightStart = 53;
+  private final int elevatorRightEnd = 77;
 
   private final int intakeStart = 0;
-  private final int intakeEnd = 31;
-  private final int elevatorStart = 32;
-  private final int elevatorEnd = 79;
+  private final int intakeEnd = 29;
+  private final int elevatorStart = 30;
+  private final int elevatorEnd = 77;
 
   private Color intakeColor = LedColor.OFF;
   private Color elevatorColor = LedColor.OFF;
@@ -93,7 +93,7 @@ public class LedSubsystem extends SubsystemBase implements ILed {
     this.mode = LedMode.SOLID;
     this.color = LedColor.OFF;
     this.led = new AddressableLED(9);
-    this.ledBuffer = new AddressableLEDBuffer(80);
+    this.ledBuffer = new AddressableLEDBuffer(78);
     this.led.setLength(ledBuffer.getLength());
     this.led.setData(ledBuffer);
     this.led.start();
