@@ -57,7 +57,7 @@ public class ScorerSubsystem implements IScorer {
 
   CustomBooleanLogger hasAlgaeLog = new CustomBooleanLogger("/ScorerSubsystem/hasAlgae");
 
-  CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasAccelerated");
+  CustomBooleanLogger hasAcceleratedLog = new CustomBooleanLogger("/ScorerSubsystem/hasEndEffectorAccelerated");
 
   CustomStringLogger targetReefLevelLog = new CustomStringLogger("/ScorerSubsystem/targetReefLevel");
 
