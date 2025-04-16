@@ -23,12 +23,10 @@ public class CustomBooleanLogger extends BooleanLogEntry {
 
   @Override
   public void append(boolean value) {
-    if (DriverStation.isEnabled() && value != this.loggedValue) {
-      this.loggedValue = value;
-      super.append(value);
-      if (!CustomBooleanLogger.isFmsMatch) {
-        SmartDashboard.putBoolean(this.name, value);
-      }
+    this.loggedValue = value;
+    super.append(value);
+    if (!CustomBooleanLogger.isFmsMatch) {
+      SmartDashboard.putBoolean(this.name, value);
     }
   }
 
