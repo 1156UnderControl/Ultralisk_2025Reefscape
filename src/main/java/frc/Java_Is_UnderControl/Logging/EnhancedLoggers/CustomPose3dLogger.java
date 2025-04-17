@@ -33,7 +33,7 @@ public class CustomPose3dLogger extends Pose3dLogEntry {
 
   @Override
   public void appendRadians(Pose3d pose) {
-    if (DriverStation.isEnabled() && !pose.equals(this.loggedValue)) {
+    if (!pose.equals(this.loggedValue)) {
       this.loggedValue = pose;
       super.appendRadians(pose);
       if (!CustomPose3dLogger.isFmsMatch) {

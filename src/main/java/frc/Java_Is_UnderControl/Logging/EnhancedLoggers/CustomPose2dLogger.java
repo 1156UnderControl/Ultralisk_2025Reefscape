@@ -32,7 +32,7 @@ public class CustomPose2dLogger extends Pose2dLogEntry {
 
   @Override
   public void appendRadians(Pose2d pose) {
-    if (DriverStation.isEnabled() && !pose.equals(this.loggedValue)) {
+    if (!pose.equals(this.loggedValue)) {
       this.loggedValue = pose;
       super.appendRadians(pose);
       if (!CustomPose2dLogger.isFmsMatch) {

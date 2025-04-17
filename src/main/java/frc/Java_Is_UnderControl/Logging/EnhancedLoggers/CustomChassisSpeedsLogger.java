@@ -24,7 +24,7 @@ public class CustomChassisSpeedsLogger extends ChassisSpeedsLogEntry {
 
   @Override
   public void append(ChassisSpeeds chassisSpeeds) {
-    if (DriverStation.isEnabled() && !chassisSpeeds.equals(this.loggedValue)) {
+    if (!chassisSpeeds.equals(this.loggedValue)) {
       this.loggedValue = chassisSpeeds;
       super.append(chassisSpeeds);
       if (!CustomChassisSpeedsLogger.isFmsMatch) {

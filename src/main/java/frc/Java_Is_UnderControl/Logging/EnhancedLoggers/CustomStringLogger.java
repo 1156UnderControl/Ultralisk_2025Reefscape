@@ -23,7 +23,7 @@ public class CustomStringLogger extends StringLogEntry {
 
   @Override
   public void append(String value) {
-    if (DriverStation.isEnabled() && !value.equals(this.loggedValue)) {
+    if (!value.equals(this.loggedValue)) {
       this.loggedValue = value;
       super.append(value);
       if (!CustomStringLogger.isFmsMatch) {
