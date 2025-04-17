@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFieldLayout.OriginPosition;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -59,7 +58,6 @@ public class ReefPoseEstimatorWithLimelight implements PoseEstimator {
       Supplier<TargetBranch> targetBranchSupplier) {
     this.limelightLeftName = limelightLeftName;
     this.limelightRightName = limelightRightName;
-    this.aprilTagFieldLayout.setOrigin(OriginPosition.kBlueAllianceWallRightSide);
     this.detectedPoseLogger = new CustomPose2dLogger("/Vision/" + this.poseEstimatorName + "/DetectedPose");
     this.numberOfDetectedTagsLogger = new CustomDoubleLogger(
         "/Vision/" + this.poseEstimatorName + "/NumberOfDetectedTags");
