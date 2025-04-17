@@ -4,7 +4,6 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
@@ -175,10 +174,6 @@ public class ScorerSubsystem implements IScorer {
     targetBranchLevelLogger.append(this.targetReefLevel.name());
     targetAlgaeLevelLogger.append(this.algaeScoreHeight.name());
     targetReefLevelLog.append(this.targetReefLevel.name());
-    SmartDashboard.putString("ScorerSubsystem/TargetLevelName", this.targetReefLevel.name());
-    SmartDashboard.putString("ScorerSubsystem/TargetReefBranch", branchHeightTarget);
-    SmartDashboard.putBoolean("ScorerSubsystem/HasAlgae", this.hasAlgae());
-    SmartDashboard.putBoolean("ScorerSubsystem/HasCoral", this.hasCoral());
   }
 
   private void setScorerStructureGoals() {
