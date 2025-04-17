@@ -11,6 +11,7 @@ import frc.robot.constants.FieldConstants.Reef;
 import frc.robot.constants.FieldConstants.ReefLevel;
 
 public class SwerveConstants {
+  public static final double DISTANCE_FROM_REEF_CENTER_TO_USE_REEF_POSE_ESTIMATION = 3;
   public static final PIDConfig MOVE_TO_POSE_TRANSLATION_PID = new PIDConfig(5, 0, 0, 0, 0);
   public static final Constraints MOVE_TO_POSE_TRANSLATION_CONSTRAINTS = new Constraints(4, 3);
   public static final Constraints MOVE_TO_POSE_X_CONSTRAINTS = new Constraints(4, 3);
