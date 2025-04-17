@@ -78,7 +78,7 @@ public class GoToBranchConfiguration {
       this.distanceToTargetBranch = branch.getTargetPoseToScore().getTranslation()
           .getDistance(robotPose.getTranslation());
       Pose2d targetBranchScorePose = scorerTargetReefLevelSupplier.get() == ReefLevel.L4
-          ? CoordinatesTransform.getRetreatPose(branch.getTargetPoseToScore(), 0.05)
+          ? CoordinatesTransform.getRetreatPose(branch.getTargetPoseToScore(), 0.09)
           : branch.getTargetPoseToScore();
       this.distanceToTarget = this.getDriveTarget(robotPose, targetBranchScorePose, this.goDirect, backup)
           .getTranslation().getDistance(robotPose.getTranslation());
