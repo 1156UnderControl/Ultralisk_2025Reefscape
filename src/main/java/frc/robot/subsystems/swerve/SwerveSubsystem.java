@@ -237,8 +237,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private void selectPoseEstimator() {
     forcingReefPoseEstimatorLogger.append(forceReefPoseEstimation);
-    if ((getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 3
-        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP"))) || this.forceReefPoseEstimation) {
+    if (getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 3
+        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP") || this.forceReefPoseEstimation)) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
       poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
