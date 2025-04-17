@@ -82,8 +82,13 @@ public class ControlBoard implements IDriverController, IOperatorController {
   }
 
   @Override
-  public Trigger resetGyro() {
-    return mDriverController.resetGyro();
+  public Trigger miniRight() {
+    return mDriverController.miniRight();
+  }
+
+  @Override
+  public Trigger miniLeft() {
+    return mDriverController.miniLeft();
   }
 
   @Override

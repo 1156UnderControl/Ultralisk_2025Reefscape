@@ -106,8 +106,13 @@ public class DriverController implements IDriverController {
   }
 
   @Override
-  public Trigger resetGyro() {
-    return driverController.back();
+  public Trigger miniRight() {
+    return driverController.button(7);
+  }
+
+  @Override
+  public Trigger miniLeft() {
+    return driverController.button(6);
   }
 
   @Override

@@ -27,7 +27,9 @@ public interface IDriverController {
 
   Trigger rightBumper();
 
-  Trigger resetGyro();
+  Trigger miniRight();
+
+  Trigger miniLeft();
 
   Trigger isForcingDriverControl();
 
