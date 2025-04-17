@@ -86,6 +86,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   CustomStringLogger poseEstimatorStateLogger = new CustomStringLogger("SwerveSubsystem/State_PoseEstimator");
 
+  CustomStringLogger targetBranchLogger = new CustomStringLogger("SwerveSubsystem/Target Branch");
+
   CustomBooleanLogger isUsingAngleCorrection = new CustomBooleanLogger("SwerveSubsystem/UsingAngleCorrection");
 
   CustomDoubleLogger targetVelocity = new CustomDoubleLogger("SwerveSubsystem/TargetVelocity");
@@ -124,7 +126,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
-        new LimelightPoseEstimator("limelight-left", false, false, 2),
+        configureMulticameraPoseEstimation(),
         configureMulticameraPoseEstimation(),
         new PIDConfig(6, 0, 0),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_TRANSLATION_PID,
@@ -135,6 +137,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.scorerTargetReefLevelSupplier = scorerTargetReefLevel;
     this.scorerTargetReefLevelAlgaeSupplier = scorerTargetReefLevelAlgae;
     this.configureGoToBranch();
+    this.getPigeon2().setYaw(0);
+    this.resetOdometry(new Pose2d());
   }
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
@@ -271,6 +275,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   protected void updateLogs() {
     this.swerveStateLogger.append(this.state);
+    this.targetBranchLogger.append(this.targetBranch.name());
   }
 
   @Override
