@@ -16,9 +16,9 @@ public class AutoScoreCoralAutonomousOptimizedDirect extends SequentialCommandGr
         new SwerveGoToBranchFastAutonomous(swerve, branch, superStructure, true)
             .alongWith(new CollectAutonomousOptimizedAfterAutoAlign(superStructure, swerve)
                 .andThen(Commands.either(Commands.none(),
-                    new OptimizedMoveScorerToScorePosition(superStructure, swerve)
-                        .andThen(Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.3)),
+                    new OptimizedMoveScorerToScorePosition(superStructure, swerve),
                     () -> superStructure.scorer.isTimerAfterAutoAlignFinished()))),
+        Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.4),
         new InstantCommand(() -> swerve.forceReefPoseEstimation(false)));
   }
 }

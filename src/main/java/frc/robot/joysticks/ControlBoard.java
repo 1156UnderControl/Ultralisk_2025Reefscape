@@ -82,8 +82,8 @@ public class ControlBoard implements IDriverController, IOperatorController {
   }
 
   @Override
-  public Trigger resetGyro() {
-    return mDriverController.resetGyro();
+  public Trigger miniLeft() {
+    return mDriverController.miniLeft();
   }
 
   @Override
@@ -110,6 +110,11 @@ public class ControlBoard implements IDriverController, IOperatorController {
   @Override
   public Trigger setNoObject() {
     return mDriverController.setNoObject();
+  }
+
+  @Override
+  public Trigger start() {
+    return mDriverController.start();
   }
 
 }
