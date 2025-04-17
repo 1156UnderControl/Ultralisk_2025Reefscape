@@ -336,11 +336,8 @@ public class RobotContainer {
 
     driverController.b().onTrue(Commands.runOnce(() -> superStructure.scorer.overrideNoObject()));
 
-    driverController.miniLeft()
-        .and(driverController.miniRight())
-        .onTrue(Commands.either(new InstantCommand(() -> drivetrain.resetRotation(new Rotation2d(180))),
-            new InstantCommand(() -> drivetrain.resetRotation(new Rotation2d(0))),
-            () -> DriverStation.getAlliance().get() == DriverStation.Alliance.Blue));
+    driverController.start().onTrue(
+        new InstantCommand(() -> drivetrain.resetRotation(new Rotation2d(0))).ignoringDisable(true));
 
     driverController.x().and(() -> DriverStation.isDisabled()).whileTrue(Commands
         .runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot()).ignoringDisable(true));

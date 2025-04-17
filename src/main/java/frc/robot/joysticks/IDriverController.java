@@ -27,7 +27,7 @@ public interface IDriverController {
 
   Trigger rightBumper();
 
-  Trigger miniRight();
+  Trigger start();
 
   Trigger miniLeft();
 

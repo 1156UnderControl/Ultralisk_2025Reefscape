@@ -82,11 +82,6 @@ public class ControlBoard implements IDriverController, IOperatorController {
   }
 
   @Override
-  public Trigger miniRight() {
-    return mDriverController.miniRight();
-  }
-
-  @Override
   public Trigger miniLeft() {
     return mDriverController.miniLeft();
   }
@@ -115,6 +110,11 @@ public class ControlBoard implements IDriverController, IOperatorController {
   @Override
   public Trigger setNoObject() {
     return mDriverController.setNoObject();
+  }
+
+  @Override
+  public Trigger start() {
+    return mDriverController.start();
   }
 
 }

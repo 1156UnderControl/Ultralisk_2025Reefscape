@@ -106,8 +106,8 @@ public class DriverController implements IDriverController {
   }
 
   @Override
-  public Trigger miniRight() {
-    return driverController.button(7);
+  public Trigger start() {
+    return driverController.start();
   }
 
   @Override
