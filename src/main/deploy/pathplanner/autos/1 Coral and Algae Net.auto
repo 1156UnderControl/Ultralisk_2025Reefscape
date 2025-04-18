@@ -33,11 +33,17 @@
           "data": {
             "name": "Score Algae"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Safe Deploy To Default After net"
+          }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Match Autos",
   "choreoAuto": false
 }
