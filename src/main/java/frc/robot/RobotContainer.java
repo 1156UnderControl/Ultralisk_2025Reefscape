@@ -18,8 +18,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
+import frc.robot.commands.autonomous_commands.AutoGoToFace;
+import frc.robot.commands.autonomous_commands.AutoPrepareToRemoveAlgae;
 import frc.robot.commands.autonomous_commands.AutoPrepareToScoreAlgaeNet;
-import frc.robot.commands.autonomous_commands.AutoRemoveAlgaeFromBranch;
 import frc.robot.commands.autonomous_commands.AutoScoreAlgae;
 import frc.robot.commands.autonomous_commands.AutoScoreAndPrepareToRemoveAlgaeFromBranch;
 import frc.robot.commands.autonomous_commands.AutoScoreCoralAutonomous;
@@ -30,6 +31,7 @@ import frc.robot.commands.autonomous_commands.AutoUpdateOdometry;
 import frc.robot.commands.autonomous_commands.CollectAutonomous;
 import frc.robot.commands.autonomous_commands.CollectAutonomousOpitimized;
 import frc.robot.commands.autonomous_commands.DefaultPositionAutonomous;
+import frc.robot.commands.scorer.MoveScorerToRemovePosition;
 import frc.robot.commands.scorer.ScoreProcessor;
 import frc.robot.commands.states.AutoScoreCoralPosition;
 import frc.robot.commands.states.ClimbPosition;
@@ -231,18 +233,37 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score Coral L Optimized Direct Without Backup And Remove Algae",
         new AutoScoreAndPrepareToRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.L));
 
+    NamedCommands.registerCommand("Prepare To Remove Algae From A-B",
+        new AutoPrepareToRemoveAlgae(superStructure, TargetBranch.A));
+    NamedCommands.registerCommand("Prepare To Remove Algae From C-D",
+        new AutoPrepareToRemoveAlgae(superStructure, TargetBranch.C));
+    NamedCommands.registerCommand("Prepare To Remove Algae From E-F",
+        new AutoPrepareToRemoveAlgae(superStructure, TargetBranch.E));
+    NamedCommands.registerCommand("Prepare To Remove Algae From G-H",
+        new AutoPrepareToRemoveAlgae(superStructure, TargetBranch.G));
+    NamedCommands.registerCommand("Prepare To Remove Algae From I-J",
+        new AutoPrepareToRemoveAlgae(superStructure, TargetBranch.I));
+    NamedCommands.registerCommand("Prepare To Remove Algae From K-L",
+        new AutoPrepareToRemoveAlgae(superStructure, TargetBranch.K));
+
     NamedCommands.registerCommand("Remove Algae From A-B",
-        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.A));
+        new AutoGoToFace(drivetrain, superStructure, TargetBranch.A)
+            .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From C-D",
-        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.C));
+        new AutoGoToFace(drivetrain, superStructure, TargetBranch.C)
+            .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From E-F",
-        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.E));
+        new AutoGoToFace(drivetrain, superStructure, TargetBranch.E)
+            .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From G-H",
-        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.G));
+        new AutoGoToFace(drivetrain, superStructure, TargetBranch.G)
+            .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From I-J",
-        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.I));
+        new AutoGoToFace(drivetrain, superStructure, TargetBranch.I)
+            .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From K-L",
-        new AutoRemoveAlgaeFromBranch(superStructure, drivetrain, TargetBranch.K));
+        new AutoGoToFace(drivetrain, superStructure, TargetBranch.K)
+            .alongWith(new MoveScorerToRemovePosition(superStructure)));
 
     NamedCommands.registerCommand("Prepare To Score Algae On Net",
         new AutoPrepareToScoreAlgaeNet(superStructure));
