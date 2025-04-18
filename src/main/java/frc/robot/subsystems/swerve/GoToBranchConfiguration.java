@@ -60,7 +60,6 @@ public class GoToBranchConfiguration {
     if (goToFace) {
       this.face = this.getReefFace(branch);
       this.distanceToTargetFace = face.getTargetPoseToScore().getTranslation().getDistance(robotPose.getTranslation());
-
       Pose2d targetFaceScorePose;
       if (scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.LOW
           || scorerTargetReefLevelAlgaeSupplier.get() == AlgaeHeightReef.MID) {
@@ -75,10 +74,7 @@ public class GoToBranchConfiguration {
           this.maxErrorPose, minErrorPose);
       finalTargetPose = this.getDriveTarget(robotPose, targetFaceScorePose, this.goDirect, false);
       this.canDriveAimingAtPose = false;
-      if (distanceToTargetFace <= minErrorPose) {
-        this.state = "DRIVE_TO_FACE_" + this.goToBranchMode + branch.name();
-        return;
-      }
+      this.state = "DRIVE_TO_FACE_" + this.goToBranchMode + branch.name() + "COLLECT:" + !backup;
     } else {
       this.distanceToTargetBranch = branch.getTargetPoseToScore().getTranslation()
           .getDistance(robotPose.getTranslation());
