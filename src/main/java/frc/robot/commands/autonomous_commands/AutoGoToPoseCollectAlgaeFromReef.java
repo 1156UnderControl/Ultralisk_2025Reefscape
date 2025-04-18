@@ -10,6 +10,7 @@ public class AutoGoToPoseCollectAlgaeFromReef extends Command {
   ISwerve swerve;
   TargetBranch targetBranch;
   SuperStructure superStructure;
+  boolean collectPoseSent;
 
   public AutoGoToPoseCollectAlgaeFromReef(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
     this.swerve = swerve;
@@ -20,6 +21,7 @@ public class AutoGoToPoseCollectAlgaeFromReef extends Command {
 
   @Override
   public void initialize() {
+    this.collectPoseSent = false;
     this.swerve.setTargetBranch(targetBranch);
   }
 
@@ -27,12 +29,13 @@ public class AutoGoToPoseCollectAlgaeFromReef extends Command {
   public void execute() {
     if (superStructure.scorer.isAtCollectAlgaePosition()) {
       this.swerve.goToCollectAlgaeFromFacePosition(targetBranch);
+      this.collectPoseSent = true;
     }
   }
 
   @Override
   public boolean isFinished() {
-    return this.swerve.isAtTargetPositionWithoutHeading();
+    return this.swerve.isAtTargetPositionWithoutHeading() && this.collectPoseSent;
   }
 
   @Override
