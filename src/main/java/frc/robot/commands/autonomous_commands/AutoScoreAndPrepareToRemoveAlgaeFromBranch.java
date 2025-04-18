@@ -18,7 +18,7 @@ public class AutoScoreAndPrepareToRemoveAlgaeFromBranch extends SequentialComman
             .alongWith(new CollectCoralFromHP(superStructure)
                 .andThen(new OptimizedMoveScorerToScorePosition(superStructure, swerve))),
         Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(0.3),
-        new InstantCommand(() -> swerve.forceReefPoseEstimation(false)),
-        new AutoGoToFaceAndRaiseElevator(swerve, superStructure, branch));
+        new AutoGoToFaceAndRaiseElevator(swerve, superStructure, branch),
+        new InstantCommand(() -> swerve.forceReefPoseEstimation(false)));
   }
 }

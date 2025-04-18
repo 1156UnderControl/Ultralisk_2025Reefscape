@@ -88,6 +88,12 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "Move To Default",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "Prepare To Score Algae On Net",
       "waypointRelativePos": 2.0218362282878286,
       "endWaypointRelativePos": null,

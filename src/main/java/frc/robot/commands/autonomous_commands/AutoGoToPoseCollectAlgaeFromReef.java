@@ -6,12 +6,12 @@ import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.ISwerve;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class AutoCollectAlgaeFromReef extends Command {
+public class AutoGoToPoseCollectAlgaeFromReef extends Command {
   ISwerve swerve;
   TargetBranch targetBranch;
   SuperStructure superStructure;
 
-  public AutoCollectAlgaeFromReef(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
+  public AutoGoToPoseCollectAlgaeFromReef(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
     this.swerve = swerve;
     this.targetBranch = branch;
     this.superStructure = superStructure;
