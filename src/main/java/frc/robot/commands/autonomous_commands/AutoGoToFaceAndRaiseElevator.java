@@ -20,7 +20,6 @@ public class AutoGoToFaceAndRaiseElevator extends SequentialCommandGroup {
         new AutoGoToFace(swerve, superStructure, branch),
         new InstantCommand(() -> this.superStructure.scorer.setAutoAlgaeLevel(branch)),
         new MoveScorerToRemovePosition(superStructure)
-            .alongWith(new AutoGoToPoseCollectAlgaeFromReef(swerve, superStructure, branch)
-                .onlyIf(() -> superStructure.scorer.isAtCollectAlgaePosition())));
+            .alongWith(new AutoGoToPoseCollectAlgaeFromReef(swerve, superStructure, branch)));
   }
 }
