@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.SuperStructure;
 import frc.robot.commands.scorer.MoveScorerToScorePosition;
 import frc.robot.commands.util.GoAndRaiseElevator;
@@ -20,11 +21,20 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
   OperatorController operatorKeyboard = OperatorController.getInstance();
   IDriverController driverController = DriverController.getInstance();
   boolean hasCancelledAutoMove = false;
+  boolean driverHasCancelledAutoMove = false;
 
   public AutoScoreCoralPosition(SuperStructure superStructure, SwerveSubsystem swerve, TargetBranch branch) {
-    addCommands(new InstantCommand(() -> hasCancelledAutoMove = false),
+    addCommands(new InstantCommand(() -> {
+      hasCancelledAutoMove = false;
+      driverHasCancelledAutoMove = false;
+    }),
         new GoAndRaiseElevator(swerve, superStructure, branch)
-            .until(driverController.isForcingDriverControl().or(() -> {
+            .until(new Trigger(() -> {
+              if (driverController.isForcingDriverControl().getAsBoolean()) {
+                driverHasCancelledAutoMove = true;
+              }
+              return driverHasCancelledAutoMove;
+            }).or(() -> {
               if (operatorKeyboard.scoreObject().getAsBoolean()) {
                 hasCancelledAutoMove = true;
               }
@@ -32,7 +42,8 @@ public class AutoScoreCoralPosition extends SequentialCommandGroup {
             })),
         new ParallelRaceGroup(new MoveScorerToScorePosition(superStructure)
             .until(operatorKeyboard.scoreObject()
-                .or(() -> swerve.isAtTargetPositionWithoutHeading() && superStructure.scorer.isScorerAtPosition())
+                .or(() -> (swerve.isAtTargetPositionWithoutHeading() && superStructure.scorer.isScorerAtPosition())
+                    && !driverHasCancelledAutoMove)
                 .or(() -> hasCancelledAutoMove)),
             Commands.run(() -> swerve.driveAlignAngleJoystick(), swerve)),
         Commands.run(() -> superStructure.scorer.placeCoral()).withTimeout(Seconds.of(0.3)),
