@@ -159,16 +159,16 @@ public class SparkFlexMotor implements IMotor {
   public void updateLogs() {
     this.appliedOutputLog.append(this.motor.getAppliedOutput());
     this.targetOutputLog.append(this.targetPercentage);
-    this.currentLog.append(this.motor.getOutputCurrent());
+    // this.currentLog.append(this.motor.getOutputCurrent());
     this.positionLog.append(this.motor.getEncoder().getPosition());
-    this.absoluteExternalEncoderLogger.append(this.getPositionExternalAbsoluteEncoder());
-    this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
-    this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
-    this.velocityLog.append(this.motor.getEncoder().getVelocity());
-    this.temperatureLog.append(this.motor.getMotorTemperature());
+    // this.absoluteExternalEncoderLogger.append(this.getPositionExternalAbsoluteEncoder());
+    // this.externalEncoderPositionLog.append(this.getPositionExternalEncoder());
+    // this.externalEncoderVelocityLog.append(this.getVelocityExternalEncoder());
+    // this.velocityLog.append(this.motor.getEncoder().getVelocity());
+    // this.temperatureLog.append(this.motor.getMotorTemperature());
     // this.faultsLog.append(this.motor.getFaults());
     this.targetPositionLog.append(this.targetPosition);
-    this.targetSpeedLog.append(this.targetVelocity);
+    // this.targetSpeedLog.append(this.targetVelocity);
   }
 
   private void configureSparkFlex(Supplier<REVLibError> config) {

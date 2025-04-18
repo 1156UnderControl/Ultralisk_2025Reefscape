@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.Control.PIDConfig;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomDoubleLogger;
-import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomPose2dLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Swerve.MoveToPosePIDConfig;
 import frc.Java_Is_UnderControl.Swerve.OdometryEnabledSwerveConfig;
@@ -71,8 +70,6 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   Supplier<Boolean> elevatorAtHighPositionSupplier;
 
-  CustomPose2dLogger logPoses = new CustomPose2dLogger("pose reef");
-
   int[] apriltagsIDs = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22 };
 
   private ReefPoseEstimatorWithLimelight reefPoseEstimator = new ReefPoseEstimatorWithLimelight("limelight-left",
@@ -88,6 +85,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   private String state = "NULL";
 
   CustomStringLogger poseEstimatorStateLogger = new CustomStringLogger("SwerveSubsystem/State_PoseEstimator");
+
+  CustomStringLogger targetBranchLogger = new CustomStringLogger("SwerveSubsystem/Target Branch");
 
   CustomBooleanLogger isUsingAngleCorrection = new CustomBooleanLogger("SwerveSubsystem/UsingAngleCorrection");
 
@@ -109,11 +108,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private boolean positionUpdated = false;
 
-  private GoToBranchConfiguration goToBranchConfigurationFastDirect;
-
   private GoToBranchConfiguration goToBranchConfigurationFast;
-
-  private GoToBranchConfiguration goToBranchConfigurationAutonomous;
 
   private GoToBranchConfiguration goToBranchConfigurationTeleoperated;
 
@@ -131,7 +126,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
       SwerveDrivetrainConstants drivetrainConstants,
       SwerveModuleConstants<?, ?, ?>... modules) {
     super(new OdometryEnabledSwerveConfig(0.75, pathPlannerConfig,
-        new LimelightPoseEstimator("limelight-left", false, false, 2),
+        configureMulticameraPoseEstimation(),
         configureMulticameraPoseEstimation(),
         new PIDConfig(6, 0, 0),
         new MoveToPosePIDConfig(SwerveConstants.MOVE_TO_POSE_TRANSLATION_PID,
@@ -142,6 +137,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.scorerTargetReefLevelSupplier = scorerTargetReefLevel;
     this.scorerTargetReefLevelAlgaeSupplier = scorerTargetReefLevelAlgae;
     this.configureGoToBranch();
+    this.getPigeon2().setYaw(0);
+    this.resetOdometry(new Pose2d());
   }
 
   private static PoseEstimator configureMulticameraPoseEstimation() {
@@ -156,27 +153,12 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void configureGoToBranch() {
-    this.goToBranchConfigurationFastDirect = new GoToBranchConfiguration(
-        AutoAlignConstants.PoseDeadBand.FastDirect.MIN_ERROR_AUTO_ALIGN_FAST_DIRECT,
-        AutoAlignConstants.PoseDeadBand.FastDirect.MAX_ERROR_AUTO_ALIGN_FAST_DIRECT,
-        AutoAlignConstants.PoseDeadBand.FastDirect.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST_DIRECT, "FAST_DIRECT",
-        AutoAlignConstants.VelocitiesRelatedToDistance.FastDirect.MIN_VELOCITY_POSITION,
-        AutoAlignConstants.VelocitiesRelatedToDistance.FastDirect.MAX_VELOCITY_POSITION);
-
     this.goToBranchConfigurationFast = new GoToBranchConfiguration(
         AutoAlignConstants.PoseDeadBand.Fast.MIN_ERROR_AUTO_ALIGN_FAST,
         AutoAlignConstants.PoseDeadBand.Fast.MAX_ERROR_AUTO_ALIGN_FAST,
         AutoAlignConstants.PoseDeadBand.Fast.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST, "FAST",
         AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MIN_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MAX_VELOCITY_POSITION);
-
-    this.goToBranchConfigurationAutonomous = new GoToBranchConfiguration(
-        AutoAlignConstants.PoseDeadBand.Autonomous.MIN_ERROR_AUTO_ALIGN_AUTO,
-        AutoAlignConstants.PoseDeadBand.Autonomous.MAX_ERROR_AUTO_ALIGN_AUTO,
-        AutoAlignConstants.PoseDeadBand.Autonomous.MIN_ERROR_AUTO_ALIGN_AUTO, "AUTONOMOUS",
-        AutoAlignConstants.VelocitiesRelatedToDistance.Autonomous.MIN_VELOCITY_POSITION,
-        AutoAlignConstants.VelocitiesRelatedToDistance.Autonomous.MAX_VELOCITY_POSITION);
-
     this.goToBranchConfigurationTeleoperated = new GoToBranchConfiguration(
         AutoAlignConstants.PoseDeadBand.Teleoperated.MIN_ERROR_AUTO_ALIGN_TELEOPERATED,
         AutoAlignConstants.PoseDeadBand.Teleoperated.MAX_ERROR_AUTO_ALIGN_TELEOPERATED,
@@ -259,8 +241,10 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private void selectPoseEstimator() {
     forcingReefPoseEstimatorLogger.append(forceReefPoseEstimation);
-    if ((getPose().getTranslation().getDistance(AllianceFlipUtil.apply(FieldConstants.Reef.center)) < 3
-        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP"))) || this.forceReefPoseEstimation) {
+    if (getPose().getTranslation()
+        .getDistance(AllianceFlipUtil
+            .apply(FieldConstants.Reef.center)) < SwerveConstants.DISTANCE_FROM_REEF_CENTER_TO_USE_REEF_POSE_ESTIMATION
+        && (state.contains("DRIVE_TO_BRANCH") || state.contains("STOP") || this.forceReefPoseEstimation)) {
       poseEstimatorState = PoseEstimatorState.REEF_ESTIMATION;
     } else {
       poseEstimatorState = PoseEstimatorState.GLOBAL_POSE_ESTIMATION;
@@ -277,6 +261,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         overrideAutonomousPoseEstimator(reefPoseEstimator);
         break;
       default:
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-left", this.apriltagsIDs);
+        LimelightHelpers.SetFiducialIDFiltersOverride("limelight-right", this.apriltagsIDs);
         overrideTeleOpPoseEstimator(null);
         overrideAutonomousPoseEstimator(null);
         break;
@@ -289,6 +275,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   protected void updateLogs() {
     this.swerveStateLogger.append(this.state);
+    this.targetBranchLogger.append(this.targetBranch.name());
   }
 
   @Override

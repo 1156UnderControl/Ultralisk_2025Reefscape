@@ -383,6 +383,9 @@ public class RobotContainer {
 
     driverController.b().onTrue(Commands.runOnce(() -> superStructure.scorer.overrideNoObject()));
 
+    driverController.start().onTrue(
+        new InstantCommand(() -> drivetrain.resetRotation(new Rotation2d(0))).ignoringDisable(true));
+
     driverController.x().and(() -> DriverStation.isDisabled()).whileTrue(Commands
         .runEnd(() -> superStructure.setCoastToRobot(), () -> superStructure.setBrakeToRobot()).ignoringDisable(true));
     drivetrain.registerTelemetry(logger::telemeterize);
