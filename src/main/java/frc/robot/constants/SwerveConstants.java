@@ -107,7 +107,7 @@ public class SwerveConstants {
       }
 
       public class Fast {
-        public static final double MIN_VELOCITY_POSITION = 0.9;
+        public static final double MIN_VELOCITY_POSITION = 0.6;
         public static final double MAX_VELOCITY_POSITION = 3.4;
       }
 
