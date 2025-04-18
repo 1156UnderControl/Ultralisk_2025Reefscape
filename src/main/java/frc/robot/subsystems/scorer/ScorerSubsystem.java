@@ -165,8 +165,8 @@ public class ScorerSubsystem implements IScorer {
   private void updateLogs() {
     elevatorMotorLeader.updateLogs();
     elevatorMotorFollower.updateLogs();
-    pivotMotor.updateLogs();
-    endEffectorMotor.updateLogs();
+    // pivotMotor.updateLogs();
+    // endEffectorMotor.updateLogs();
     hasCoralLog.append(this.hasCoral);
     hasAlgaeLog.append(this.hasAlgae);
     hasAcceleratedLog.append(this.endEffectorAccelerated);

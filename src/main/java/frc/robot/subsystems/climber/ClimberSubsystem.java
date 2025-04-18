@@ -78,7 +78,7 @@ public class ClimberSubsystem implements IClimber {
 
   public void periodic() {
     moveArmToPosition(this.armGoal, 0);
-    climberArmMotor.updateLogs();
+    // climberArmMotor.updateLogs();
   }
 
   @Override
