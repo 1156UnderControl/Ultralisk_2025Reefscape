@@ -110,6 +110,8 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private GoToBranchConfiguration goToBranchConfigurationFast;
 
+  private GoToBranchConfiguration removeAlgaeFromBranchConfiguration;
+
   private GoToBranchConfiguration goToBranchConfigurationTeleoperated;
 
   private Pose2d targetFacePose = TargetFace.A.getTargetPoseToScore();
@@ -153,6 +155,12 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void configureGoToBranch() {
+    this.removeAlgaeFromBranchConfiguration = new GoToBranchConfiguration(
+        AutoAlignConstants.PoseDeadBand.RemoveAlgae.MIN_ERROR_AUTO_ALIGN_FAST,
+        AutoAlignConstants.PoseDeadBand.RemoveAlgae.MAX_ERROR_AUTO_ALIGN_FAST,
+        AutoAlignConstants.PoseDeadBand.RemoveAlgae.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST, "REMOVE_ALGAE",
+        AutoAlignConstants.VelocitiesRelatedToDistance.RemoveAlgae.MIN_VELOCITY_POSITION,
+        AutoAlignConstants.VelocitiesRelatedToDistance.RemoveAlgae.MAX_VELOCITY_POSITION);
     this.goToBranchConfigurationFast = new GoToBranchConfiguration(
         AutoAlignConstants.PoseDeadBand.Fast.MIN_ERROR_AUTO_ALIGN_FAST,
         AutoAlignConstants.PoseDeadBand.Fast.MAX_ERROR_AUTO_ALIGN_FAST,
@@ -325,7 +333,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.goToBranchConfigurationTeleoperated.setBranch(branch, true);
     this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
-        elevatorAtHighPositionSupplier, false, true);
+        elevatorAtHighPositionSupplier, true, true);
     this.distanceToTargetFace = goToBranchConfigurationTeleoperated.getDistanceToTargetFace();
     this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
     this.distanceToTargetFaceLog.append(distanceToTargetFace);
@@ -334,6 +342,38 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
         this.goToBranchConfigurationTeleoperated.getFinalVelocity());
     this.targetFacePose = this.goToBranchConfigurationTeleoperated.getFinalPose();
     this.state = this.goToBranchConfigurationTeleoperated.getGoToState();
+  }
+
+  @Override
+  public void goToFaceAutonomous(TargetBranch branch) {
+    this.goToBranchConfigurationTeleoperated.setBranch(branch, true);
+    this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+        scorerTargetReefLevelAlgaeSupplier,
+        elevatorAtHighPositionSupplier, true, true);
+    this.distanceToTargetFace = goToBranchConfigurationTeleoperated.getDistanceToTargetFace();
+    this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
+    this.distanceToTargetFaceLog.append(distanceToTargetFace);
+    this.isUsingAngleCorrection.append(false);
+    driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
+        this.goToBranchConfigurationTeleoperated.getFinalVelocity());
+    this.targetFacePose = this.goToBranchConfigurationTeleoperated.getFinalPose();
+    this.state = this.goToBranchConfigurationTeleoperated.getGoToState();
+  }
+
+  @Override
+  public void goToCollectAlgaeFromFacePosition(TargetBranch branch) {
+    this.removeAlgaeFromBranchConfiguration.setBranch(branch, true);
+    this.removeAlgaeFromBranchConfiguration.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+        scorerTargetReefLevelAlgaeSupplier,
+        elevatorAtHighPositionSupplier, false, true);
+    this.distanceToTargetFace = removeAlgaeFromBranchConfiguration.getDistanceToTargetFace();
+    this.targetVelocity.append(removeAlgaeFromBranchConfiguration.getFinalVelocity());
+    this.distanceToTargetFaceLog.append(distanceToTargetFace);
+    this.isUsingAngleCorrection.append(false);
+    driveToPose(this.removeAlgaeFromBranchConfiguration.getFinalPose(),
+        this.removeAlgaeFromBranchConfiguration.getFinalVelocity());
+    this.targetFacePose = this.removeAlgaeFromBranchConfiguration.getFinalPose();
+    this.state = this.removeAlgaeFromBranchConfiguration.getGoToState();
   }
 
   @Override

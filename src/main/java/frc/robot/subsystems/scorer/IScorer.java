@@ -39,6 +39,8 @@ public interface IScorer {
 
   void collectAlgae();
 
+  void runEndEffectorForAlgaeRemoval();
+
   void setAlgaeManualControl(boolean isManualControl);
 
   boolean isAlgaeManualControl();

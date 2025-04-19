@@ -1,0 +1,71 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.7,
+        "y": 5.034204621118366
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.3359693537835975,
+        "y": 5.0769813784041125
+      },
+      "isLocked": false,
+      "linkedName": "backup first net end"
+    },
+    {
+      "anchor": {
+        "x": 5.966467737268517,
+        "y": 5.3715581597222215
+      },
+      "prevControl": {
+        "x": 6.420224307960442,
+        "y": 5.328209288262085
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.4888745069033527,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Prepare To Remove Algae From I-J",
+      "waypointRelativePos": 0.5101039616141734,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Prepare To Remove Algae From I-J"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.8,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -117.9448859353844
+  },
+  "reversed": false,
+  "folder": "Coral and Algaes Center",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": false
+}

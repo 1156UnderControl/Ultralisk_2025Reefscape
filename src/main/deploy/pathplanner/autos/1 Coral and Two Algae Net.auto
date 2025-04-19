@@ -7,61 +7,67 @@
         {
           "type": "named",
           "data": {
+            "name": "ResetOdometry Center XY With Vision"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "Set Coral Level L4"
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "First Point - 4 Corals Path"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Score Coral J"
+            "name": "Score Coral G Optimized Direct Without Backup And Remove Algae"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "First Collect, Second Point - 4 Corals Path"
+            "pathName": "Backup First Net"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score Coral K"
+            "name": "Score Algae"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Second Collect, Third Point - 4 Corals Path"
+            "pathName": "Safe Deploy To Default After net"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score Coral L"
+            "name": "Remove Algae From I-J"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Third Collect - 4 Corals Path"
+            "pathName": "Backup Second Net"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Score Coral A"
+            "name": "Score Algae"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Safe Deploy To Default After net 2"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Match Autos",
   "choreoAuto": false
 }

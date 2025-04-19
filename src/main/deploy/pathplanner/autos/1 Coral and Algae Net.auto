@@ -7,7 +7,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ResetOdometry Right XY"
+            "name": "ResetOdometry Center XY With Vision"
           }
         },
         {
@@ -19,19 +19,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Coral H"
+            "name": "Score Coral G Optimized Direct Without Backup And Remove Algae"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "First Push - Push Robot"
+            "pathName": "Backup First Net"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Algae"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Second Push - Push Robots"
+            "pathName": "Safe Deploy To Default After net"
           }
         }
       ]

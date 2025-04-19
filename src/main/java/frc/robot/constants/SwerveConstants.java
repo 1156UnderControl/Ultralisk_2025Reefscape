@@ -76,7 +76,14 @@ public class SwerveConstants {
 
       public class Fast {
         public static final double MAX_ERROR_AUTO_ALIGN_FAST = 1.5;
-        public static final double MIN_ERROR_AUTO_ALIGN_FAST = 1.0;
+        public static final double MIN_ERROR_AUTO_ALIGN_FAST = 0.7;
+        public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.3;
+        public static final double ERROR_FOR_ELEVATOR_RAISED_FAST = 0.6;
+      }
+
+      public class RemoveAlgae {
+        public static final double MAX_ERROR_AUTO_ALIGN_FAST = 1.5;
+        public static final double MIN_ERROR_AUTO_ALIGN_FAST = 0.7;
         public static final double ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST = 0.3;
         public static final double ERROR_FOR_ELEVATOR_RAISED_FAST = 0.6;
       }
@@ -107,8 +114,13 @@ public class SwerveConstants {
       }
 
       public class Fast {
-        public static final double MIN_VELOCITY_POSITION = 0.6;
+        public static final double MIN_VELOCITY_POSITION = 0.7;
         public static final double MAX_VELOCITY_POSITION = 3.4;
+      }
+
+      public class RemoveAlgae {
+        public static final double MIN_VELOCITY_POSITION = 1.5;
+        public static final double MAX_VELOCITY_POSITION = 3.5;
       }
 
       public class Autonomous {

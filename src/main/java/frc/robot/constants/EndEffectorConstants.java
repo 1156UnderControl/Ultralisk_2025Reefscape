@@ -9,6 +9,7 @@ public class EndEffectorConstants {
     public static final double VELOCITY_FALL_FOR_INTAKE_DETECTION = 1200;
     public static final double MIN_VELOCITY_FOR_INTAKE_DETECTION_INITIALIZE = 2000;
     public static final double SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION = 1000;
+    public static final double SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION_IN_AUTO = 2000;
 
     public class setpoints {
       public static final double DUTY_CYCLE_INTAKE = 1.0;

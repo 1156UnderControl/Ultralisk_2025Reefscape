@@ -1,18 +1,18 @@
-package frc.robot.commands.swerve;
+package frc.robot.commands.autonomous_commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.Java_Is_UnderControl.LEDs.LedColor;
 import frc.robot.SuperStructure;
 import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.ISwerve;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class SwerveGoToFace extends Command {
+public class AutoGoToPoseCollectAlgaeFromReef extends Command {
   ISwerve swerve;
   TargetBranch targetBranch;
   SuperStructure superStructure;
+  boolean collectPoseSent;
 
-  public SwerveGoToFace(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
+  public AutoGoToPoseCollectAlgaeFromReef(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
     this.swerve = swerve;
     this.targetBranch = branch;
     this.superStructure = superStructure;
@@ -21,27 +21,25 @@ public class SwerveGoToFace extends Command {
 
   @Override
   public void initialize() {
+    this.collectPoseSent = false;
     this.swerve.setTargetBranch(targetBranch);
   }
 
   @Override
   public void execute() {
-    this.superStructure.led.setSolidColor(LedColor.RED);
-    this.swerve.goToFaceTeleoperated(targetBranch);
+    if (superStructure.scorer.isAtCollectAlgaePosition()) {
+      this.swerve.goToCollectAlgaeFromFacePosition(targetBranch);
+      this.collectPoseSent = true;
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return this.swerve.isAtTargetFacePositionWithoutHeading();
+    return this.swerve.isAtTargetPositionWithoutHeading() && this.collectPoseSent;
   }
 
   @Override
   public void end(boolean interrupted) {
-    if (interrupted) {
-      this.superStructure.led.setSolidColor(LedColor.RED);
-    } else {
-      this.superStructure.led.setBlink(LedColor.PURPLE);
-    }
     this.swerve.stopSwerve();
   }
 }

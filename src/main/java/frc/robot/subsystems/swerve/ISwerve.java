@@ -13,6 +13,10 @@ public interface ISwerve {
 
   void goToFaceTeleoperated(TargetBranch branch);
 
+  void goToFaceAutonomous(TargetBranch branch);
+
+  void goToCollectAlgaeFromFacePosition(TargetBranch branch);
+
   boolean isAtTargetFacePositionWithoutHeading();
 
   boolean checkBackupNecessary();

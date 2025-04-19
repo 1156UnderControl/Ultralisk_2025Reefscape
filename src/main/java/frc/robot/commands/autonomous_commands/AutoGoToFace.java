@@ -1,4 +1,4 @@
-package frc.robot.commands.swerve;
+package frc.robot.commands.autonomous_commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.Java_Is_UnderControl.LEDs.LedColor;
@@ -7,12 +7,12 @@ import frc.robot.constants.SwerveConstants.TargetBranch;
 import frc.robot.subsystems.swerve.ISwerve;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class SwerveGoToFace extends Command {
+public class AutoGoToFace extends Command {
   ISwerve swerve;
   TargetBranch targetBranch;
   SuperStructure superStructure;
 
-  public SwerveGoToFace(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
+  public AutoGoToFace(SwerveSubsystem swerve, SuperStructure superStructure, TargetBranch branch) {
     this.swerve = swerve;
     this.targetBranch = branch;
     this.superStructure = superStructure;
@@ -27,7 +27,7 @@ public class SwerveGoToFace extends Command {
   @Override
   public void execute() {
     this.superStructure.led.setSolidColor(LedColor.RED);
-    this.swerve.goToFaceTeleoperated(targetBranch);
+    this.swerve.goToFaceAutonomous(targetBranch);
   }
 
   @Override
