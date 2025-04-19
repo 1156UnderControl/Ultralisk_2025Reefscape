@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.391749999999999,
-        "y": 5.59475
+        "x": 5.254231409143517,
+        "y": 5.218466073495369
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.640246219564109,
-        "y": 5.567370648978738
+        "x": 5.4596158854166665,
+        "y": 6.109707754629629
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 5.59475
       },
       "prevControl": {
-        "x": 7.45032075013809,
-        "y": 5.582090134740307
+        "x": 7.346812913161649,
+        "y": 5.6442988228976825
       },
       "nextControl": null,
       "isLocked": false,
@@ -37,11 +37,11 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.5524696991822424,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.4756224445093457,
+      "maxWaypointRelativePos": 0.8892651139018695,
       "constraints": {
-        "maxVelocity": 1.0,
-        "maxAcceleration": 1.5,
+        "maxVelocity": 2.0,
+        "maxAcceleration": 1.0,
         "maxAngularVelocity": 200.0,
         "maxAngularAcceleration": 350.0,
         "nominalVoltage": 12.0,
@@ -59,7 +59,7 @@
     },
     {
       "name": "Prepare To Score Algae On Net",
-      "waypointRelativePos": 0.6365727219626167,
+      "waypointRelativePos": 0.41659973714953275,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -70,7 +70,7 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.7,
+    "maxVelocity": 3.8,
     "maxAcceleration": 2.5,
     "maxAngularVelocity": 200.0,
     "maxAngularAcceleration": 350.0,
