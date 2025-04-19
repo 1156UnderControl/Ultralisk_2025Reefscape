@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.Java_Is_UnderControl.Util.AllianceFlipUtil;
-import frc.robot.commands.autonomous_commands.AutoGoToFace;
+import frc.robot.commands.autonomous_commands.AutoGoToPoseCollectAlgaeFromReef;
 import frc.robot.commands.autonomous_commands.AutoPrepareToRemoveAlgae;
 import frc.robot.commands.autonomous_commands.AutoPrepareToScoreAlgaeNet;
 import frc.robot.commands.autonomous_commands.AutoScoreAlgae;
@@ -247,22 +247,22 @@ public class RobotContainer {
         new AutoPrepareToRemoveAlgae(superStructure, TargetBranch.K));
 
     NamedCommands.registerCommand("Remove Algae From A-B",
-        new AutoGoToFace(drivetrain, superStructure, TargetBranch.A)
+        new AutoGoToPoseCollectAlgaeFromReef(drivetrain, superStructure, TargetBranch.A)
             .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From C-D",
-        new AutoGoToFace(drivetrain, superStructure, TargetBranch.C)
+        new AutoGoToPoseCollectAlgaeFromReef(drivetrain, superStructure, TargetBranch.C)
             .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From E-F",
-        new AutoGoToFace(drivetrain, superStructure, TargetBranch.E)
+        new AutoGoToPoseCollectAlgaeFromReef(drivetrain, superStructure, TargetBranch.E)
             .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From G-H",
-        new AutoGoToFace(drivetrain, superStructure, TargetBranch.G)
+        new AutoGoToPoseCollectAlgaeFromReef(drivetrain, superStructure, TargetBranch.G)
             .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From I-J",
-        new AutoGoToFace(drivetrain, superStructure, TargetBranch.I)
+        new AutoGoToPoseCollectAlgaeFromReef(drivetrain, superStructure, TargetBranch.I)
             .alongWith(new MoveScorerToRemovePosition(superStructure)));
     NamedCommands.registerCommand("Remove Algae From K-L",
-        new AutoGoToFace(drivetrain, superStructure, TargetBranch.K)
+        new AutoGoToPoseCollectAlgaeFromReef(drivetrain, superStructure, TargetBranch.K)
             .alongWith(new MoveScorerToRemovePosition(superStructure)));
 
     NamedCommands.registerCommand("Prepare To Score Algae On Net",
