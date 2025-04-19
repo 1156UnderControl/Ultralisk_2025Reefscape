@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Volts;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomBooleanLogger;
 import frc.Java_Is_UnderControl.Logging.EnhancedLoggers.CustomStringLogger;
 import frc.Java_Is_UnderControl.Motors.IMotor;
@@ -86,7 +87,7 @@ public class ScorerSubsystem implements IScorer {
 
   private StabilizeChecker stablePosition = new StabilizeChecker(0.2);
 
-  private StabilizeChecker stableAlgae = new StabilizeChecker(0.5);
+  private StabilizeChecker stableAlgae = new StabilizeChecker(0.3);
 
   private StabilizeChecker homingElevatorStabitily = new StabilizeChecker(1);
 
@@ -260,8 +261,11 @@ public class ScorerSubsystem implements IScorer {
         .getVelocity() >= EndEffectorConstants.tunning_values_endeffector.MIN_VELOCITY_FOR_INTAKE_DETECTION_INITIALIZE) {
       this.endEffectorAccelerated = true;
     }
+    double velocityBelowForAlgaeDetection = DriverStation.isAutonomousEnabled()
+        ? EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION_IN_AUTO
+        : EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION;
     if ((endEffectorAccelerated && stableAlgae.isStableInCondition(() -> this.endEffectorMotor
-        .getVelocity() <= EndEffectorConstants.tunning_values_endeffector.SLOW_VELOCITY_FOR_INTAKE_ALGAE_DETECTION))) {
+        .getVelocity() <= velocityBelowForAlgaeDetection))) {
       hasAlgae = true;
       endEffectorAccelerated = false;
     }
@@ -505,7 +509,11 @@ public class ScorerSubsystem implements IScorer {
 
   @Override
   public void placeAlgae() {
-    endEffectorMotor.set(-0.4);
+    if (DriverStation.isAutonomousEnabled()) {
+      endEffectorMotor.set(-0.8);
+    } else {
+      endEffectorMotor.set(-0.4);
+    }
     this.hasAlgae = false;
     this.state = "PLACING_ALGAE";
   }
