@@ -30,13 +30,14 @@ public class Robot extends LoggedRobot {
 
   OperatorController controller = OperatorController.getInstance();
 
+  // test
+
   public Robot() {
     m_robotContainer = new RobotContainer();
     DataLogManager.start("", "", 0.01);
     DriverStation.startDataLog(DataLogManager.getLog(), true);
 
     Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    Logger.start();
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
     if (isReal()) {
