@@ -39,6 +39,9 @@
 # Compiled class file
 *.class
 
+# Auto-generated build metadata (do not track)
+src/main/java/frc/robot/BuildConstants.java
+
 # Log file
 *.log
 
