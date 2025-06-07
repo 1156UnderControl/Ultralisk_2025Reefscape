@@ -38,6 +38,8 @@ public class RobotContainer {
 
   private DriverController driverController = DriverController.getInstance();
 
+  private DriverController operatorController = DriverController.getInstance();
+
   public final SuperStructure superStructure = new SuperStructure();
 
   private SwerveModuleConstants[] modulesArray = TunerConstants.getModuleConstants();
@@ -52,6 +54,7 @@ public class RobotContainer {
   private NamedCommandsRegistry namedCommandsRegistry;
 
   public RobotContainer() {
+    this.namedCommandsRegistry = new NamedCommandsRegistry(drivetrain, superStructure);
     setNamedCommandsForAuto();
     configureBindings();
     this.autoChooser = AutoBuilder.buildAutoChooser();
@@ -61,7 +64,6 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         Commands.run(() -> drivetrain.driveAlignAngleJoystick(), drivetrain)
             .onlyIf(() -> DriverStation.isTeleopEnabled()));
-    this.namedCommandsRegistry = new NamedCommandsRegistry(drivetrain, superStructure);
   }
 
   private void setNamedCommandsForAuto() {
