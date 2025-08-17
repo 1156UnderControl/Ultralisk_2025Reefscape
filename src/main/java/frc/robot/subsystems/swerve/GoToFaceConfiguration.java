@@ -1,6 +1,6 @@
 package frc.robot.subsystems.swerve;
 
-public class GoToBranchConfiguration {
+public class GoToFaceConfiguration {
 
   public double minErrorPose;
   public double maxErrorPose;
@@ -8,7 +8,7 @@ public class GoToBranchConfiguration {
   public double minVelocity;
   public String goToBranchMode;
 
-  public GoToBranchConfiguration(double minErrorPose,
+  public GoToFaceConfiguration(double minErrorPose,
       double maxErrorPose, String goToBranchMode,
       double minVelocity, double maxVelocity) {
     this.minErrorPose = minErrorPose;
