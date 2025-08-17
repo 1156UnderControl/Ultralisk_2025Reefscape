@@ -1,7 +1,7 @@
 # Ultralisk 2025
 Code for the Ultralisk 2025 Reefscape robot.
 
-![Robot Image](https://via.placeholder.com/400x300?text=Ultralisk)
+![Robot Image](imgs/ultralisk.jpeg)
 
 
 ## Highlights
@@ -17,7 +17,7 @@ Code for the Ultralisk 2025 Reefscape robot.
   Snapshot Branches
 
     You can see how the robot code was **before** and **after** each competition that Ultralisk participated.
- 
+
 ## Packages
 
 - [`frc.robot.subsystems`](/src/main/java/frc/robot/subsystems/)
@@ -34,7 +34,7 @@ Code for the Ultralisk 2025 Reefscape robot.
 
 - [`frc.robot.commands.autonomous_commands`](/src/main/java/frc/robot/commands/autonomous_commands/)
 
-  Contains autonomous routines for scoring coral, removing algae, and positioning around the reef.  
+  Contains autonomous routines for scoring coral, removing algae, and positioning around the reef.
 
 - [`frc.robot.commands.swerve`](/src/main/java/frc/robot/commands/swerve/)
 
