@@ -110,9 +110,19 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   private GoToBranchConfiguration goToBranchConfigurationFast;
 
-  private GoToBranchConfiguration removeAlgaeFromBranchConfiguration;
+  private GoToFaceConfiguration removeAlgaeFromBranchTeleoperatedConfiguration;
+
+  private GoToFaceConfiguration removeAlgaeFromBranchAutonomousConfiguration;
 
   private GoToBranchConfiguration goToBranchConfigurationTeleoperated;
+
+  private GoToFace goToFaceTeleoperatedSetpointDefiner;
+
+  private GoToFace goToFaceAutonomousSetpointDefiner;
+
+  private GoToBranch goToBranchTeleoperatedSetpointDefiner;
+
+  private GoToBranch goToBranchFastSetpointDefiner;
 
   private Pose2d targetFacePose = TargetFace.A.getTargetPoseToScore();
 
@@ -138,7 +148,7 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     this.elevatorAtHighPositionSupplier = elevatorAtHighPositionSupplier;
     this.scorerTargetReefLevelSupplier = scorerTargetReefLevel;
     this.scorerTargetReefLevelAlgaeSupplier = scorerTargetReefLevelAlgae;
-    this.configureGoToBranch();
+    this.configureGoToObjects();
     this.getPigeon2().setYaw(0);
     this.resetOdometry(new Pose2d());
   }
@@ -154,25 +164,32 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
     return estimatorMultiCamera;
   }
 
-  private void configureGoToBranch() {
-    this.removeAlgaeFromBranchConfiguration = new GoToBranchConfiguration(
+  private void configureGoToObjects() {
+    this.removeAlgaeFromBranchTeleoperatedConfiguration = new GoToFaceConfiguration(
         AutoAlignConstants.PoseDeadBand.RemoveAlgae.MIN_ERROR_AUTO_ALIGN_FAST,
-        AutoAlignConstants.PoseDeadBand.RemoveAlgae.MAX_ERROR_AUTO_ALIGN_FAST,
-        AutoAlignConstants.PoseDeadBand.RemoveAlgae.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST, "REMOVE_ALGAE",
+        AutoAlignConstants.PoseDeadBand.RemoveAlgae.MAX_ERROR_AUTO_ALIGN_FAST, "REMOVE_ALGAE",
         AutoAlignConstants.VelocitiesRelatedToDistance.RemoveAlgae.MIN_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.RemoveAlgae.MAX_VELOCITY_POSITION);
+    this.removeAlgaeFromBranchAutonomousConfiguration = new GoToFaceConfiguration(
+        AutoAlignConstants.PoseDeadBand.Teleoperated.MIN_ERROR_AUTO_ALIGN_TELEOPERATED,
+        AutoAlignConstants.PoseDeadBand.Teleoperated.MAX_ERROR_AUTO_ALIGN_TELEOPERATED, "REMOVE_ALGAE_AUTONOMOUS",
+        AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MIN_VELOCITY_POSITION,
+        AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MAX_VELOCITY_POSITION);
     this.goToBranchConfigurationFast = new GoToBranchConfiguration(
         AutoAlignConstants.PoseDeadBand.Fast.MIN_ERROR_AUTO_ALIGN_FAST,
-        AutoAlignConstants.PoseDeadBand.Fast.MAX_ERROR_AUTO_ALIGN_FAST,
-        AutoAlignConstants.PoseDeadBand.Fast.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_FAST, "FAST",
+        AutoAlignConstants.PoseDeadBand.Fast.MAX_ERROR_AUTO_ALIGN_FAST, "FAST",
         AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MIN_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.Fast.MAX_VELOCITY_POSITION);
     this.goToBranchConfigurationTeleoperated = new GoToBranchConfiguration(
         AutoAlignConstants.PoseDeadBand.Teleoperated.MIN_ERROR_AUTO_ALIGN_TELEOPERATED,
-        AutoAlignConstants.PoseDeadBand.Teleoperated.MAX_ERROR_AUTO_ALIGN_TELEOPERATED,
-        AutoAlignConstants.PoseDeadBand.Teleoperated.ERROR_FOR_ROTATION_ALIGN_ACTIVATION_TELEOPERATED, "TELEOPERATED",
+        AutoAlignConstants.PoseDeadBand.Teleoperated.MAX_ERROR_AUTO_ALIGN_TELEOPERATED, "TELEOPERATED",
         AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MIN_VELOCITY_POSITION,
         AutoAlignConstants.VelocitiesRelatedToDistance.Teleoperated.MAX_VELOCITY_POSITION);
+
+    this.goToFaceTeleoperatedSetpointDefiner = new GoToFace(removeAlgaeFromBranchTeleoperatedConfiguration);
+    this.goToFaceAutonomousSetpointDefiner = new GoToFace(removeAlgaeFromBranchTeleoperatedConfiguration);
+    this.goToBranchFastSetpointDefiner = new GoToBranch(goToBranchConfigurationFast);
+    this.goToBranchTeleoperatedSetpointDefiner = new GoToBranch(goToBranchConfigurationTeleoperated);
   }
 
   public void resetOdometryLimelight(Translation2d defaultPosition) {
@@ -297,32 +314,32 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
   }
 
   private void driveToBranchFast(TargetBranch branch, boolean backup, boolean goDirect) {
-    this.goToBranchConfigurationFast.setBranch(branch, goDirect);
-    this.goToBranchConfigurationFast.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+    this.goToBranchFastSetpointDefiner.setBranch(branch, goDirect);
+    this.goToBranchFastSetpointDefiner.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
-        elevatorAtHighPositionSupplier, backup, false);
-    this.distanceToTargetBranch = goToBranchConfigurationFast.getDistanceToTargetBranch();
-    this.targetVelocity.append(goToBranchConfigurationFast.getFinalVelocity());
+        elevatorAtHighPositionSupplier, backup);
+    this.distanceToTargetBranch = goToBranchFastSetpointDefiner.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchFastSetpointDefiner.getFinalVelocity());
     this.distanceToTargetBranchLog.append(distanceToTargetBranch);
     this.isUsingAngleCorrection.append(false);
-    driveToPose(this.goToBranchConfigurationFast.getFinalPose(),
-        this.goToBranchConfigurationFast.getFinalVelocity());
-    this.state = this.goToBranchConfigurationFast.getGoToState();
+    driveToPose(this.goToBranchFastSetpointDefiner.getFinalPose(),
+        this.goToBranchFastSetpointDefiner.getFinalVelocity());
+    this.state = this.goToBranchFastSetpointDefiner.getGoToState();
   }
 
   private void goToBranchTeleoperated(TargetBranch branch, boolean backup, boolean goDirect) {
-    this.goToBranchConfigurationTeleoperated.setBranch(branch, goDirect);
-    this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+    this.goToBranchTeleoperatedSetpointDefiner.setBranch(branch, goDirect);
+    this.goToBranchTeleoperatedSetpointDefiner.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
-        elevatorAtHighPositionSupplier, backup, false);
-    this.distanceToTargetBranch = goToBranchConfigurationTeleoperated.getDistanceToTargetBranch();
-    this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
+        elevatorAtHighPositionSupplier, backup);
+    this.distanceToTargetBranch = goToBranchTeleoperatedSetpointDefiner.getDistanceToTargetBranch();
+    this.targetVelocity.append(goToBranchTeleoperatedSetpointDefiner.getFinalVelocity());
     this.distanceToTargetBranchLog.append(distanceToTargetBranch);
-    if (this.goToBranchConfigurationTeleoperated.getDistanceToTargetBranch() < 3.5) {
+    if (this.goToBranchTeleoperatedSetpointDefiner.getDistanceToTargetBranch() < 3.5) {
       this.isUsingAngleCorrection.append(false);
-      driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
-          this.goToBranchConfigurationTeleoperated.getFinalVelocity());
-      this.state = this.goToBranchConfigurationTeleoperated.getGoToState();
+      driveToPose(this.goToBranchTeleoperatedSetpointDefiner.getFinalPose(),
+          this.goToBranchTeleoperatedSetpointDefiner.getFinalVelocity());
+      this.state = this.goToBranchTeleoperatedSetpointDefiner.getGoToState();
     } else {
       driveAlignAngleJoystick();
     }
@@ -330,50 +347,50 @@ public class SwerveSubsystem extends OdometryEnabledSwerveSubsystem implements I
 
   @Override
   public void goToFaceTeleoperated(TargetBranch branch) {
-    this.goToBranchConfigurationTeleoperated.setBranch(branch, true);
-    this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+    this.goToFaceTeleoperatedSetpointDefiner.setBranch(branch, true);
+    this.goToFaceTeleoperatedSetpointDefiner.updateFaceData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
-        elevatorAtHighPositionSupplier, true, true);
-    this.distanceToTargetFace = goToBranchConfigurationTeleoperated.getDistanceToTargetFace();
-    this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
+        elevatorAtHighPositionSupplier, true);
+    this.distanceToTargetFace = goToFaceTeleoperatedSetpointDefiner.getDistanceToTargetFace();
+    this.targetVelocity.append(goToFaceTeleoperatedSetpointDefiner.getFinalVelocity());
     this.distanceToTargetFaceLog.append(distanceToTargetFace);
     this.isUsingAngleCorrection.append(false);
-    driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
-        this.goToBranchConfigurationTeleoperated.getFinalVelocity());
-    this.targetFacePose = this.goToBranchConfigurationTeleoperated.getFinalPose();
-    this.state = this.goToBranchConfigurationTeleoperated.getGoToState();
+    driveToPose(this.goToFaceTeleoperatedSetpointDefiner.getFinalPose(),
+        this.goToFaceTeleoperatedSetpointDefiner.getFinalVelocity());
+    this.targetFacePose = this.goToFaceTeleoperatedSetpointDefiner.getFinalPose();
+    this.state = this.goToFaceTeleoperatedSetpointDefiner.getGoToState();
   }
 
   @Override
   public void goToFaceAutonomous(TargetBranch branch) {
-    this.goToBranchConfigurationTeleoperated.setBranch(branch, true);
-    this.goToBranchConfigurationTeleoperated.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+    this.goToFaceAutonomousSetpointDefiner.setBranch(branch, true);
+    this.goToFaceAutonomousSetpointDefiner.updateFaceData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
-        elevatorAtHighPositionSupplier, true, true);
-    this.distanceToTargetFace = goToBranchConfigurationTeleoperated.getDistanceToTargetFace();
-    this.targetVelocity.append(goToBranchConfigurationTeleoperated.getFinalVelocity());
+        elevatorAtHighPositionSupplier, true);
+    this.distanceToTargetFace = goToFaceAutonomousSetpointDefiner.getDistanceToTargetFace();
+    this.targetVelocity.append(goToFaceAutonomousSetpointDefiner.getFinalVelocity());
     this.distanceToTargetFaceLog.append(distanceToTargetFace);
     this.isUsingAngleCorrection.append(false);
-    driveToPose(this.goToBranchConfigurationTeleoperated.getFinalPose(),
-        this.goToBranchConfigurationTeleoperated.getFinalVelocity());
-    this.targetFacePose = this.goToBranchConfigurationTeleoperated.getFinalPose();
-    this.state = this.goToBranchConfigurationTeleoperated.getGoToState();
+    driveToPose(this.goToFaceAutonomousSetpointDefiner.getFinalPose(),
+        this.goToFaceAutonomousSetpointDefiner.getFinalVelocity());
+    this.targetFacePose = this.goToFaceAutonomousSetpointDefiner.getFinalPose();
+    this.state = this.goToFaceAutonomousSetpointDefiner.getGoToState();
   }
 
   @Override
   public void goToCollectAlgaeFromFacePosition(TargetBranch branch) {
-    this.removeAlgaeFromBranchConfiguration.setBranch(branch, true);
-    this.removeAlgaeFromBranchConfiguration.updateBranchData(getPose(), scorerTargetReefLevelSupplier,
+    this.goToFaceTeleoperatedSetpointDefiner.setBranch(branch, true);
+    this.goToFaceTeleoperatedSetpointDefiner.updateFaceData(getPose(), scorerTargetReefLevelSupplier,
         scorerTargetReefLevelAlgaeSupplier,
-        elevatorAtHighPositionSupplier, false, true);
-    this.distanceToTargetFace = removeAlgaeFromBranchConfiguration.getDistanceToTargetFace();
-    this.targetVelocity.append(removeAlgaeFromBranchConfiguration.getFinalVelocity());
+        elevatorAtHighPositionSupplier, true);
+    this.distanceToTargetFace = goToFaceTeleoperatedSetpointDefiner.getDistanceToTargetFace();
+    this.targetVelocity.append(goToFaceTeleoperatedSetpointDefiner.getFinalVelocity());
     this.distanceToTargetFaceLog.append(distanceToTargetFace);
     this.isUsingAngleCorrection.append(false);
-    driveToPose(this.removeAlgaeFromBranchConfiguration.getFinalPose(),
-        this.removeAlgaeFromBranchConfiguration.getFinalVelocity());
-    this.targetFacePose = this.removeAlgaeFromBranchConfiguration.getFinalPose();
-    this.state = this.removeAlgaeFromBranchConfiguration.getGoToState();
+    driveToPose(this.goToFaceTeleoperatedSetpointDefiner.getFinalPose(),
+        this.goToFaceTeleoperatedSetpointDefiner.getFinalVelocity());
+    this.targetFacePose = this.goToFaceTeleoperatedSetpointDefiner.getFinalPose();
+    this.state = this.goToFaceTeleoperatedSetpointDefiner.getGoToState();
   }
 
   @Override
